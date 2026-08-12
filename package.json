@@ -1,37 +1,22 @@
 {
-  "name": "monimal",
+  "name": "maximal-site",
+  "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Monorepo spike: maximal, maximal-core and maximal-electron in one pnpm workspace, driven by Turborepo.",
-  "packageManager": "pnpm@10.20.0",
   "scripts": {
-    "build": "turbo run build",
-    "typecheck": "turbo run typecheck",
-    "test": "turbo run test --concurrency=1",
-    "lint": "turbo run lint",
-    "check": "turbo run build typecheck && turbo run test --concurrency=1",
-    "package": "turbo run package --filter maximal-client",
-    "sync": "./scripts/sync.sh",
-    "deviations": "node scripts/apply-deviations.mjs",
-    "check:float": "node scripts/check-float.mjs --warn"
+    "dev": "astro dev",
+    "build": "astro build && node scripts/verify-dist.mjs",
+    "test": "bun test tests",
+    "verify:dist": "node scripts/verify-dist.mjs",
+    "preview": "astro preview",
+    "og": "node scripts/gen-og.mjs",
+    "astro": "astro"
   },
   "devDependencies": {
-    "turbo": "^2.10.9"
+    "astro": "^6.2.2",
+    "typescript": "^5.6.0"
   },
-  "pnpm": {
-    "overrides": {
-      "prettier": "3.8.3"
-    },
-    "onlyBuiltDependencies": [
-      "@google/genai",
-      "electron",
-      "esbuild",
-      "node-llama-cpp",
-      "node-pty",
-      "protobufjs"
-    ]
-  },
-  "engines": {
-    "node": ">=22"
+  "dependencies": {
+    "@astrojs/markdoc": "^2.0.0"
   }
 }
