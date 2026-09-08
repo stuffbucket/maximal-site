@@ -1,11 +1,10 @@
 # maximal — landing site
 
-Static Astro site published to GitHub Pages at
-`https://stuffbucket.github.io/maximal/`.
+Static Astro site published at `https://mxml.sh/` through GitHub Pages.
 
 ```sh
 bun install
-bun run dev      # http://localhost:4321/maximal
+bun run dev      # http://localhost:4321
 bun run build    # → dist/
 bun run preview
 ```

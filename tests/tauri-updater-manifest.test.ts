@@ -14,9 +14,9 @@
  *   5. An unauthenticated build does not look the release up at all, so CI does
  *      not depend on the anonymous GitHub API budget.
  *
- * Colocated under site/tests (site's builder has no test runner of its own);
+ * Colocated under tests (the site builder has no test runner of its own);
  * imports the pure module by relative path. No network — the signature fetch is
- * injected as a mock. Run with: `bun test site/tests/tauri-updater-manifest.test.ts`.
+ * injected as a mock. Run with: `bun test tests/tauri-updater-manifest.test.ts`.
  */
 
 import { describe, expect, test } from "bun:test";

@@ -1,6 +1,6 @@
 // Canonical order, titles, and one-line blurbs for the user guide surfaced at
 // /guide. The Markdown source lives in docs/guide/*.md (a content collection;
-// see site/src/content.config.ts). Keep this in sync with docs/guide/README.md.
+// see src/content.config.ts). Keep this in sync with docs/guide/README.md.
 export const GUIDE_NAV = [
   {
     slug: "overview",

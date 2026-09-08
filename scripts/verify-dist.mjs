@@ -1,4 +1,4 @@
-// Post-build guard: assert the built site/dist will render correctly once the
+// Post-build guard: assert the built dist/ will render correctly once the
 // GitHub Pages deploy action publishes it — so a regression FAILS THE DEPLOY
 // instead of silently shipping a broken page. Run after `astro build`, before
 // the artifact upload (wired into .github/workflows/deploy-pages.yml).
@@ -35,13 +35,13 @@ function walk(dir, test, out = []) {
 const cnamePath = join(DIST, "CNAME");
 if (!existsSync(cnamePath)) {
   errors.push(
-    `dist/CNAME is missing — the deploy would drop the ${EXPECTED_CNAME} custom domain. It must live at site/public/CNAME.`,
+    `dist/CNAME is missing — the deploy would drop the ${EXPECTED_CNAME} custom domain. It must live at public/CNAME.`,
   );
 } else {
   const cname = readFileSync(cnamePath, "utf8").trim();
   if (cname !== EXPECTED_CNAME) {
     errors.push(
-      `dist/CNAME is "${cname}", expected "${EXPECTED_CNAME}" (site/public/CNAME).`,
+      `dist/CNAME is "${cname}", expected "${EXPECTED_CNAME}" (public/CNAME).`,
     );
   }
 }
@@ -60,6 +60,11 @@ for (const file of html) {
       `${rel}: ${hits.length} site-relative /maximal/ asset URL(s) — Astro \`base\` must be "/" for the root-served custom domain, not "/maximal". e.g. ${hits[0]}`,
     );
   }
+}
+
+const guidePages = html.filter((file) => file.startsWith(join(DIST, "guide")));
+if (guidePages.length < 2) {
+  errors.push("dist/guide contains no routed guide pages.");
 }
 
 // 3. The core styling/entry assets actually exist (a build that emitted zero
@@ -81,7 +86,7 @@ if (!existsSync(join(DIST, "favicon.svg"))) {
 const redirectPath = join(DIST, "maximal", "index.html");
 if (!existsSync(redirectPath)) {
   errors.push(
-    "dist/maximal/index.html is missing — the legacy /maximal/ path (old app DOWNLOAD_URL) would 404. It lives at site/public/maximal/index.html.",
+    "dist/maximal/index.html is missing — the legacy /maximal/ path (old app DOWNLOAD_URL) would 404. It lives at public/maximal/index.html.",
   );
 } else {
   const body = readFileSync(redirectPath, "utf8");
