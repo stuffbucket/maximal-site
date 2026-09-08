@@ -3,7 +3,7 @@
 // so the version they advertise can never drift apart.
 //
 // SOURCE OF TRUTH — the committed static manifest at
-// `site/public/updates/manifest.json`. As of issue #223 (Phase 4 of #218) the
+// `public/updates/manifest.json`. As of issue #223 (Phase 4 of #218) the
 // build no longer queries the GitHub releases API: there is NO build-time
 // `GITHUB_TOKEN` lookup and NO `SITE_PIN_VERSION` knob. The committed manifest
 // IS the pin — updating what the site advertises is a data change (a manifest
@@ -99,7 +99,7 @@ function resolveChannel(channelName: string): ReleaseInfo {
 /**
  * Resolve the stable release to advertise from the committed static manifest.
  * "Pinning" is now purely a manifest-data concern: the tag this returns is
- * whatever `channels.stable` in site/public/updates/manifest.json names.
+ * whatever `channels.stable` in public/updates/manifest.json names.
  */
 export function resolveLatestRelease(): ReleaseInfo {
   return resolveChannel("stable");

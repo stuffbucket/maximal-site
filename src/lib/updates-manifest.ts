@@ -1,6 +1,6 @@
 // Schema + pure builder for the update manifest the project publishes at the
 // canonical, CDN-cached, no-auth URL:
-//   https://stuffbucket.github.io/maximal/updates/manifest.json
+//   https://stuffbucket.github.io/maximal-site/updates/manifest.json
 //
 // Two independent consumers read this file at runtime:
 //   1. The desktop updater (src/lib/update-check.ts → parseManifestVersion),
@@ -15,7 +15,7 @@
 // SECURITY INVARIANT — `downloads` is BROWSER-ONLY. Do NOT wire the desktop
 // installer (or any auto-update flow) to `downloads.<slot>.url`. The desktop
 // side must keep reading only `version`; the URL it downloads from stays the
-// hardcoded `mxml.sh` constant in src/lib/update-check.ts.
+// compile-time DOWNLOAD_URL in the desktop client.
 //
 // SCHEMA HISTORY
 //   schema 1: { version, notes } per channel — desktop clients in the field.
@@ -77,7 +77,7 @@ export interface UpdateManifest {
 
 const REPO_URL = "https://github.com/stuffbucket/maximal";
 
-/** A minimal asset shape — a subset of `site/src/lib/version.ts`'s ReleaseAsset
+/** A minimal asset shape — a subset of `src/lib/version.ts`'s ReleaseAsset
  *  — so this pure builder has no dependency on the build-time GitHub lookup. */
 export interface ManifestAsset {
   name: string;
@@ -94,7 +94,7 @@ export interface ChannelReleaseInput {
 }
 
 /** Match a release's assets to the well-known download slots. Mirrors the
- *  build-time selection in `site/src/lib/downloads.ts` so the site and the
+ *  build-time selection in `src/lib/downloads.ts` so the site and the
  *  manifest advertise the same artifacts. An unmatched slot is omitted. */
 export function resolveDownloads(
   assets: ManifestAsset[],

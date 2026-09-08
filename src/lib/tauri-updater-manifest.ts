@@ -1,7 +1,7 @@
 // Schema + pure builder for the Tauri v2 "dynamic" update manifest the project
 // publishes alongside the notify-only schema-2 manifest, at the canonical,
 // CDN-cached, no-auth URL:
-//   https://mxml.sh/updates/latest.json
+//   https://stuffbucket.github.io/maximal-site/updates/latest.json
 //
 // The desktop app's tauri.conf.json points its updater plugin at this URL:
 //   "plugins": { "updater": { "pubkey": "…", "endpoints": ["…/latest.json"] } }

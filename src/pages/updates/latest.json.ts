@@ -1,7 +1,7 @@
 // The Tauri v2 update manifest the desktop app's IN-PLACE self-updater polls.
 // Prerendered to dist/updates/latest.json at build time and served (static,
 // Fastly-CDN-cached, no auth) at:
-//   https://mxml.sh/updates/latest.json          ← the updater plugin fetches this
+//   https://stuffbucket.github.io/maximal-site/updates/latest.json
 // (tauri.conf.json → plugins.updater.endpoints). It sits NEXT TO the notify-only
 // manifest.json this same `astro build` emits (pages/updates/manifest.json.ts).
 //
@@ -30,7 +30,7 @@
 //   - The releases API erroring (403 rate-limit / 5xx) THROWS ⇒ the build fails
 //     and the last good deploy (and its last good latest.json) stays live, rather
 //     than being replaced by a broken one.
-// The pure shape lives in site/src/lib/tauri-updater-manifest.ts (unit-tested).
+// The pure shape lives in src/lib/tauri-updater-manifest.ts (unit-tested).
 
 import {
   buildUpdaterManifest,
@@ -47,10 +47,9 @@ const REPO = "stuffbucket/maximal";
 /** Build-time GitHub API auth + cache-busting, mirroring the site's historical
  *  releases lookup. The token comes from GITHUB_TOKEN, supplied by whichever
  *  workflow deploys this site; it must never reach the client bundle (this
- *  route runs in the Node build context only). No workflow in THIS repository
- *  supplies one — `.github/workflows/` holds only ci.yml and release.yml, and
- *  the manifest mxml.sh serves is deployed from stuffbucket/maximal — so here
- *  `GET` returns before ever calling this. */
+ *  route runs in the Node build context only). The Pages workflow deliberately
+ *  does not expose its token as GITHUB_TOKEN, so `GET` returns before calling
+ *  the API unless a release-aware workflow explicitly supplies one. */
 function githubHeaders(token: string): Record<string, string> {
   const headers: Record<string, string> = {
     Accept: "application/vnd.github+json",

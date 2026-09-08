@@ -18,7 +18,8 @@ const { Content } = await render(entry);
 // scripts/gen-og.mjs → public/og.png) advertised via Open Graph + Twitter meta
 // only — invisible to the rendered page, but it's what unfurlers use instead of
 // guessing at the first inline <img> (which was grabbing the dashboard shot).
-const siteBase = (Astro.site?.href ?? "https://mxml.sh/")
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+const siteBase = new URL(`${base}/`, Astro.site ?? "https://stuffbucket.github.io").href
   .replace(/\/$/, "");
 const ogImage = `${siteBase}/og.png`;
 const ogTitle = "maximal · your AI tools, powered by GitHub Copilot";
@@ -36,14 +37,14 @@ const ogDescription =
       rel="preload"
       as="font"
       type="font/woff2"
-      href="/fonts/fraunces-latin.woff2"
+      href={`${base}/fonts/fraunces-latin.woff2`}
       crossorigin
     />
     <link
       rel="preload"
       as="font"
       type="font/woff2"
-      href="/fonts/commissioner-latin.woff2"
+      href={`${base}/fonts/commissioner-latin.woff2`}
       crossorigin
     />
 

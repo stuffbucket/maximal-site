@@ -1,6 +1,7 @@
 # maximal — landing site
 
-Static Astro site published at `https://mxml.sh/` through GitHub Pages.
+Static Astro site published at
+`https://stuffbucket.github.io/maximal-site/` through GitHub Pages.
 
 ```sh
 pnpm install

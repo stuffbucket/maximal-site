@@ -3,12 +3,8 @@
 // instead of silently shipping a broken page. Run after `astro build`, before
 // the artifact upload (wired into .github/workflows/deploy-pages.yml).
 //
-// mxml.sh is a GitHub Pages CUSTOM DOMAIN served at ROOT (see astro.config.mjs
-// + docs). Two ways that has silently broken before, both caught here:
-//   1. A "/maximal" Astro `base` re-emits /maximal/* asset URLs that 404 at the
-//      root-served domain (the page renders unstyled). Issue #289.
-//   2. A missing or typo'd CNAME drops the custom domain on deploy. PR #288
-//      shipped a root CNAME reading "msmxl.sh". PR #292 removed it.
+// GitHub Pages serves this repository below /maximal-site/. Root-relative URLs
+// outside that base render locally but 404 after deployment, so reject them.
 //
 // Exits non-zero with a precise message on any violation.
 import { readdirSync, readFileSync, existsSync, statSync } from "node:fs";
@@ -17,7 +13,8 @@ import { dirname, join, resolve } from "node:path";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const DIST = resolve(HERE, "..", "dist");
-const EXPECTED_CNAME = "mxml.sh";
+const SITE_URL = "https://stuffbucket.github.io/maximal-site/";
+const BASE = "/maximal-site";
 
 const errors = [];
 
@@ -31,33 +28,24 @@ function walk(dir, test, out = []) {
   return out;
 }
 
-// 1. CNAME present + exactly the expected apex (catches missing / typo'd domain).
+// A GitHub Pages project URL is not a custom domain and must not emit CNAME.
 const cnamePath = join(DIST, "CNAME");
-if (!existsSync(cnamePath)) {
-  errors.push(
-    `dist/CNAME is missing — the deploy would drop the ${EXPECTED_CNAME} custom domain. It must live at public/CNAME.`,
-  );
-} else {
-  const cname = readFileSync(cnamePath, "utf8").trim();
-  if (cname !== EXPECTED_CNAME) {
-    errors.push(
-      `dist/CNAME is "${cname}", expected "${EXPECTED_CNAME}" (public/CNAME).`,
-    );
-  }
+if (existsSync(cnamePath)) {
+  errors.push("dist/CNAME exists, but project Pages must use the github.io URL.");
 }
 
-// 2. No site-relative /maximal/ asset URLs — the base-path regression. Matches
-//    src="/maximal/..." / href="/maximal/..." only; absolute github.com repo
-//    links (github.com/stuffbucket/maximal/...) are fine and NOT matched.
+// Every root-relative HTML asset or route must stay inside the project base.
 const html = walk(DIST, (n) => n.endsWith(".html"));
-const badBaseRe = /(?:src|href)="\/maximal\//g;
+const rootUrlRe = /(?:src|href)="(\/(?!\/)[^"]*)"/g;
 for (const file of html) {
   const body = readFileSync(file, "utf8");
-  const hits = body.match(badBaseRe);
-  if (hits) {
+  const badUrls = [...body.matchAll(rootUrlRe)]
+    .map((match) => match[1])
+    .filter((url) => url !== BASE && !url.startsWith(`${BASE}/`));
+  if (badUrls.length > 0) {
     const rel = file.slice(DIST.length + 1);
     errors.push(
-      `${rel}: ${hits.length} site-relative /maximal/ asset URL(s) — Astro \`base\` must be "/" for the root-served custom domain, not "/maximal". e.g. ${hits[0]}`,
+      `${rel}: root-relative URL(s) escape ${BASE}: ${[...new Set(badUrls)].join(", ")}`,
     );
   }
 }
@@ -80,9 +68,7 @@ if (!existsSync(join(DIST, "favicon.svg"))) {
   errors.push("dist/favicon.svg is missing.");
 }
 
-// 4. The legacy /maximal/ path still redirects to root — shipped app builds
-//    (<= v0.4.40) link there for downloads; a static redirect page keeps them
-//    working. Assert it exists and forwards to "/".
+// The historical /maximal/ path inside the project redirects to its root.
 const redirectPath = join(DIST, "maximal", "index.html");
 if (!existsSync(redirectPath)) {
   errors.push(
@@ -90,9 +76,9 @@ if (!existsSync(redirectPath)) {
   );
 } else {
   const body = readFileSync(redirectPath, "utf8");
-  if (!/url=\/(?:["']|\s|$)/m.test(body) && !/location\.replace\("\/"/.test(body)) {
+  if (!body.includes(`url=${BASE}/`) || !body.includes(`location.replace("${BASE}/"`)) {
     errors.push(
-      "dist/maximal/index.html exists but does not redirect to the site root (/).",
+      `dist/maximal/index.html does not redirect to ${BASE}/.`,
     );
   }
 }
@@ -101,11 +87,11 @@ if (errors.length > 0) {
   console.error("verify-dist: FAILED\n");
   for (const e of errors) console.error(`  ✗ ${e}`);
   console.error(
-    `\n${errors.length} problem(s). The built site would not render correctly at https://${EXPECTED_CNAME}/.`,
+    `\n${errors.length} problem(s). The built site would not render correctly at ${SITE_URL}.`,
   );
   process.exit(1);
 }
 
 console.log(
-  `verify-dist: OK — dist/CNAME=${EXPECTED_CNAME}, ${html.length} HTML file(s) clean of /maximal/ asset paths, ${css.length} CSS asset(s) present.`,
+  `verify-dist: OK — no CNAME, ${html.length} HTML file(s) stay within ${BASE}, ${css.length} CSS asset(s) present.`,
 );
