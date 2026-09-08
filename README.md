@@ -3,10 +3,12 @@
 Static Astro site published at `https://mxml.sh/` through GitHub Pages.
 
 ```sh
-bun install
-bun run dev      # http://localhost:4321
-bun run build    # → dist/
-bun run preview
+pnpm install
+pnpm run dev      # http://localhost:4321
+pnpm run build    # cached by Turbo → dist/
+pnpm run test     # cached by Turbo
+pnpm run check    # build + test
+pnpm run preview
 ```
 
 The latest release version is fetched at **build time** from the GitHub

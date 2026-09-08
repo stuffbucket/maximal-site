@@ -1,0 +1,10 @@
+packages: []
+
+verifyDepsBeforeRun: warn
+
+overrides:
+  esbuild: 0.28.2
+  tar: 7.5.22
+
+allowBuilds:
+  esbuild: true
