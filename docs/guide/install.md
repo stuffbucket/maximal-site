@@ -5,7 +5,7 @@ Install maximal on macOS, Windows, or Linux, then head to [Connect GitHub Copilo
 ## What you need
 
 - **An active GitHub Copilot subscription** (Individual, Business, or Enterprise).
-- **macOS on Apple Silicon** (M1 or newer), **Windows 10/11 (64-bit)**, or **Linux** (`x86_64` or `arm64`).
+- **macOS on Apple Silicon** (M1 or newer), **Windows 10/11 (64-bit)**, or **Linux**: Debian 13, Ubuntu 24.04, or Ubuntu 26.04, on `amd64` or `arm64`.
 
 ## Install on macOS
 
@@ -25,25 +25,39 @@ Install maximal on macOS, Windows, or Linux, then head to [Connect GitHub Copilo
 
 ## Install on Linux
 
-On Linux, maximal runs its local service alongside the same unified Settings and Dashboard interface in your browser (`http://127.0.0.1:4141/ui/settings/`), including full support for Claude Code, Codex, and the Microsoft **Work IQ** MCP broker:
+maximal installs from its own signed apt repository on **Debian 13**, **Ubuntu 24.04**, and **Ubuntu 26.04**, on `amd64` and `arm64`.
 
-1. Clone the repository and build the UI and isolated MCP broker with [Bun](https://bun.sh) and [mise](https://mise.jdx.dev):
+> **Packages are available from 0.5.0.** Until 0.5.0 ships, use `Suites: rc` instead of `Suites: stable` below.
+
+1. Add the repository and install:
    ```sh
-   git clone https://github.com/stuffbucket/maximal
-   cd maximal
-   bun install --frozen-lockfile --ignore-scripts
-   (cd shell && bun install --frozen-lockfile --ignore-scripts)
-   bun run ensure:ui-embed
-   bun run build:ui
-   bun run build
-   mise -C packages/mcp-broker exec -- pnpm install --frozen-lockfile
-   mise -C packages/mcp-broker exec -- pnpm build
+   sudo install -d -m 0755 /etc/apt/keyrings
+   curl -fsSL https://mxml.sh/apt/maximal.asc | sudo tee /etc/apt/keyrings/maximal.asc >/dev/null
+   sudo tee /etc/apt/sources.list.d/maximal.sources >/dev/null <<'EOF'
+   Types: deb
+   URIs: https://mxml.sh/apt
+   Suites: stable
+   Components: main
+   Signed-By: /etc/apt/keyrings/maximal.asc
+   EOF
+   sudo apt update
+   sudo apt install maximal-desktop   # desktop: tray app + proxy
+   # or: sudo apt install maximal     # headless: proxy only
    ```
-2. Start maximal and open `http://127.0.0.1:4141/ui/settings/` in your browser:
+2. **Desktop:** open **Maximal** from your app menu. KDE shows the tray icon out of the box. GNOME needs the AppIndicator extension, which Ubuntu includes; on Debian, install `gnome-shell-extension-appindicator`. Settings also open in your browser at `http://127.0.0.1:4141/ui/settings/`.
+3. **Headless:** sign in with `maximal auth`, then keep it running as a user service:
    ```sh
-   HOST=127.0.0.1 NODE_ENV=production MAXIMAL_UI_DIST="$PWD/shell/dist/ui" \
-     bun dist/main.js start --port 4141
+   systemctl --user enable --now maximal
+   sudo loginctl enable-linger "$USER"
    ```
+
+To update:
+
+```sh
+sudo apt update && sudo apt install --only-upgrade maximal maximal-desktop
+```
+
+For other distributions, building from source, and more detail, see the [full Linux guide](https://github.com/stuffbucket/maximal/blob/main/docs/linux.md).
 
 ## Next steps
 
