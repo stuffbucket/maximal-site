@@ -14,6 +14,9 @@
     "verify:dist": "node scripts/verify-dist.mjs",
     "preview": "astro preview",
     "og": "node scripts/gen-og.mjs",
+    "models:sync": "node scripts/sync-copilot-models.mjs",
+    "screenshots": "node scripts/gen-screenshots.mjs",
+    "screenshots:docker": "bash scripts/screenshots-docker.sh",
     "astro": "astro"
   },
   "devDependencies": {
