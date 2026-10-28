@@ -4,9 +4,10 @@
 // The marketing site server-renders a RELEASE-INDEPENDENT fallback (a /releases
 // href + generic label) so it works with JS off, for crawlers, and when the
 // manifest fetch fails (fail-closed — see docs/decisions/site-runtime-version-manifest.md).
-// At runtime a small bundled script fetches /updates/manifest.json and, IF it
-// parses cleanly, upgrades the anchors + version pills in place. A failed or
-// malformed fetch leaves the baked fallback untouched.
+// At runtime a small bundled script fetches the canonical manifest from
+// mxml.sh (falling back to this site's copy) and, IF it parses cleanly,
+// upgrades the anchors + version pills in place. A failed or malformed fetch
+// leaves the baked fallback untouched.
 //
 // This module is the PURE, unit-testable core: it takes an already-fetched,
 // untyped JSON value and returns the browser-facing download data for the
@@ -15,9 +16,11 @@
 // so schema drift is a compile error here.
 //
 // SECURITY: reading `downloads.<slot>.url` here is intentional and in-scope —
-// the site is browser-only and the URL is a user-visible, clickable link, so it
-// adds no new trust surface. This is exactly the consumer the schema's SECURITY
-// note permits (unlike the desktop client, which must read only `version`).
+// the site is browser-only and the URL is a user-visible, clickable link. This
+// is exactly the consumer the schema's SECURITY note permits (unlike the
+// desktop client, which must read only `version`). The manifest comes from
+// another deployment (mxml.sh), so a link is used only when it is an asset of a
+// stuffbucket/maximal GitHub release (RELEASE_ASSET_PREFIX).
 
 import type {
   DownloadSlot,
@@ -43,10 +46,35 @@ export interface HydratedDownloads {
   hasWindows: boolean;
 }
 
+/** Every download the manifest lists is a release asset of the project. */
+export const RELEASE_ASSET_PREFIX =
+  "https://github.com/stuffbucket/maximal/releases/download/";
+
+/** True for an https URL to a stuffbucket/maximal release asset, and nothing
+ *  else: no other host, path, scheme, or credentials. */
+export function isReleaseAssetUrl(url: string): boolean {
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    return false;
+  }
+  return (
+    !parsed.username &&
+    !parsed.password &&
+    parsed.href.startsWith(RELEASE_ASSET_PREFIX) &&
+    parsed.pathname.length > new URL(RELEASE_ASSET_PREFIX).pathname.length
+  );
+}
+
 function isDownload(value: unknown): value is ManifestDownload {
   if (typeof value !== "object" || value === null) return false;
   const d = value as Record<string, unknown>;
-  return typeof d.url === "string" && d.url.length > 0 && typeof d.name === "string";
+  return (
+    typeof d.url === "string" &&
+    isReleaseAssetUrl(d.url) &&
+    typeof d.name === "string"
+  );
 }
 
 /** Narrow an untyped, freshly-fetched JSON value to a schema-2 manifest we can
@@ -82,6 +110,21 @@ export function readStableDownloads(value: unknown): HydratedDownloads | null {
   if (!manifest) return null;
   const channel = manifest.channels[SITE_CHANNEL];
   if (!channel || typeof channel.version !== "string" || !channel.version) {
+    return null;
+  }
+
+  // A link that isn't a release asset means the document can't be trusted:
+  // use none of it, rather than a new version label beside an old link.
+  const listed = Object.values(channel.downloads ?? {}) as unknown[];
+  if (
+    listed.some(
+      (d) =>
+        typeof d === "object" &&
+        d !== null &&
+        typeof (d as { url?: unknown }).url === "string" &&
+        !isReleaseAssetUrl((d as { url: string }).url),
+    )
+  ) {
     return null;
   }
 

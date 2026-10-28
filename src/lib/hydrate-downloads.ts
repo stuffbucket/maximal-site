@@ -75,19 +75,37 @@ function apply(data: HydratedDownloads): void {
     });
 }
 
-async function hydrate(): Promise<void> {
-  // Same-origin (Pages serves both the page and the manifest) ⇒ no CORS. The
-  // manifest is CDN-cached with a short TTL, so a plain fetch is enough.
-  const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+/** The canonical manifest, published by maximal's release pipeline, so a
+ *  release reaches the site within the manifest's cache time (10 minutes) with
+ *  no site change. Served with `access-control-allow-origin: *`. */
+const CANONICAL_MANIFEST = "https://mxml.sh/updates/manifest.json";
+
+/** Fetch one manifest and read the site channel from it; null when the fetch
+ *  fails, times out, or the document can't be trusted. */
+async function fetchDownloads(url: string): Promise<HydratedDownloads | null> {
   try {
-    const res = await fetch(`${base}/updates/manifest.json`, {
+    const res = await fetch(url, {
       headers: { accept: "application/json" },
+      signal: AbortSignal.timeout(5000),
     });
-    if (!res.ok) return; // keep the baked fallback
-    const data = readStableDownloads(await res.json());
-    if (data) apply(data);
+    if (!res.ok) return null;
+    return readStableDownloads(await res.json());
   } catch {
-    // Network error / malformed JSON ⇒ do nothing (fail-closed).
+    return null; // network error, timeout, malformed JSON
+  }
+}
+
+async function hydrate(): Promise<void> {
+  // The canonical manifest first, then this site's own copy
+  // (public/updates/manifest.json); if neither reads cleanly, the baked
+  // fallback stays (fail-closed).
+  const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+  for (const url of [CANONICAL_MANIFEST, `${base}/updates/manifest.json`]) {
+    const data = await fetchDownloads(url);
+    if (data) {
+      apply(data);
+      return;
+    }
   }
 }
 
