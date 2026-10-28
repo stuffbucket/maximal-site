@@ -2,20 +2,27 @@
 // Editorial intro + Copilot model specimens (from public/models/copilot.json)
 // + a 12-column bento grid built from real maximal captures. No mocked-up
 // third-party app UI.
-import { getEditorialModelGroups } from "../../lib/copilot-models";
+import BrandInitial from "../BrandInitial.astro";
+import { getCopilotCatalog, getEditorialModelGroups } from "../../lib/copilot-models";
 import replay from "../../data/usage-replay.json";
+import dashShot from "../../data/dashboard-shot.json";
 
 const groups = getEditorialModelGroups();
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
-const shotDashboard = `${base}/screenshots/app-dashboard.png`;
+const shotDashboard = `${base}/screenshots/app-dashboard-live.png`;
 const shotRequestDialog = `${base}/screenshots/guide/mcp-request-dialog.png`;
+const shotMcpServers = `${base}/screenshots/guide/mcp-servers.png`;
+const shotApps = `${base}/screenshots/apps.png`;
+const shotModels = `${base}/screenshots/models.png`;
+const catalogCount = getCopilotCatalog().count;
 const guideUrl = `${base}/guide`;
 
 // The live overlay replays real maximal usage (src/data/usage-replay.json,
 // from scripts/extract-usage-replay.mjs) with the dashboard's own rules: 15
 // one-minute buckets, the rate is the mean of the last five (the current,
-// partial minute included), and the view refreshes every 10 seconds once
-// today's total passes a million tokens. It starts from the exact state the
+// partial minute included). The view refreshes every 3 seconds (the app
+// waits 10 once today's total passes a million tokens), with the recording
+// still playing in real time. It starts from the exact state the
 // dashboard capture shows (scripts/gen-screenshots.mjs reads the same file).
 const SPARK_W = 280;
 const SPARK_H = 68;
@@ -25,6 +32,46 @@ const sparkRate = Math.round(
 );
 const sumBase = (key: string) =>
   replay.baseByModel.reduce((acc, row) => acc + Number((row as Record<string, unknown>)[key] ?? 0), 0);
+// The capture's totals are blanked at capture time and drawn here instead, at the positions recorded in dashboard-shot.json, so
+// they move with the overlay (scripts/gen-screenshots.mjs).
+const dashBase = {
+  total:
+    sumBase("input_tokens") +
+    sumBase("output_tokens") +
+    sumBase("cache_read_input_tokens") +
+    sumBase("cache_creation_input_tokens"),
+  input: sumBase("input_tokens"),
+  output: sumBase("output_tokens"),
+  cacheRead: sumBase("cache_read_input_tokens"),
+  cacheWrite: sumBase("cache_creation_input_tokens"),
+  requests: sumBase("request_count"),
+};
+const dashVp = dashShot.viewport;
+const cqw = (px: number) => `${((px / dashVp.width) * 100).toFixed(4)}cqw`;
+const dashTexts = dashShot.texts.map((t) => ({
+  key: t.key,
+  text: dashBase[t.key as keyof typeof dashBase].toLocaleString("en-US"),
+  style: [
+    `left:${(t.rect.x * 100).toFixed(3)}%`,
+    `top:${(t.rect.y * 100).toFixed(3)}%`,
+    // The totals grow to the right as they climb.
+    `min-width:${(t.rect.w * 100).toFixed(3)}%`,
+    `font-size:${cqw(t.fontSize)}`,
+    `line-height:${cqw(t.rect.h * dashVp.height)}`,
+    `font-weight:${t.fontWeight}`,
+    `color:${t.color}`,
+  ].join(";"),
+}));
+
+// The unlimited quotas' card (Chat, Completions) is hidden in the capture;
+// the live rate callout sits in its place.
+const slotStyle = [
+  `--slot-x:${(dashShot.slot.x * 100).toFixed(3)}%`,
+  `--slot-y:${(dashShot.slot.y * 100).toFixed(3)}%`,
+  `--slot-w:${(dashShot.slot.w * 100).toFixed(3)}%`,
+  `--slot-h:${(dashShot.slot.h * 100).toFixed(3)}%`,
+].join(";");
+
 const sparkFigures = [
   { key: "input", label: "Input", value: sumBase("input_tokens") },
   { key: "output", label: "Output", value: sumBase("output_tokens") },
@@ -53,169 +100,53 @@ const familyIcons: Record<string, string> = {
   <!-- 1. Intro spread -->
   <div class="intro-spread">
     <h2 class="intro-spread__headline">
-      <span class="lede-initial" aria-hidden="true">
-        <svg viewBox="0 0 86 80">
-          <rect width="86" height="80" rx="18.4" fill="#c8334a"></rect>
-          <text
-            class="lede-initial__m"
-            x="42.5"
-            y="60.39"
-            text-anchor="middle"
-            fill="#f4ead4">m</text
-          >
-        </svg></span
-      ><span class="sr-only">m</span>aximal sets your Copilot models{" "}
+      <BrandInitial class="lede-initial" /><span class="sr-only">m</span
+      >aximal sets your models{" "}
       <span class="ink-brand">free.</span>
     </h2>
     <div class="intro-spread__prose">
+      <p class="intro-spread__lead">Pick the app. Pick the model. Get to work.</p>
       <p>
-        Maximal is a small app for your computer. Sign in with GitHub, and the
-        AI models that come with GitHub Copilot work in Claude Desktop, Claude
-        Code, Codex, and the apps you build yourself.
+        Maximal brings the models in GitHub Copilot to Claude Desktop, Claude
+        Code, Codex, and whatever you&rsquo;re building. It runs on your
+        machine, never sends your prompts anywhere you didn&rsquo;t ask it to,
+        and shows you every request as it happens.
       </p>
-      <p>
-        It doesn&rsquo;t track what you do or collect your data. It&rsquo;s
-        built to be secure, private, and dependable, so you can set it up once
-        and let it run. When you&rsquo;re curious, you can watch what each app
-        is using as it happens.
-      </p>
+      <a class="intro-spread__skip" href="#start">
+        Set up in three steps&nbsp;&darr;
+      </a>
     </div>
   </div>
 
-  <!-- 2. Model family specimens -->
-  <div class="specimens" aria-labelledby="models-heading">
-    <header class="section-head">
-      <h3 id="models-heading" class="section-head__title">
-        Models on GitHub Copilot
-      </h3>
-      <p class="section-head__sub">
-        A wide variety of models are available for you to use.
-      </p>
-    </header>
-
-    <div class="specimens__grid">
-      {
-        groups.map((g) => (
-          <article class="specimen">
-            <span
-              class="specimen__glyph"
-              data-glyph={g.glyph}
-              aria-hidden="true"
-            >
-              {g.glyph}
-            </span>
-            <div class="specimen__content">
-              <div class="specimen__mark" aria-hidden="true">
-                <svg
-                  viewBox="0 0 24 24"
-                  set:html={familyIcons[g.icon]}
-                />
-              </div>
-              <h4 class="specimen__headline">{g.headline}</h4>
-              <p class="specimen__note">{g.note}</p>
-              <p class="specimen__tiers">{g.tiers}</p>
-            </div>
-          </article>
-        ))
-      }
-    </div>
-  </div>
-
-  <!-- 3. Bento grid (7 + 5 / 5 + 7) -->
-  <div class="bento-section" aria-labelledby="bento-heading">
-    <header class="section-head">
-      <h3 id="bento-heading" class="section-head__title">
-        Mix models, apps, and workplace context
-      </h3>
-      <p class="section-head__sub">
-        Share data from sources like Microsoft WorkIQ with more of your tools.
-        Maximal helps you choose which apps get access, simplifies setup, and
-        manages complex workflows for you.
-      </p>
-    </header>
-
+  <!-- 2. The dashboard, live: the proof of "every request as it happens" -->
+  <div class="bento-section" aria-label="Usage dashboard">
     <div class="bento">
-      <!-- Work IQ traffic cop, with the real maximal Requests dialog -->
-      <article class="bento-card bento-card--7">
-        <div class="bento-card__body">
-          <h4 class="bento-card__title">A traffic cop for your work data</h4>
-          <p class="bento-card__copy">
-            Maximal shares Work IQ and other MCP servers with the apps you pick.
-            Every other app gets a red light.
-          </p>
-        </div>
-        <figure class="appshot__frame">
-          <img
-            src={shotRequestDialog}
-            alt="maximal showing a Work IQ request that is waiting for your answer"
-            width="1920"
-            height="1360"
-            loading="lazy"
-            decoding="async"
-          />
-        </figure>
-      </article>
-
-      <div class="bento-stack bento-card--5">
-        <article class="bento-card">
-          <div class="bento-card__body">
-            <h4 class="bento-card__title">Swap the model, keep your setup</h4>
-            <p class="bento-card__copy">
-              Try a different model in Claude Code or Codex without changing
-              how you work.
-            </p>
-          </div>
-        </article>
-
-        <article class="bento-card">
-          <div class="bento-card__body">
-            <h4 class="bento-card__title">Prototypes that really answer</h4>
-            <p class="bento-card__copy">
-              Give the app you&rsquo;re building a quality model, right on your
-              machine.
-            </p>
-          </div>
-          <figure
-            class="exchange"
-            aria-label="Example: an alt-text helper prototype answering with a real model"
-          >
-            <p class="exchange__ask">Alt text for team-offsite.jpg</p>
-            <p class="exchange__reply">
-              &ldquo;Six people around a long wooden table, laughing at a sketch
-              taped to the whiteboard.&rdquo;
-            </p>
-          </figure>
-        </article>
-      </div>
-
-      <article class="bento-card bento-card--5 bento-card--center">
-        <div class="bento-card__body">
-          <h4 class="bento-card__title">See what every app consumes</h4>
-          <p class="bento-card__copy">
-            Live token rate, monthly quota, and usage by model.{" "}
-            <a href={`${guideUrl}/usage-and-settings`}>
-              Explore the dashboard&nbsp;&rarr;
-            </a>
-          </p>
-        </div>
-      </article>
-
       <!-- Real dashboard capture with a live, zoomed rate overlay -->
-      <figure class="bento-card bento-card--7 bento-card--shot">
+      <figure class="bento-card bento-card--12 bento-card--shot">
         <div class="appshot__stage">
           <div class="appshot__frame">
             <img
               src={shotDashboard}
-              alt="maximal’s usage dashboard showing Copilot quotas, a tokens-per-minute sparkline, and today’s token usage by model"
+              alt="maximal’s usage dashboard showing Copilot quotas, the live token rate, and today’s token usage by model"
               width="2000"
               height="1440"
               loading="lazy"
               decoding="async"
             />
+            <div class="dash-live" aria-hidden="true" data-dash-live>
+              {
+                dashTexts.map((t) => (
+                  <span class="dash-live__text" data-dash={t.key} style={t.style}>
+                    {t.text}
+                  </span>
+                ))
+              }
+            </div>
           </div>
 
           <div
             class="spark-zoom"
+            style={slotStyle}
             role="img"
             aria-label="Live tokens per minute over the last 15 minutes, with today’s input, output, and request totals"
             data-spark
@@ -229,7 +160,6 @@ const familyIcons: Record<string, string> = {
                   >
                   <span class="spark-zoom__unit">tokens/min</span>
                 </div>
-                <span class="spark-zoom__live">Last 15 minutes</span>
               </div>
               <div class="spark-zoom__plot">
               <svg
@@ -286,20 +216,269 @@ const familyIcons: Record<string, string> = {
           </div>
         </div>
       </figure>
+
+      <article class="bento-card bento-card--12">
+        <div class="bento-card__body">
+          <h3 class="bento-card__title">See what every app consumes</h3>
+          <p class="bento-card__copy">
+            Live token rate, monthly quota, and usage by model.{" "}
+            <a href={`${guideUrl}/usage-and-settings`}>
+              Explore the dashboard&nbsp;&rarr;
+            </a>
+          </p>
+        </div>
+      </article>
+    </div>
+  </div>
+
+  <!-- 3. Model family specimens -->
+  <div class="specimens" aria-labelledby="models-heading">
+    <header class="section-head">
+      <h3 id="models-heading" class="section-head__title">
+        Get the latest models as they arrive.
+      </h3>
+      <p class="section-head__sub">
+        When new models are added by a provider, maximal updates
+        automatically.
+      </p>
+    </header>
+
+    <div class="specimens__grid">
+      {
+        groups.map((g) => (
+          <article class="specimen">
+            <span
+              class="specimen__glyph"
+              data-glyph={g.glyph}
+              aria-hidden="true"
+            >
+              {g.glyph}
+            </span>
+            <div class="specimen__content">
+              <div class="specimen__mark" aria-hidden="true">
+                <svg
+                  viewBox="0 0 24 24"
+                  set:html={familyIcons[g.icon]}
+                />
+              </div>
+              <h4 class="specimen__headline">{g.headline}</h4>
+              <p class="specimen__note">{g.note}</p>
+              <p class="specimen__tiers">{g.tiers}</p>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+
+  <!-- 4. Data sources: two cards, each with its real maximal capture -->
+  <div class="bento-section" aria-labelledby="data-heading">
+    <header class="section-head">
+      <h3 id="data-heading" class="section-head__title">
+        Use the data you work with.
+      </h3>
+      <p class="section-head__sub">
+        Maximal sets up your data sources and MCP servers, then keeps them in
+        line.
+      </p>
+    </header>
+
+    <div class="bento">
+      <!-- Traffic cop: Work IQ shared with only the apps you check -->
+      <article class="bento-card bento-card--6">
+        <div class="bento-card__body">
+          <h4 class="bento-card__title">A traffic cop for your data</h4>
+          <p class="bento-card__copy">
+            Mix and match your apps with Microsoft Work IQ. The apps you pick
+            get a green light; everything else waits at the red.
+          </p>
+        </div>
+        <figure class="appshot__frame">
+          <img
+            src={shotMcpServers}
+            alt="maximal’s MCP servers settings with Microsoft Work IQ switched on and shared with Claude Code and Claude Desktop only"
+            width="1408"
+            height="1360"
+            loading="lazy"
+            decoding="async"
+          />
+        </figure>
+      </article>
+
+      <!-- Go-between: a request an app can't show, answered in maximal -->
+      <article class="bento-card bento-card--6">
+        <div class="bento-card__body">
+          <h4 class="bento-card__title">A go-between for your apps</h4>
+          <p class="bento-card__copy">
+            When Work IQ asks a question your app can&rsquo;t show, maximal
+            takes the message, you answer, and the work carries on.
+          </p>
+        </div>
+        <figure class="appshot__frame">
+          <img
+            src={shotRequestDialog}
+            alt="maximal showing a Microsoft Work IQ request that Claude Desktop can’t display, ready for you to answer"
+            width="1408"
+            height="1360"
+            loading="lazy"
+            decoding="async"
+          />
+        </figure>
+      </article>
+    </div>
+  </div>
+
+  <!-- 5. Apps and models: bento (6 + 6 / 7 + 5) -->
+  <div class="bento-section" aria-labelledby="apps-heading">
+    <header class="section-head">
+      <h3 id="apps-heading" class="section-head__title">
+        Any app. Any model.
+      </h3>
+      <p class="section-head__sub">
+        Swap models in the tools you know and power what you build.
+      </p>
+    </header>
+
+    <div class="bento">
+      <!-- Any app: the real Apps settings, cropped to the content column -->
+      <article class="bento-card bento-card--6">
+        <div class="bento-card__body">
+          <h4 class="bento-card__title">Turn on the apps you use</h4>
+          <p class="bento-card__copy">
+            Claude Code, Claude Desktop, and Codex each get one switch. Maximal
+            does the setup.
+          </p>
+        </div>
+        <figure class="appshot__frame appshot__frame--crop">
+          <img
+            src={shotApps}
+            alt="maximal’s Apps settings with Claude Code, Claude Desktop, and Codex switched on"
+            width="1408"
+            height="1628"
+            loading="lazy"
+            decoding="async"
+          />
+        </figure>
+      </article>
+
+      <!-- Any model: the whole Models list, drifting past -->
+      <article class="bento-card bento-card--6">
+        <div class="bento-card__body">
+          <h4 class="bento-card__title">Every model in one list</h4>
+          <p class="bento-card__copy">
+            See each model&rsquo;s context size and what it can do, then pick
+            the one that fits the job.
+          </p>
+        </div>
+        <figure class="appshot__frame appshot__frame--scroll">
+          <img
+            src={shotModels}
+            alt={`maximal’s Models list showing all ${catalogCount} GitHub Copilot models with their context size, max output, and capabilities`}
+            width="1408"
+            height="7508"
+            loading="lazy"
+            decoding="async"
+          />
+        </figure>
+      </article>
+
+      <!-- A prototype doing real AI work: a receipt photo read into an expense -->
+      <article class="bento-card bento-card--7">
+        <div class="bento-card__body">
+          <h4 class="bento-card__title">Prototypes that do the real thing</h4>
+          <p class="bento-card__copy">
+            When the app you&rsquo;re building needs AI, point it at maximal.
+            Snap a receipt, and a real model fills in the rest.
+          </p>
+        </div>
+        <figure
+          class="scan"
+          data-proto
+          aria-label="Example: an expense app prototype reading a photographed receipt. A model fills in the merchant, date, and total, and files it under Meals."
+        >
+          <div class="receipt" aria-hidden="true">
+            <p class="receipt__shop">Corner Café</p>
+            <p class="receipt__meta">Oct 27, 2026 &middot; 8:42 AM</p>
+            <dl class="receipt__lines">
+              <div><dt>Flat white</dt><dd>4.50</dd></div>
+              <div><dt>Croissant</dt><dd>3.75</dd></div>
+              <div><dt>Tax</dt><dd>0.69</dd></div>
+              <div class="receipt__total"><dt>Total</dt><dd>8.94</dd></div>
+            </dl>
+            <span class="receipt__beam"></span>
+          </div>
+          <dl class="scan__fields">
+            <div style="--i:0"><dt>Merchant</dt><dd><span>Corner Café</span></dd></div>
+            <div style="--i:1"><dt>Date</dt><dd><span>Oct 27, 2026</span></dd></div>
+            <div style="--i:2"><dt>Total</dt><dd><span>$8.94</span></dd></div>
+            <div style="--i:3"><dt>Category</dt><dd><span>Meals</span></dd></div>
+          </dl>
+        </figure>
+      </article>
+
+      <article class="bento-card bento-card--5">
+        <div class="bento-card__body">
+          <h4 class="bento-card__title">One click between accounts</h4>
+          <p class="bento-card__copy">
+            Work and personal, a click apart. Switch in maximal and every app
+            follows&mdash;no settings to touch.
+          </p>
+        </div>
+        <ul
+          class="accounts"
+          data-accounts
+          aria-label="Example: switching between a work and a personal GitHub account"
+        >
+          <li class="accounts__row" data-active="true">
+            <span class="accounts__mark" aria-hidden="true">A</span>
+            <span class="accounts__id">
+              <span class="accounts__name">ada-northwind</span>
+              <span class="accounts__kind">Work</span>
+            </span>
+            <span class="accounts__state">
+              <span class="accounts__dot" aria-hidden="true"></span>Signed in
+            </span>
+            <button type="button" class="accounts__switch" data-account-switch>
+              Switch
+            </button>
+          </li>
+          <li class="accounts__row" data-active="false">
+            <span class="accounts__mark" aria-hidden="true">A</span>
+            <span class="accounts__id">
+              <span class="accounts__name">ada-kestrel</span>
+              <span class="accounts__kind">Personal</span>
+            </span>
+            <span class="accounts__state">
+              <span class="accounts__dot" aria-hidden="true"></span>Signed in
+            </span>
+            <button type="button" class="accounts__switch" data-account-switch>
+              Switch
+            </button>
+          </li>
+        </ul>
+      </article>
+
     </div>
   </div>
 </section>
 
 <script is:inline>
-  // Live overlay: replays real maximal usage (timing and token counts per
+  // Live usage: replays real maximal usage (timing and token counts per
   // request) through the dashboard's own rules. Requests land in one-minute
   // buckets; the rate is the mean of the last five buckets, the current,
-  // partial one included; the line is the last 15 buckets scaled to their
-  // max; and, as in the app once today's total passes a million tokens, the
-  // view refreshes every 10 seconds. The 10-minute recording loops, so the
-  // totals keep climbing. Time only runs while the overlay is on screen.
+  // partial one included; the sparkline is the last 15 buckets scaled to
+  // their max. The recording plays in real time and the view refreshes every
+  // 3 seconds. It drives both the zoomed overlay and the live copies of the
+  // capture's own totals, so the two always agree.
+  //
+  // Motion: on each refresh the numbers ease to their new values over 0.9s
+  // (a short glide, then still) and the lines ease over 1.6s; when a minute
+  // rolls over, the lines slide left by one step as they ease. The
+  // 10-minute recording loops, so totals keep climbing. Time only runs while
+  // the overlay is on screen.
   (function () {
     var root = document.querySelector("[data-spark]");
+    var dash = document.querySelector("[data-dash-live]");
     if (!root) return;
     if (
       window.matchMedia &&
@@ -313,36 +492,47 @@ const familyIcons: Record<string, string> = {
     } catch (e) {
       return;
     }
-    var valEl = root.querySelector("[data-spark-val]");
+    var req = replay && replay.requests;
     var lineEl = root.querySelector("[data-spark-line]");
+    if (!req || !req.dtMs || !req.dtMs.length || !lineEl) return;
     var areaEl = root.querySelector("[data-spark-area]");
     var dotEl = root.querySelector("[data-spark-dot]");
-    var figEls = {
-      input: root.querySelector('[data-spark-figure="input"]'),
-      output: root.querySelector('[data-spark-figure="output"]'),
-      requests: root.querySelector('[data-spark-figure="requests"]'),
-    };
-    var req = replay && replay.requests;
-    if (!req || !req.dtMs || !req.dtMs.length || !lineEl) return;
+
+    // Every place a number is shown, keyed by what it shows.
+    var outputs = { rate: [], total: [], input: [], output: [], cacheRead: [], cacheWrite: [], requests: [] };
+    var rateEl = root.querySelector("[data-spark-val]");
+    if (rateEl) outputs.rate.push(rateEl);
+    ["input", "output", "requests"].forEach(function (k) {
+      var el = root.querySelector('[data-spark-figure="' + k + '"]');
+      if (el) outputs[k].push(el);
+    });
+    if (dash) {
+      Object.keys(outputs).forEach(function (k) {
+        var el = dash.querySelector('[data-dash="' + k + '"]');
+        if (el) outputs[k].push(el);
+      });
+    }
 
     var W = 280;
     var H = 68;
     var MINUTE_MS = 60000;
-    var REFRESH_MS = 10000;
-    var TWEEN_MS = 700;
+    var REFRESH_MS = 3000;
+    var NUMBER_MS = 900;
+    var LINE_MS = 1600;
     var count = req.dtMs.length;
     var duration = replay.durationMs;
 
     var buckets = replay.history.concat([0]);
-    var step = W / (buckets.length - 1);
     var minute = 0; // index of the current (last) bucket's minute
     var t = 0; // replay clock, ms
     var cursor = 0;
     var at = req.dtMs[0]; // replay time of the next request
-    var totals = { input: 0, output: 0, requests: 0 };
+    var totals = { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, requests: 0 };
     replay.baseByModel.forEach(function (row) {
       totals.input += row.input_tokens;
       totals.output += row.output_tokens;
+      totals.cacheRead += row.cache_read_input_tokens;
+      totals.cacheWrite += row.cache_creation_input_tokens;
       totals.requests += row.request_count;
     });
 
@@ -350,22 +540,22 @@ const familyIcons: Record<string, string> = {
     var timer = null;
     var last = 0;
     var anim = null;
-    var shownY = ys(buckets);
+    var shown = values();
+    var shownLine = buckets.slice();
 
-    function ys(values) {
-      var max = 1;
-      for (var i = 0; i < values.length; i++) if (values[i] > max) max = values[i];
-      return values.map(function (v) {
-        return H - 4 - (v / max) * (H - 10);
-      });
-    }
-
-    function path(yv, offset) {
-      var d = "";
-      for (var i = 0; i < yv.length; i++) {
-        d += (i ? " L" : "M") + (i * step + offset).toFixed(1) + "," + yv[i].toFixed(1);
-      }
-      return d;
+    function values() {
+      var five = buckets.slice(-5);
+      var sum = 0;
+      for (var i = 0; i < five.length; i++) sum += five[i];
+      return {
+        rate: sum / five.length,
+        total: totals.input + totals.output + totals.cacheRead + totals.cacheWrite,
+        input: totals.input,
+        output: totals.output,
+        cacheRead: totals.cacheRead,
+        cacheWrite: totals.cacheWrite,
+        requests: totals.requests,
+      };
     }
 
     function rollTo(m) {
@@ -390,6 +580,8 @@ const familyIcons: Record<string, string> = {
           req.input[i] + req.output[i] + req.cacheRead[i] + req.cacheWrite[i];
         totals.input += req.input[i];
         totals.output += req.output[i];
+        totals.cacheRead += req.cacheRead[i];
+        totals.cacheWrite += req.cacheWrite[i];
         totals.requests += 1;
         cursor = (cursor + 1) % count;
         // After the last request, wait out the rest of the recording and
@@ -402,45 +594,65 @@ const familyIcons: Record<string, string> = {
       return shifted;
     }
 
-    function ease(k) {
+    function easeOut(k) {
       return 1 - Math.pow(1 - k, 3);
     }
 
-    function render(shifted) {
-      var five = buckets.slice(-5);
-      var sum = 0;
-      for (var i = 0; i < five.length; i++) sum += five[i];
-      if (valEl) valEl.textContent = Math.round(sum / five.length).toLocaleString("en-US");
-      Object.keys(figEls).forEach(function (k) {
-        if (figEls[k]) figEls[k].textContent = totals[k].toLocaleString("en-US");
-      });
+    function easeInOut(k) {
+      return k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+    }
 
-      // Ease the line from where it was (shifted left by any minutes that
-      // rolled over) to the new buckets.
-      var target = ys(buckets);
-      var from = shownY.slice(Math.min(shifted, shownY.length));
-      while (from.length < target.length) from.push(target[from.length]);
-      var startOffset = Math.min(shifted, buckets.length) * step;
+    // Both sparklines scale the same bucket values to their own max.
+    function drawLines(vals, slide) {
+      var max = 1;
+      for (var i = 0; i < vals.length; i++) if (vals[i] > max) max = vals[i];
+      var n = vals.length - 1;
+
+      var d = "";
+      var y = 0;
+      for (var j = 0; j < vals.length; j++) {
+        y = H - 4 - (vals[j] / max) * (H - 10);
+        d += (j ? " L" : "M") + ((j + slide) * (W / n)).toFixed(1) + "," + y.toFixed(1);
+      }
+      lineEl.setAttribute("d", d);
+      if (areaEl) {
+        var x0 = (slide * (W / n)).toFixed(1);
+        var x1 = ((n + slide) * (W / n)).toFixed(1);
+        areaEl.setAttribute("d", d + " L" + x1 + "," + H + " L" + x0 + "," + H + " Z");
+      }
+      if (dotEl) dotEl.style.top = ((y / H) * 100).toFixed(2) + "%";
+    }
+
+    function render(shifted) {
+      var fromNums = shown;
+      var toNums = values();
+      // Line values: the old ones, moved left by any minutes that rolled
+      // over, easing to the new ones while the whole line slides into place.
+      var fromLine = shownLine.slice(Math.min(shifted, shownLine.length));
+      while (fromLine.length < buckets.length) fromLine.push(0);
+      var toLine = buckets.slice();
+      var slideFrom = Math.min(shifted, buckets.length);
       var start = performance.now();
       if (anim) cancelAnimationFrame(anim);
       (function frame(now) {
-        var k = Math.min(1, (now - start) / TWEEN_MS);
-        var e = ease(k);
-        var yv = from.map(function (y, i) {
-          return y + (target[i] - y) * e;
+        var kn = Math.min(1, (now - start) / NUMBER_MS);
+        var kl = Math.min(1, (now - start) / LINE_MS);
+        var en = easeOut(kn);
+        var el = easeInOut(kl);
+        var cur = {};
+        Object.keys(outputs).forEach(function (key) {
+          cur[key] = fromNums[key] + (toNums[key] - fromNums[key]) * en;
+          var text = Math.round(cur[key]).toLocaleString("en-US");
+          outputs[key].forEach(function (el) {
+            el.textContent = text;
+          });
         });
-        var off = startOffset * (1 - e);
-        var d = path(yv, off);
-        lineEl.setAttribute("d", d);
-        if (areaEl) {
-          areaEl.setAttribute(
-            "d",
-            d + " L" + (W + off).toFixed(1) + "," + H + " L" + off.toFixed(1) + "," + H + " Z",
-          );
-        }
-        if (dotEl) dotEl.style.top = ((yv[yv.length - 1] / H) * 100).toFixed(2) + "%";
-        shownY = yv;
-        anim = k < 1 ? requestAnimationFrame(frame) : null;
+        shown = cur;
+        shownLine = fromLine.map(function (v, i) {
+          return v + (toLine[i] - v) * el;
+        });
+        drawLines(shownLine, slideFrom * (1 - el));
+        anim = kn < 1 || kl < 1 ? requestAnimationFrame(frame) : null;
       })(start);
     }
 
@@ -487,6 +699,70 @@ const familyIcons: Record<string, string> = {
   })();
 </script>
 
+<script is:inline>
+  // Receipt example: when the card is on screen, a scan passes over the
+  // receipt, then the fields fill in (CSS does the motion). It resets off
+  // screen so it plays again on the next visit.
+  (function () {
+    var scan = document.querySelector("[data-proto]");
+    if (!scan) return;
+    if (!("IntersectionObserver" in window)) {
+      scan.setAttribute("data-state", "read");
+      return;
+    }
+    var timers = [];
+    function clear() {
+      timers.forEach(clearTimeout);
+      timers = [];
+    }
+    new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.intersectionRatio >= 0.6) {
+            if (timers.length) return;
+            timers.push(
+              setTimeout(function () {
+                scan.setAttribute("data-state", "scan");
+              }, 500),
+              setTimeout(function () {
+                scan.setAttribute("data-state", "read");
+              }, 1900),
+            );
+          } else if (!entry.isIntersecting) {
+            clear();
+            scan.removeAttribute("data-state");
+          }
+        });
+      },
+      { threshold: [0, 0.6] },
+    ).observe(scan);
+  })();
+
+  // Account example: Switch behaves like maximal's (a moment of
+  // "Switching…", then the other account is the signed-in one).
+  (function () {
+    var list = document.querySelector("[data-accounts]");
+    if (!list) return;
+    list.addEventListener("click", function (event) {
+      var btn = event.target.closest("[data-account-switch]");
+      if (!btn || btn.disabled) return;
+      var label = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = "Switching…";
+      setTimeout(function () {
+        list.querySelectorAll(".accounts__row").forEach(function (row) {
+          row.setAttribute(
+            "data-active",
+            row.contains(btn) ? "true" : "false",
+          );
+        });
+        btn.textContent = label;
+        btn.disabled = false;
+      }, 700);
+    });
+  })();
+</script>
+
 <style>
   @property --shader-angle {
     syntax: "<angle>";
@@ -497,16 +773,6 @@ const familyIcons: Record<string, string> = {
   @keyframes border-shader-spin {
     to {
       --shader-angle: 360deg;
-    }
-  }
-
-  @keyframes live-pulse {
-    0%,
-    100% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0.35;
     }
   }
 
@@ -544,6 +810,7 @@ const familyIcons: Record<string, string> = {
 
   /* 1. Intro spread (6 + 6 columns) */
   .intro-spread {
+    --intro-headline-size: clamp(var(--text-2xl), 3.6vw, var(--text-4xl));
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));
     column-gap: var(--space-6);
@@ -555,7 +822,7 @@ const familyIcons: Record<string, string> = {
     grid-column: 1 / span 6;
     font-family: var(--font-display);
     font-weight: var(--weight-md);
-    font-size: clamp(var(--text-2xl), 3.6vw, var(--text-4xl));
+    font-size: var(--intro-headline-size);
     font-variation-settings: normal;
     line-height: var(--leading-xl);
     letter-spacing: var(--tracking-2xl);
@@ -565,53 +832,21 @@ const familyIcons: Record<string, string> = {
     text-wrap: balance;
   }
 
-  /* The app-tile initial is taller than a line. Negative block margins keep
-     its margin box inside the strut so it can't stretch the first line box:
-     every line gets the same leading. vertical-align is offset by the same
-     0.4em so the tile sits exactly where it did (its m on the baseline). */
-  /* A boxed raised initial, measured against Fraunces at the headline's
-     size and optical size:
-       ascender 0.74em above the baseline ("l"), descender 0.233em below ("p"),
-       x-height 0.475em ("m", arch included).
-     The m is a letter of the word: it sits on the text's baseline at the
-     text's x-height (85 units of 0.01216em = 1.034em, so its x-height is
-     0.476em; its baseline is y=60.39, 0.233em above the frame's bottom less
-     an optical lift of 0.45 units, about 0.25px at desktop size).
-     The frame aligns to the type: bottom on the descender line, top on the
-     ascender line (0.973em, 80 units), and just wide enough to give the m
-     0.09em either side (1.046em, 86 units).
-     Spacing: the frame's right edge is straight through the x-height band
-     and the "a" opens on a round bowl, so the gap between them matches the
-     face's own straight-to-round fit ("n" to "o", 0.03em): the a's 0.043em
-     side bearing less 0.013em.
-     Margin: the lines below start with letters whose ink sits inside the
-     column edge by their side bearing ("C" at 0.038em). The frame steps in
-     0.045em so its straight edge lines up with that ink, with the round C
-     overshooting it slightly, as round letters do against straight ones.
-     Negative block margins keep the margin box between the baseline and
-     0.6em above it, so the frame never stretches the first line box. */
-  .lede-initial {
-    display: inline-block;
-    width: 1.046em;
-    height: 0.973em;
-    margin-block: -0.14em -0.233em;
-    vertical-align: baseline;
+  /* The tile initial (BrandInitial) steps in from the column edge: the
+     lines below start with letters whose ink sits inside it by their side
+     bearing ("C" at 0.038em), so the frame's straight edge moves in 0.045em
+     to line up with that ink, the round C overshooting it slightly, as round
+     letters do against straight ones. */
+  .intro-spread__headline :global(.lede-initial) {
     margin-left: 0.045em;
-    margin-right: -0.013em;
-  }
-  .lede-initial svg {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
-  .lede-initial__m {
-    font-family: var(--font-display);
-    font-weight: 900;
-    font-size: 85px;
-    font-variation-settings: "SOFT" 30, "WONK" 1, "opsz" 144;
   }
 
+  /* Baseline-aligned with the headline, then raised so the lead's cap
+     height meets the tile's top (the headline's ascender line, 0.74em above
+     its baseline). Commissioner's caps are 0.72em tall. */
   .intro-spread__prose {
+    position: relative;
+    top: calc(0.72 * var(--text-md) - 0.74 * var(--intro-headline-size));
     grid-column: 7 / -1;
     display: grid;
     gap: var(--space-4);
@@ -623,6 +858,29 @@ const familyIcons: Record<string, string> = {
 
   .intro-spread__prose p {
     margin: 0;
+  }
+
+  /* The hook: same size as the paragraph, set apart by ink and weight only. */
+  .intro-spread__lead {
+    color: var(--text-strong);
+    font-weight: var(--weight-md);
+  }
+
+  /* A quiet way past the tour for readers ready to install. */
+  .intro-spread__skip {
+    justify-self: start;
+    font-size: var(--text-sm);
+    font-weight: var(--weight-md);
+    line-height: var(--leading-lg);
+    color: var(--link);
+    text-decoration: none;
+  }
+
+  .intro-spread__skip:hover {
+    color: var(--link-hover);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
   }
 
   /* 2. Model specimens */
@@ -738,10 +996,6 @@ const familyIcons: Record<string, string> = {
     gap: var(--space-5);
   }
 
-  .bento-stack {
-    display: grid;
-    gap: var(--space-5);
-  }
 
   .bento-card {
     margin: 0;
@@ -760,13 +1014,137 @@ const familyIcons: Record<string, string> = {
     grid-column: span 7;
   }
 
+  .bento-card--12 {
+    grid-column: 1 / -1;
+  }
+
+  .bento-card--6 {
+    grid-column: span 6;
+  }
+
+  /* Account switcher example, laid out like maximal's: who on the left,
+     status or a Switch button on the right, centred on the two-line name.
+     One size, one weight per role. */
+  .accounts {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-4);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    line-height: var(--leading-lg);
+  }
+
+  .accounts__row {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas: "mark id action";
+    column-gap: var(--space-3);
+    align-items: center;
+  }
+
+  /* Plain monogram avatars, like a GitHub account without a photo. */
+  .accounts__mark {
+    grid-area: mark;
+    display: inline-grid;
+    place-items: center;
+    width: var(--size-xl);
+    height: var(--size-xl);
+    border-radius: var(--radius-pill);
+    background: var(--surface-control);
+    border: var(--border-width-hairline) solid
+      color-mix(in srgb, var(--border-strong) 40%, transparent);
+    color: var(--text-base-color);
+    font-weight: var(--weight-md);
+    line-height: 1;
+  }
+
+  .accounts__id {
+    grid-area: id;
+    display: grid;
+    min-width: 0;
+  }
+
+  .accounts__name {
+    color: var(--text-strong);
+    font-weight: var(--weight-md);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .accounts__kind {
+    color: var(--text-muted);
+  }
+
+  /* Status and button share the cell, so swapping never moves the row. */
+  .accounts__state,
+  .accounts__switch {
+    grid-area: action;
+    justify-self: end;
+    transition:
+      opacity 240ms cubic-bezier(0.16, 1, 0.3, 1),
+      visibility 0s linear 240ms;
+  }
+
+  .accounts__state {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--text-muted);
+  }
+
+  .accounts__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: var(--radius-pill);
+    background: var(--status-success);
+  }
+
+  .accounts__switch {
+    appearance: none;
+    margin: 0;
+    padding: var(--space-1) var(--space-3);
+    font: inherit;
+    font-weight: var(--weight-md);
+    color: var(--text-strong);
+    background: var(--surface-control);
+    border: var(--border-width-hairline) solid
+      color-mix(in srgb, var(--border-strong) 40%, transparent);
+    border-radius: var(--radius-input);
+    cursor: pointer;
+  }
+
+  .accounts__switch:hover {
+    border-color: var(--accent);
+  }
+
+  .accounts__switch:disabled {
+    color: var(--text-muted);
+    cursor: progress;
+  }
+
+  .accounts__switch:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  .accounts__row[data-active="true"] .accounts__switch,
+  .accounts__row[data-active="false"] .accounts__state {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .accounts__row[data-active="true"] .accounts__state,
+  .accounts__row[data-active="false"] .accounts__switch {
+    transition-delay: 0s;
+  }
+
   .bento-card--5 {
     grid-column: span 5;
   }
 
-  .bento-card--center {
-    justify-content: center;
-  }
 
   .bento-card--shot {
     padding: var(--space-4);
@@ -798,45 +1176,194 @@ const familyIcons: Record<string, string> = {
     margin: 0;
   }
 
-  /* A prototype's prompt and the model's answer: same size as the copy,
-     the ask in a light bubble, the answer as plain text. */
-  .exchange {
+  /* A prototype reading a receipt: the photo on the left, the expense form
+     it fills in on the right. The scan passes over the paper, then the
+     fields fill one by one. */
+  .scan {
     margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-6);
+    align-items: center;
+    font-family: var(--font-body);
+  }
+
+  /* Side by side while the form has room; stacked on a phone. */
+  .receipt {
+    flex: 0 1 12rem;
+  }
+
+  .scan__fields {
+    flex: 1 1 10rem;
+  }
+
+  .scan p,
+  .scan dl,
+  .scan dd {
+    margin: 0;
+  }
+
+  /* The receipt is a picture, so it keeps its own paper and ink in both
+     themes. Its torn bottom edge is a zigzag mask. */
+  .receipt {
+    position: relative;
+    padding: var(--space-4) var(--space-4) var(--space-5);
+    background: #f5f5f5;
+    color: #2a2a2a;
+    font-size: var(--text-xs);
+    line-height: var(--leading-lg);
+    font-variant-numeric: tabular-nums lining-nums;
+    transform: rotate(-2deg);
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.18);
+    -webkit-mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg)
+      50% / 10px 100%;
+    mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg)
+      50% / 10px 100%;
+  }
+
+  .receipt__shop {
+    font-weight: var(--weight-lg);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    text-align: center;
+  }
+
+  .receipt__meta {
+    color: #6b6b6b;
+    text-align: center;
+    margin-bottom: var(--space-3);
+  }
+
+  .receipt__lines {
+    display: grid;
+    gap: 2px;
+  }
+
+  .receipt__lines div {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+
+  .receipt__total {
+    margin-top: var(--space-2);
+    padding-top: var(--space-2);
+    border-top: 1px dashed #8a8a8a;
+    font-weight: var(--weight-lg);
+  }
+
+  /* The scan: a teal line with a short trail, travelling down the paper. */
+  .receipt__beam {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      transparent calc(100% - 2.5rem),
+      rgb(67 126 137 / 0.18) calc(100% - 2px),
+      #437e89 calc(100% - 2px)
+    );
+    transform: translateY(-100%);
+    pointer-events: none;
+  }
+
+  .scan:is([data-state="scan"], [data-state="read"]) .receipt__beam {
+    animation: receipt-scan 1.3s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+  }
+
+  @keyframes receipt-scan {
+    to {
+      transform: translateY(100%);
+    }
+  }
+
+  .scan__fields {
     display: grid;
     gap: var(--space-3);
-    font-family: var(--font-body);
+  }
+
+  .scan__fields div {
+    display: grid;
+    gap: 2px;
+  }
+
+  .scan__fields dt {
+    color: var(--text-muted);
+    font-size: var(--text-xs);
+    line-height: var(--leading-lg);
+  }
+
+  /* Each value starts as an empty field and fills in once read. */
+  .scan__fields dd {
+    position: relative;
+    color: var(--text-strong);
     font-size: var(--text-base);
+    font-weight: var(--weight-md);
     line-height: var(--leading-base);
   }
 
-  .exchange p {
-    margin: 0;
-  }
-
-  .exchange__ask {
-    justify-self: end;
-    padding: var(--space-1) var(--space-3);
-    border-radius: var(--radius-card);
+  .scan__fields dd::before {
+    content: "";
+    position: absolute;
+    inset: 0.25em auto 0.25em 0;
+    width: 60%;
+    border-radius: var(--radius-chip);
     background: var(--surface-control);
-    color: var(--text-muted);
+    transition: opacity 300ms cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  .exchange__reply {
-    color: var(--text-strong);
-    text-wrap: pretty;
+  .scan__fields dd span {
+    opacity: 0;
+    transition: opacity 300ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .scan[data-state="read"] .scan__fields dd::before {
+    opacity: 0;
+    transition-delay: calc(var(--i) * 180ms);
+  }
+
+  .scan[data-state="read"] .scan__fields dd span {
+    opacity: 1;
+    transition-delay: calc(var(--i) * 180ms);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .receipt__beam,
+    .scan__fields dd::before {
+      display: none;
+    }
+    .scan__fields dd span {
+      opacity: 1;
+    }
   }
 
   .appshot__stage {
     position: relative;
     z-index: 1;
+    container: dash-stage / inline-size;
   }
 
   .appshot__frame {
+    position: relative;
+    container-type: inline-size;
     margin: 0;
     border: var(--border-width-hairline) solid var(--border-subtle);
     border-radius: var(--radius-input);
     overflow: hidden;
     line-height: 0;
+  }
+
+  /* Live copies of the capture's totals, set exactly as the dashboard sets
+     them and scaled with the capture (cqw). */
+  .dash-live {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .dash-live__text {
+    position: absolute;
+    font-family: var(--font-body);
+    white-space: nowrap;
   }
 
   .appshot__frame img {
@@ -845,15 +1372,61 @@ const familyIcons: Record<string, string> = {
     height: auto;
   }
 
-  /* Zoomed, live rate overlay. Its left edge starts at 51% of the capture so
-     it clears the quota card's "62.7% Used" (which ends at 47.5%), and it sits
-     above the dashboard's own rate meter (which starts at 49% down). */
+  /* Settings captures share the data cards' proportions; taller ones are
+     cropped from the bottom. */
+  .appshot__frame--crop,
+  .appshot__frame--scroll {
+    aspect-ratio: 1408 / 1360;
+  }
+
+  .appshot__frame--crop img {
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+  }
+
+  /* The whole Models list drifts past, pausing at each end, and holds still
+     under the pointer. */
+  .appshot__frame--scroll {
+    container-type: size;
+  }
+
+  .appshot__frame--scroll img {
+    animation: model-list-drift 80s ease-in-out infinite alternate;
+  }
+
+  .appshot__frame--scroll:hover img {
+    animation-play-state: paused;
+  }
+
+  @keyframes model-list-drift {
+    0%,
+    6% {
+      transform: translateY(0);
+    }
+    94%,
+    100% {
+      transform: translateY(calc(-100% + 100cqh));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .appshot__frame--scroll {
+      overflow-y: auto;
+    }
+    .appshot__frame--scroll img {
+      animation: none;
+    }
+  }
+
+  /* Live rate callout. On a capture wide enough to read it, it takes the
+     place of the dashboard's Chat / Completions card (hidden in the
+     capture, its box recorded as --slot-*) and scales with the capture;
+     on a narrower one it sits below. */
   .spark-zoom {
-    position: absolute;
+    position: relative;
     z-index: 20;
-    top: 9%;
-    left: 51%;
-    right: -0.75rem;
+    margin-top: var(--space-3);
     padding: 1.5px;
     border-radius: calc(var(--radius-card) + 1.5px);
     background: conic-gradient(
@@ -873,7 +1446,6 @@ const familyIcons: Record<string, string> = {
   }
 
   .spark-zoom__inner {
-    container-type: inline-size;
     position: relative;
     padding: var(--space-4);
     background: color-mix(in srgb, #141414 95%, transparent);
@@ -909,7 +1481,6 @@ const familyIcons: Record<string, string> = {
   }
 
   .spark-zoom__unit,
-  .spark-zoom__live,
   .spark-zoom__figures dt {
     font-family: var(--font-body);
     font-size: var(--text-xs);
@@ -975,31 +1546,73 @@ const familyIcons: Record<string, string> = {
     white-space: nowrap;
   }
 
-  @container (max-width: 260px) {
-    .spark-zoom__live {
-      display: none;
+  /* In the card's place: rate and totals on one row, the line below. Sizes
+     are fractions of the capture's width (cqw of the stage), set to the
+     tokens' values at a 1142px-wide capture. */
+  @container dash-stage (width >= 900px) {
+    .spark-zoom {
+      position: absolute;
+      margin: 0;
+      left: var(--slot-x);
+      top: var(--slot-y);
+      width: var(--slot-w);
+      height: var(--slot-h);
+    }
+
+    .spark-zoom__inner {
+      box-sizing: border-box;
+      height: 100%;
+      padding: 1.4cqw;
+      grid-template-columns: auto minmax(0, 1fr);
+      grid-template-rows: auto minmax(0, 1fr);
+      grid-template-areas:
+        "head figures"
+        "plot plot";
+      gap: 0.7cqw 2.1cqw;
+    }
+
+    .spark-zoom__head {
+      grid-area: head;
+    }
+
+    .spark-zoom__metric {
+      gap: 0.7cqw;
+    }
+
+    .spark-zoom__val {
+      font-size: 2.1cqw;
+    }
+
+    .spark-zoom__unit,
+    .spark-zoom__figures dt {
+      font-size: 1.05cqw;
+    }
+
+    .spark-zoom__figures {
+      grid-area: figures;
+      justify-self: end;
+      grid-template-columns: repeat(3, auto);
+      gap: 1.4cqw;
+    }
+
+    .spark-zoom__figures dd {
+      font-size: 1.23cqw;
+    }
+
+    .spark-zoom__plot {
+      grid-area: plot;
+      height: auto;
+    }
+
+    .spark-zoom__dot {
+      width: 0.6cqw;
+      height: 0.6cqw;
+      margin: -0.3cqw 0 0 -0.3cqw;
     }
   }
 
-  .spark-zoom__live {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-1);
-    color: #8a8a8a;
-  }
-
-  .spark-zoom__live::before {
-    content: "";
-    width: 6px;
-    height: 6px;
-    border-radius: var(--radius-pill);
-    background: #7fc1d2;
-    animation: live-pulse 2.4s ease-in-out infinite;
-  }
-
   @media (prefers-reduced-motion: reduce) {
-    .spark-zoom,
-    .spark-zoom__live::before {
+    .spark-zoom {
       animation: none;
     }
   }
@@ -1017,10 +1630,15 @@ const familyIcons: Record<string, string> = {
     .bento {
       grid-template-columns: minmax(0, 1fr);
     }
+    .intro-spread__prose {
+      top: 0;
+    }
     .intro-spread__headline,
     .intro-spread__prose,
     .bento-card--7,
-    .bento-card--5 {
+    .bento-card--6,
+    .bento-card--5,
+    .bento-card--12 {
       grid-column: 1 / -1;
     }
   }
@@ -1037,10 +1655,4 @@ const familyIcons: Record<string, string> = {
     }
   }
 
-  @media (max-width: 640px) {
-    .spark-zoom {
-      position: static;
-      margin-top: var(--space-3);
-    }
-  }
 </style>

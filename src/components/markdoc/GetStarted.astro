@@ -426,7 +426,7 @@ const readmeUrl = `${repoUrl}#readme`;
   /* Quiet subordinate button for Linux */
   .btn--quiet {
     background: var(--surface-control);
-    border-color: var(--border-subtle);
+    border-color: color-mix(in srgb, var(--border-strong) 40%, transparent);
     color: var(--text-muted);
     font-weight: var(--weight-base);
   }
@@ -570,7 +570,7 @@ const readmeUrl = `${repoUrl}#readme`;
   .account__avatar {
     width: var(--size-xl);
     height: var(--size-xl);
-    transition: opacity 280ms cubic-bezier(0.16, 1, 0.3, 1);
+    transition: filter 280ms cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .account__avatar circle {
@@ -638,8 +638,9 @@ const readmeUrl = `${repoUrl}#readme`;
     transition-delay: 0s;
   }
 
+  /* Muted, not faded: opacity would sink the red into a dark page. */
   .account[data-active="false"] .account__avatar {
-    opacity: 0.45;
+    filter: saturate(0.2);
   }
 
   .account[data-active="false"] .control-label {
@@ -714,15 +715,18 @@ const readmeUrl = `${repoUrl}#readme`;
     }
   }
 
-  /* Work IQ: copy on the left, one stacked flow on the right */
+  /* Work IQ, on the steps' three-column grid: the copy spans steps 1 and 2
+     (about 80 characters a line), the controls fill step 3's column and end on the same right margin as
+     its switches. */
   .workiq-row {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-6) var(--space-7);
-    align-items: center;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-6);
+    align-items: baseline;
   }
 
   .workiq-row__intro {
+    grid-column: 1 / span 2;
     display: grid;
     gap: var(--space-3);
   }
@@ -744,6 +748,7 @@ const readmeUrl = `${repoUrl}#readme`;
     line-height: var(--leading-base);
     color: var(--text-base-color);
     margin: 0;
+    max-width: none;
   }
 
   .workiq-row__more {
@@ -753,9 +758,9 @@ const readmeUrl = `${repoUrl}#readme`;
   }
 
   .workiq-flow {
+    grid-column: 3;
     display: grid;
     gap: var(--space-4);
-    max-width: 26rem;
   }
 
   .request-card {
@@ -763,8 +768,9 @@ const readmeUrl = `${repoUrl}#readme`;
     padding: var(--space-4);
     display: grid;
     gap: var(--space-1);
-    background: var(--surface-card);
-    border: var(--border-width-hairline) solid var(--border-subtle);
+    background: var(--surface-control);
+    border: var(--border-width-hairline) solid
+      color-mix(in srgb, var(--border-strong) 40%, transparent);
     border-radius: var(--radius-card);
   }
 
@@ -809,6 +815,10 @@ const readmeUrl = `${repoUrl}#readme`;
     .setup__steps,
     .workiq-row {
       grid-template-columns: minmax(0, 1fr);
+    }
+    .workiq-row__intro,
+    .workiq-flow {
+      grid-column: 1;
     }
     .setup-step {
       max-width: 26rem;
