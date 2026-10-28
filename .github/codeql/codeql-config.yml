@@ -1,0 +1,13 @@
+# CodeQL configuration, wired in by .github/workflows/codeql.yml.
+#
+# The default query suite: this is a static site with no server and no
+# secrets, and the default suite is what lets CodeQL analyze a PR
+# incrementally instead of rescanning everything.
+
+name: "maximal-site CodeQL config"
+
+# Code that never ships to the site.
+paths-ignore:
+  - tests
+  - dist
+  - contrib
