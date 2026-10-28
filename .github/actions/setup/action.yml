@@ -34,6 +34,12 @@ runs:
         key: pnpm-store-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
         restore-keys: pnpm-store-${{ runner.os }}-
 
+    # A rotating shard URL in the lockfile would fail the install with a
+    # tarball mismatch later; say why up front (stuffbucket/pnpm-hooks).
+    - name: Check the lockfile's tarball URLs
+      shell: bash
+      run: node apply-pnpm-tarball-policy.mjs --check
+
     - name: Install dependencies
       shell: bash
       run: pnpm install --frozen-lockfile

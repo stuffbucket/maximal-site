@@ -2,6 +2,11 @@ packages: []
 
 verifyDepsBeforeRun: warn
 
+# Keeps the registry proxy's rotating shard hosts (ms-feed-N.pkgs.visualstudio.com)
+# out of pnpm-lock.yaml; policy in package.json#pnpmTarballUrlPolicy. From
+# stuffbucket/pnpm-hooks@4935cd6, with apply-pnpm-tarball-policy.mjs.
+pnpmfile: .pnpmfile.cjs
+
 # Supply chain: a new version must be a day old before it resolves, and
 # dependencies can't pull git or tarball URLs. No trustPolicy: the registry
 # proxy drops publish-trust metadata (provenance, trusted publisher) for some

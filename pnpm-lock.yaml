@@ -166,7 +166,7 @@ overrides:
   esbuild: 0.28.2
   tar: 7.5.22
 
-pnpmfileChecksum: sha256-KA1hqH5t+eLHkSv2Se8dVNbFYO9G2x6QZCXAuC+aiOA=
+pnpmfileChecksum: sha256-SPyXVg5/7m1kZMg8LOIakLQVjXEhFes3/+HNA3KzcgM=
 
 importers:
 
