@@ -1,0 +1,103 @@
+name: Generate Screenshots
+
+on:
+  workflow_dispatch:
+    inputs:
+      maximal_ref:
+        description: "stuffbucket/maximal git ref (tag, branch, or SHA) to capture UI from"
+        required: false
+        default: "main"
+        type: string
+      commit_to_branch:
+        description: "Commit updated PNGs back to the current branch"
+        required: false
+        default: false
+        type: boolean
+
+concurrency:
+  group: screenshots-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+defaults:
+  run:
+    shell: bash -eo pipefail {0}
+
+jobs:
+  screenshots:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    container:
+      image: mcr.microsoft.com/playwright:v1.52.0-noble
+      options: --ipc=host
+    steps:
+      - name: Checkout maximal-site
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: maximal-site
+
+      - name: Checkout stuffbucket/maximal
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: stuffbucket/maximal
+          ref: ${{ inputs.maximal_ref || 'main' }}
+          path: maximal
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version-file: maximal/.bun-version
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+        with:
+          run_install: false
+
+      - name: Build Maximal UI for the mock harness
+        working-directory: maximal
+        run: |
+          bun install --frozen-lockfile --ignore-scripts
+          (cd shell && bun install --frozen-lockfile --ignore-scripts)
+          bun run build:ui
+
+      - name: Install Playwright JS client in temp directory (uses container browsers)
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
+        run: |
+          mkdir -p /tmp/pw-runner
+          cd /tmp/pw-runner
+          npm init -y >/dev/null 2>&1
+          npm install --no-save playwright@1.52.0
+
+      - name: Capture PII-safe screenshots from UI harness
+        working-directory: maximal-site
+        env:
+          MAXIMAL_DIR: ${{ github.workspace }}/maximal
+          NODE_PATH: /tmp/pw-runner/node_modules
+        run: |
+          node scripts/gen-screenshots.mjs
+
+      - name: Upload screenshots artifact
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: maximal-site-screenshots-${{ inputs.maximal_ref || 'main' }}
+          path: |
+            maximal-site/public/screenshots/*.png
+            maximal-site/public/screenshots/guide/*.png
+          if-no-files-found: error
+
+      - name: Commit updated screenshots to branch (optional)
+        if: ${{ inputs.commit_to_branch == true }}
+        working-directory: maximal-site
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/screenshots/
+          if git diff --staged --quiet; then
+            echo "No screenshot changes to commit."
+          else
+            git commit -m "docs(screenshots): regenerate UI screenshots from maximal (${{ inputs.maximal_ref || 'main' }})"
+            git push
+          fi

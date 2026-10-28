@@ -1,0 +1,63 @@
+---
+// The maximal app tile as a boxed raised initial: it replaces the first "m"
+// of "maximal" in Fraunces display text, so the wordmark reads as one word.
+// Follow it with a visually hidden "m" (<span class="sr-only">m</span>) so
+// the word reads correctly to assistive tech; the tile itself is hidden.
+//
+// Pass `class` to adjust its side margins for the setting (the landing
+// headline steps it in to line up with the lines below).
+const { class: className } = Astro.props;
+---
+
+<span class:list={["brand-initial", className]} aria-hidden="true"
+  ><svg viewBox="0 0 86 80">
+    <rect width="86" height="80" rx="18.4" fill="#c8334a"></rect>
+    <text
+      class="brand-initial__m"
+      x="42.5"
+      y="60.39"
+      text-anchor="middle"
+      fill="#f4ead4">m</text
+    >
+  </svg></span
+>
+
+<style>
+  /* Sized in em of the surrounding text, measured against Fraunces:
+       ascender 0.74em above the baseline ("l"), descender 0.233em below ("p"),
+       x-height 0.475em ("m", arch included).
+     The m is a letter of the word: it sits on the text's baseline at the
+     text's x-height (85 units of 0.01216em = 1.034em, so its x-height is
+     0.476em; its baseline is y=60.39, 0.233em above the frame's bottom less
+     an optical lift of 0.45 units, about 0.25px at 48px).
+     The frame aligns to the type: bottom on the descender line, top on the
+     ascender line (0.973em, 80 units), and just wide enough to give the m
+     0.09em either side (1.046em, 86 units).
+     Spacing: the frame's right edge is straight through the x-height band
+     and the "a" opens on a round bowl, so the gap between them matches the
+     face's own straight-to-round fit ("n" to "o", 0.03em): the a's 0.043em
+     side bearing less 0.013em.
+     Negative block margins keep the margin box between the baseline and
+     0.6em above it, so the frame never stretches the first line box. */
+  .brand-initial {
+    display: inline-block;
+    width: 1.046em;
+    height: 0.973em;
+    margin-block: -0.14em -0.233em;
+    vertical-align: baseline;
+    margin-right: -0.013em;
+  }
+
+  .brand-initial svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .brand-initial__m {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 85px;
+    font-variation-settings: "SOFT" 30, "WONK" 1, "opsz" 144;
+  }
+</style>

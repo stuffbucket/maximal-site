@@ -1,112 +1,76 @@
 # Usage and settings
 
-Once maximal is open, this is your map. You'll find a set of sections down the side — Account, Endpoint, API clients, Apps, Models, Usage, General, Logs, and Diagnostics. Here's what each one does and when you'd reach for it.
+maximal puts all of your settings and your usage dashboard in a single window.
 
-New here? Start with [Install maximal](./install) and [Get started](./overview) first, then come back.
+Across the top bar:
+
+- **Five Settings tabs on the left:** **Account**, **Integrations**, **Models & keys**, **Appearance**, and **System**.
+- **Dashboard toggle on the right:** click the chart icon (or press `⌘D` on macOS or `Ctrl+D` on Windows) to view your usage dashboard; click the gear icon (or press `⌘,` or `Ctrl+,`) to return to Settings.
+- **Language menu:** click the globe icon in the top-right corner to switch between 12 languages.
+
+---
 
 ## Account
 
-Where you connect your GitHub Copilot plan — a signed-in account is what makes everything work, because maximal runs your tools on the models in that plan.
+Sign in to GitHub Copilot and switch between saved GitHub accounts.
 
-You can sign in three ways:
+![maximal’s Account tab showing a connected GitHub Copilot account and the Switch to account list](../../public/screenshots/guide/account-connected.png)
 
-- **GitHub device code** — maximal copies a short code to your clipboard and opens the GitHub approval page. Paste the code, approve, and maximal notices automatically.
-- **Reuse your `gh` login** — if you're already signed in with the GitHub CLI on this machine, pick that account. No code to copy.
-- **From the terminal** — run `maximal auth` if you installed the CLI.
+- **Reuse a GitHub CLI account** — connect an existing `gh` login in one click.
+- **Sign in to GitHub** — connect using an 8-character browser code.
+- **Switch to** — swap between saved personal and work GitHub accounts.
+- **Status and notices** — shows your active Copilot connection and surfaces any quota or billing notices from GitHub with a direct link to fix them.
 
-You can keep several accounts and quick-switch between them; switching restarts maximal into the chosen account. Signing out or removing an account only forgets maximal's own saved token — it never touches your `gh` login or your GitHub browser session.
+---
 
-A couple of things to know:
+## Integrations
 
-- You need an active GitHub Copilot subscription. Until you sign in, maximal runs but rejects Copilot requests.
-- **GitHub Enterprise?** Set your enterprise URL here and maximal points at your deployment instead of public GitHub.
-- If Copilot pushes back (billing, plan, rate limit, terms), this section explains what happened and links you to the fix.
+Turn on your coding apps, share **Work IQ** and other MCP servers, and answer server prompts.
 
-## Endpoint
+- **Apps** — one-click switches for **Claude Code**, **Claude Desktop**, and **Codex** (plus copyable install commands if a tool isn&rsquo;t installed yet).
+- **MCP servers** — add and turn on **Work IQ** (or other local MCP servers) and choose whether **Claude Code**, **Claude Desktop**, or **All apps** receive them.
+- **Requests** — holds form or sign-in link prompts from MCP servers when an app like Claude Desktop can&rsquo;t show them directly.
 
-The address and key your tools use to reach maximal — most people never touch it, because the Apps section wires up supported tools for you (see below).
+---
 
-There are two local addresses, plus the current API key:
+## Models and keys
 
-- **Anthropic-compatible:** `http://localhost:4141`
-- **OpenAI-compatible:** `http://localhost:4141/v1`
+Browse the models included in your Copilot plan, or grab the local address and API keys for manual tools.
 
-Point any Anthropic- or OpenAI-SDK tool at the matching address and it behaves as if it's talking to Anthropic or OpenAI directly. Use the API key as `x-api-key` or `Authorization: Bearer <key>`.
+![maximal’s Models & keys tab showing model families, endpoint address, and API key connections](../../public/screenshots/guide/models-and-keys.png)
 
-There are copy helpers for a ready-to-run `curl` and for the environment variables, so you rarely have to type any of this by hand. A quick example for Claude Code:
+- **Models** — lists every model available in your GitHub Copilot plan, grouped by family, with capability badges (`Vision`, `Tools`, `Streaming`, `Reasoning`) and token limits.
+- **Endpoint and API keys** — only needed if you&rsquo;re connecting a tool manually (like `opencode` or your own scripts). Copy the local address from **Endpoint** and click **+ Add a connection** under **API keys** to create a named key.
 
-```bash
-export ANTHROPIC_BASE_URL=http://localhost:4141
-export ANTHROPIC_AUTH_TOKEN=<your-maximal-key>
-```
+---
 
-Reach for Endpoint when you're connecting something by hand, like Codex or opencode.
+## Appearance
 
-## Apps
+Control how maximal appears on your desktop.
 
-Turn a tool on with a single switch and maximal sets it up for you — this is the main path for connecting your tools.
+![maximal’s Appearance tab showing the Always show in Dock / taskbar toggle](../../public/screenshots/guide/appearance.png)
 
-Apps auto-detects coding tools you already have installed. Flip a switch on and maximal writes the right settings; flip it off to disconnect.
+- **Always show in Dock / taskbar** — on by default so maximal stays visible in your Dock or taskbar even when the window is closed. Turn it off if you only want maximal in your menu bar or system tray.
+- **Theme** — follows your system light or dark mode automatically.
 
-- **Auto-configured today:** Claude Code and Claude Desktop (Cowork mode). Claude Desktop's model picker keeps working thanks to model-id rewriting.
-- **Point-it-yourself:** Codex, opencode, and any other SDK or HTTP client. Grab the base URL and key from [Endpoint](#endpoint).
-- **Coming soon:** Copilot CLI shows in the list, but you can't toggle it yet.
+---
 
-If an app already has its own base URL or key helper set, maximal won't clobber it. It backs off, and the card explains the conflict so you can decide. Use the re-scan button after installing a new tool.
+## System
 
-## API clients
+Helpful when troubleshooting or reporting an issue.
 
-Mint a stable, named key for anything you want to keep pointed at maximal for the long run.
+- **Diagnostics** — a summary of your version and configuration with all secrets hidden, safe to copy into a bug report.
+- **Logs** — a button to open the request log folder in Finder or Explorer.
+- **Uninstall** — cleanly removes maximal&rsquo;s background service and app settings.
 
-Every time maximal restarts, its auto-generated endpoint key rotates. That's fine for quick tests, but it'll break a long-running tool the next time you restart. A named key here stays put across restarts — give it a name you'll recognize later.
+---
 
-One security note: if your key list is empty, maximal accepts *all* local requests with no client auth. That's convenient on a trusted machine, but if you want maximal to require a key, add at least one.
+## Usage Dashboard
 
-## Models
+Click the chart icon in the top-right corner (or press `⌘D`, or `Ctrl+D` on Windows) to check your Copilot quotas and token usage:
 
-The list of models available through your Copilot plan.
+![maximal’s Usage Dashboard showing Copilot quotas, the live tokens-per-minute rate, and today’s usage by model](../../public/screenshots/app-dashboard.png)
 
-It's live, grouped by kind, and fetched straight from the provider. Hit refresh if you've just changed plans or want the latest. Use this to confirm a model is available before you set it in your tool.
-
-## Usage
-
-Your dashboard for what's actually happening — check here before you wonder "am I close to a limit?"
-
-- **Copilot quotas** — what you've used and what's remaining (or unlimited) on your plan.
-- **Token usage** — input, output, cache-read, cache-write, and request counts, with live trackers and traffic graphs.
-- **Period windows** — view by day, week, or month.
-
-A retention window caps the events table, so it won't grow forever.
-
-## General
-
-A few small preferences for how maximal sits on your machine.
-
-Turn on the option to **hide maximal from your Dock or taskbar** while it keeps running in the background.
-
-maximal follows your system light/dark setting automatically. The interface ships in 12 languages (English, German, Spanish, French, Italian, Japanese, Portuguese, Russian, Chinese, and regional variants).
-
-## Logs
-
-A record of every request, so you can see what a tool actually sent.
-
-Per-request logs are rotated daily, with a retention you can configure (7 days by default). There's a reveal-folder button and tips for tailing the current log. maximal shows paths for macOS, Linux, and Windows. Start here when a request didn't do what you expected.
-
-## Diagnostics
-
-A read-only snapshot for when something's off and you want the full picture — and it's safe to screenshot, since it never reveals secrets.
-
-- Your effective configuration
-- Where each secret comes from — environment, file, config, or unset — **never the values themselves**
-- Version, git SHA, and branch
-- Web-search backend status and overall setup state
-
-It's the first thing to check before filing an issue.
-
-## Good to know
-
-- maximal is pre-alpha, so expect a few rough edges.
-- maximal auto-configures only Claude Code and Claude Desktop. Everything else connects through the [Endpoint](#endpoint) values.
-- Server-side web search needs an Ollama key configured. Without it, search reports as unavailable while fetch still works.
-
-Stuck on connecting a specific tool? See [Connect your tools](./connect-your-tools).
+- **Time range (`1 day`, `7 days`, `30 days`)** — switch the window at the top of the screen.
+- **Usage Quotas** — see how much of your monthly GitHub Copilot *Premium Interactions* quota is used, how many interactions remain, and when it resets.
+- **Token Usage and By Model** — see your live `tokens/min` rate and token counts broken down by model.

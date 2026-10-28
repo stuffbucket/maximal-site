@@ -1,41 +1,41 @@
-// Canonical order, titles, and one-line blurbs for the user guide surfaced at
-// /guide. The Markdown source lives in docs/guide/*.md (a content collection;
-// see src/content.config.ts). Keep this in sync with docs/guide/README.md.
+// Canonical order, titles, and one-line descriptions for the user guide at /guide.
+// The Markdown source lives in docs/guide/*.md (see src/content.config.ts).
+// Keep in sync with docs/guide/README.md.
 export const GUIDE_NAV = [
   {
     slug: "overview",
     title: "What is maximal?",
-    blurb: "The one-paragraph version — what it does and who it's for.",
+    blurb: "What maximal does, what it requires, and how the pieces fit together.",
   },
   {
     slug: "install",
     title: "Install maximal",
-    blurb: "Download the desktop app on macOS.",
+    blurb: "Install on macOS, Windows, or Linux.",
   },
   {
     slug: "connect-copilot",
     title: "Connect GitHub Copilot",
-    blurb: "Sign in with GitHub so maximal can use your plan.",
+    blurb: "Sign in with a GitHub CLI account or a device code, and switch accounts.",
   },
   {
     slug: "connect-your-tools",
     title: "Connect your tools",
-    blurb: "Point Claude Code, Codex, opencode, and SDK clients at maximal.",
+    blurb: "Configure Claude Code, Claude Desktop, Codex, opencode, and Work IQ (MCP).",
   },
   {
     slug: "how-it-works",
     title: "How maximal works",
-    blurb: "The whole idea, step by step.",
+    blurb: "How the local API proxy, config management, and MCP broker operate.",
   },
   {
     slug: "usage-and-settings",
     title: "Usage and settings",
-    blurb: "A map of every section in the app.",
+    blurb: "Reference for the five Settings tabs and the Usage Dashboard.",
   },
   {
     slug: "troubleshooting",
     title: "Troubleshooting and FAQ",
-    blurb: "Fixes for the common snags, and quick answers.",
+    blurb: "Fixes for common authentication, config, and MCP request issues.",
   },
 ] as const;
 

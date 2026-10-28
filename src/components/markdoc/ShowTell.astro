@@ -1,327 +1,1658 @@
 ---
-// The explainer "island": a value SENTENCE (with the crimson app-tile as a
-// drop-cap "m"), a directional tools → models RAIL, and a bold PAYOFF. This
-// replaces the old symmetric brace diagram, which grouped but never showed the
-// verb or the direction. Presentational.
+// Editorial intro + Copilot model specimens (from public/models/copilot.json)
+// + a 12-column bento grid built from real maximal captures. No mocked-up
+// third-party app UI.
+import BrandInitial from "../BrandInitial.astro";
+import { getCopilotCatalog, getEditorialModelGroups } from "../../lib/copilot-models";
+import replay from "../../data/usage-replay.json";
+import dashShot from "../../data/dashboard-shot.json";
 
-// Brand marks from Simple Icons (CC0). `fill: true` = solid logo whose path
-// carries its own fill="currentColor"; `fill: false` = a monoline stroke glyph.
-const icon: Record<string, { fill: boolean; markup: string }> = {
-  claude: {
-    fill: true,
-    markup: `<path d="m4.7144 15.9555 4.7174-2.6471.079-.2307-.079-.1275h-.2307l-.7893-.0486-2.6956-.0729-2.3375-.0971-2.2646-.1214-.5707-.1215-.5343-.7042.0546-.3522.4797-.3218.686.0608 1.5179.1032 2.2767.1578 1.6514.0972 2.4468.255h.3886l.0546-.1579-.1336-.0971-.1032-.0972L6.973 9.8356l-2.55-1.6879-1.3356-.9714-.7225-.4918-.3643-.4614-.1578-1.0078.6557-.7225.8803.0607.2246.0607.8925.686 1.9064 1.4754 2.4893 1.8336.3643.3035.1457-.1032.0182-.0728-.164-.2733-1.3539-2.4467-1.445-2.4893-.6435-1.032-.17-.6194c-.0607-.255-.1032-.4674-.1032-.7285L6.287.1335 6.6997 0l.9957.1336.419.3642.6192 1.4147 1.0018 2.2282 1.5543 3.0296.4553.8985.2429.8318.091.255h.1579v-.1457l.1275-1.706.2368-2.0947.2307-2.6957.0789-.7589.3764-.9107.7468-.4918.5828.2793.4797.686-.0668.4433-.2853 1.8517-.5586 2.9021-.3643 1.9429h.2125l.2429-.2429.9835-1.3053 1.6514-2.0643.7286-.8196.85-.9046.5464-.4311h1.0321l.759 1.1293-.34 1.1657-1.0625 1.3478-.8804 1.1414-1.2628 1.7-.7893 1.36.0729.1093.1882-.0183 2.8535-.607 1.5421-.2794 1.8396-.3157.8318.3886.091.3946-.3278.8075-1.967.4857-2.3072.4614-3.4364.8136-.0425.0304.0486.0607 1.5482.1457.6618.0364h1.621l3.0175.2247.7892.522.4736.6376-.079.4857-1.2142.6193-1.6393-.3886-3.825-.9107-1.3113-.3279h-.1822v.1093l1.0929 1.0686 2.0035 1.8092 2.5075 2.3314.1275.5768-.3218.4554-.34-.0486-2.2039-1.6575-.85-.7468-1.9246-1.621h-.1275v.17l.4432.6496 2.3436 3.5214.1214 1.0807-.17.3521-.6071.2125-.6679-.1214-1.3721-1.9246L14.38 17.959l-1.1414-1.9428-.1397.079-.674 7.2552-.3156.3703-.7286.2793-.6071-.4614-.3218-.7468.3218-1.4753.3886-1.9246.3157-1.53.2853-1.9004.17-.6314-.0121-.0425-.1397.0182-1.4328 1.9672-2.1796 2.9446-1.7243 1.8456-.4128.164-.7164-.3704.0667-.6618.4008-.5889 2.386-3.0357 1.4389-1.882.929-1.0868-.0062-.1579h-.0546l-6.3385 4.1164-1.1293.1457-.4857-.4554.0608-.7467.2307-.2429 1.9064-1.3114Z" fill="currentColor"/>`,
-  },
-  openai: {
-    fill: true,
-    markup: `<path d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z" fill="currentColor"/>`,
-  },
-  gemini: {
-    fill: true,
-    markup: `<path d="M11.04 19.32Q12 21.51 12 24q0-2.49.93-4.68.96-2.19 2.58-3.81t3.81-2.55Q21.51 12 24 12q-2.49 0-4.68-.93a12.3 12.3 0 0 1-3.81-2.58 12.3 12.3 0 0 1-2.58-3.81Q12 2.49 12 0q0 2.49-.96 4.68-.93 2.19-2.55 3.81a12.3 12.3 0 0 1-3.81 2.58Q2.49 12 0 12q2.49 0 4.68.96 2.19.93 3.81 2.55t2.55 3.81" fill="currentColor"/>`,
-  },
-  opencode: {
-    fill: true,
-    markup: `<path fill-rule="evenodd" d="M22 24H2V0h20zM17 4.8H7v14.4h10z" fill="currentColor"/>`,
-  },
-  sdk: {
-    fill: false,
-    markup: `<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 10l2.5 2.5L7 15"/><path d="M12.5 15.5H17"/>`,
-  },
-  more: {
-    fill: true,
-    markup: `<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>`,
-  },
+const groups = getEditorialModelGroups();
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+const shotDashboard = `${base}/screenshots/app-dashboard-live.png`;
+const shotRequestDialog = `${base}/screenshots/guide/mcp-request-dialog.png`;
+const shotMcpServers = `${base}/screenshots/guide/mcp-servers.png`;
+const shotApps = `${base}/screenshots/apps.png`;
+const shotModels = `${base}/screenshots/models.png`;
+const catalogCount = getCopilotCatalog().count;
+const guideUrl = `${base}/guide`;
+
+// The live overlay replays real maximal usage (src/data/usage-replay.json,
+// from scripts/extract-usage-replay.mjs) with the dashboard's own rules: 15
+// one-minute buckets, the rate is the mean of the last five (the current,
+// partial minute included). The view refreshes every 3 seconds (the app
+// waits 10 once today's total passes a million tokens), with the recording
+// still playing in real time. It starts from the exact state the
+// dashboard capture shows (scripts/gen-screenshots.mjs reads the same file).
+const SPARK_W = 280;
+const SPARK_H = 68;
+const sparkBuckets = [...replay.history, 0];
+const sparkRate = Math.round(
+  sparkBuckets.slice(-5).reduce((a, b) => a + b, 0) / 5,
+);
+const sumBase = (key: string) =>
+  replay.baseByModel.reduce((acc, row) => acc + Number((row as Record<string, unknown>)[key] ?? 0), 0);
+// The capture's totals are blanked at capture time and drawn here instead, at the positions recorded in dashboard-shot.json, so
+// they move with the overlay (scripts/gen-screenshots.mjs).
+const dashBase = {
+  total:
+    sumBase("input_tokens") +
+    sumBase("output_tokens") +
+    sumBase("cache_read_input_tokens") +
+    sumBase("cache_creation_input_tokens"),
+  input: sumBase("input_tokens"),
+  output: sumBase("output_tokens"),
+  cacheRead: sumBase("cache_read_input_tokens"),
+  cacheWrite: sumBase("cache_creation_input_tokens"),
+  requests: sumBase("request_count"),
 };
+const dashVp = dashShot.viewport;
+const cqw = (px: number) => `${((px / dashVp.width) * 100).toFixed(4)}cqw`;
+const dashTexts = dashShot.texts.map((t) => ({
+  key: t.key,
+  text: dashBase[t.key as keyof typeof dashBase].toLocaleString("en-US"),
+  style: [
+    `left:${(t.rect.x * 100).toFixed(3)}%`,
+    `top:${(t.rect.y * 100).toFixed(3)}%`,
+    // The totals grow to the right as they climb.
+    `min-width:${(t.rect.w * 100).toFixed(3)}%`,
+    `font-size:${cqw(t.fontSize)}`,
+    `line-height:${cqw(t.rect.h * dashVp.height)}`,
+    `font-weight:${t.fontWeight}`,
+    `color:${t.color}`,
+  ].join(";"),
+}));
 
-// Trimmed to ~4 per side (no duplicate Claude/OpenAI rows) so the categories
-// read at a glance: apps you run on the left, models that answer on the right.
-const tools = [
-  { name: "Claude Code", icon: "claude" },
-  { name: "Codex", icon: "openai" },
-  { name: "opencode", icon: "opencode" },
-  { name: "any Anthropic / OpenAI SDK", icon: "sdk" },
-];
-const models = [
-  { name: "Claude Opus 5", icon: "claude" },
-  { name: "GPT-5.6", icon: "openai" },
-  { name: "Gemini 3 Pro", icon: "gemini" },
-  { name: "…and more", icon: "more" },
-];
+// The unlimited quotas' card (Chat, Completions) is hidden in the capture;
+// the live rate callout sits in its place.
+const slotStyle = [
+  `--slot-x:${(dashShot.slot.x * 100).toFixed(3)}%`,
+  `--slot-y:${(dashShot.slot.y * 100).toFixed(3)}%`,
+  `--slot-w:${(dashShot.slot.w * 100).toFixed(3)}%`,
+  `--slot-h:${(dashShot.slot.h * 100).toFixed(3)}%`,
+].join(";");
 
-// Served from public/screenshots/ (base-prefixed for GitHub Pages).
-const shot = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/screenshots/app-dashboard.png`;
+const sparkFigures = [
+  { key: "input", label: "Input", value: sumBase("input_tokens") },
+  { key: "output", label: "Output", value: sumBase("output_tokens") },
+  { key: "requests", label: "Requests", value: sumBase("request_count") },
+];
+const sparkPoints = (() => {
+  const max = Math.max(...sparkBuckets, 1);
+  const step = SPARK_W / (sparkBuckets.length - 1);
+  return sparkBuckets.map((v, i) => [
+    +(i * step).toFixed(1),
+    +(SPARK_H - 4 - (v / max) * (SPARK_H - 10)).toFixed(1),
+  ]);
+})();
+const sparkLine = sparkPoints.map(([x, y], i) => `${i ? "L" : "M"}${x},${y}`).join(" ");
+const sparkArea = `${sparkLine} L${SPARK_W},${SPARK_H} L0,${SPARK_H} Z`;
+const sparkLast = sparkPoints[sparkPoints.length - 1];
+
+const familyIcons: Record<string, string> = {
+  claude: `<path d="m4.7144 15.9555 4.7174-2.6471.079-.2307-.079-.1275h-.2307l-.7893-.0486-2.6956-.0729-2.3375-.0971-2.2646-.1214-.5707-.1215-.5343-.7042.0546-.3522.4797-.3218.686.0608 1.5179.1032 2.2767.1578 1.6514.0972 2.4468.255h.3886l.0546-.1579-.1336-.0971-.1032-.0972L6.973 9.8356l-2.55-1.6879-1.3356-.9714-.7225-.4918-.3643-.4614-.1578-1.0078.6557-.7225.8803.0607.2246.0607.8925.686 1.9064 1.4754 2.4893 1.8336.3643.3035.1457-.1032.0182-.0728-.164-.2733-1.3539-2.4467-1.445-2.4893-.6435-1.032-.17-.6194c-.0607-.255-.1032-.4674-.1032-.7285L6.287.1335 6.6997 0l.9957.1336.419.3642.6192 1.4147 1.0018 2.2282 1.5543 3.0296.4553.8985.2429.8318.091.255h.1579v-.1457l.1275-1.706.2368-2.0947.2307-2.6957.0789-.7589.3764-.9107.7468-.4918.5828.2793.4797.686-.0668.4433-.2853 1.8517-.5586 2.9021-.3643 1.9429h.2125l.2429-.2429.9835-1.3053 1.6514-2.0643.7286-.8196.85-.9046.5464-.4311h1.0321l.759 1.1293-.34 1.1657-1.0625 1.3478-.8804 1.1414-1.2628 1.7-.7893 1.36.0729.1093.1882-.0183 2.8535-.607 1.5421-.2794 1.8396-.3157.8318.3886.091.3946-.3278.8075-1.967.4857-2.3072.4614-3.4364.8136-.0425.0304.0486.0607 1.5482.1457.6618.0364h1.621l3.0175.2247.7892.522.4736.6376-.079.4857-1.2142.6193-1.6393-.3886-3.825-.9107-1.3113-.3279h-.1822v.1093l1.0929 1.0686 2.0035 1.8092 2.5075 2.3314.1275.5768-.3218.4554-.34-.0486-2.2039-1.6575-.85-.7468-1.9246-1.621h-.1275v.17l.4432.6496 2.3436 3.5214.1214 1.0807-.17.3521-.6071.2125-.6679-.1214-1.3721-1.9246L14.38 17.959l-1.1414-1.9428-.1397.079-.674 7.2552-.3156.3703-.7286.2793-.6071-.4614-.3218-.7468.3218-1.4753.3886-1.9246.3157-1.53.2853-1.9004.17-.6314-.0121-.0425-.1397.0182-1.4328 1.9672-2.1796 2.9446-1.7243 1.8456-.4128.164-.7164-.3704.0667-.6618.4008-.5889 2.386-3.0357 1.4389-1.882.929-1.0868-.0062-.1579h-.0546l-6.3385 4.1164-1.1293.1457-.4857-.4554.0608-.7467.2307-.2429 1.9064-1.3114Z" fill="currentColor"/>`,
+  openai: `<path d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z" fill="currentColor"/>`,
+  gemini: `<path d="M11.04 19.32Q12 21.51 12 24q0-2.49.93-4.68.96-2.19 2.58-3.81t3.81-2.55Q21.51 12 24 12q-2.49 0-4.68-.93a12.3 12.3 0 0 1-3.81-2.58 12.3 12.3 0 0 1-2.58-3.81Q12 2.49 12 0q0 2.49-.96 4.68-.93 2.19-2.55 3.81a12.3 12.3 0 0 1-3.81 2.58Q2.49 12 0 12q2.49 0 4.68.96 2.19.93 3.81 2.55t2.55 3.81" fill="currentColor"/>`,
+};
 ---
 
-<section id="how" class="showtell">
-  <div class="flow-lede">
-    <h2 class="flow-lede__text">
-      <span class="lede-initial" aria-hidden="true">
-        <svg viewBox="0 0 100 100">
-          <rect width="100" height="100" rx="23" fill="#c8334a"></rect>
-          <text class="lede-initial__m" x="50" y="66" text-anchor="middle"
-            fill="#f4ead4">m</text>
-        </svg></span
-      ><span class="sr-only">m</span>aximalize{" "}
-      <span class="ink-brand">your AI ecosystem</span>
+<section id="how" class="editorial">
+  <!-- 1. Intro spread -->
+  <div class="intro-spread">
+    <h2 class="intro-spread__headline">
+      <BrandInitial class="lede-initial" /><span class="sr-only">m</span
+      >aximal sets your models{" "}
+      <span class="ink-brand">free.</span>
     </h2>
-    <p class="flow-lede__how">
-      Switch on the coding tools you already use, and maximal runs them on the
-      models in your Copilot plan.
-    </p>
+    <div class="intro-spread__prose">
+      <p class="intro-spread__lead">Pick the app. Pick the model. Get to work.</p>
+      <p>
+        Maximal brings the models in GitHub Copilot to Claude Desktop, Claude
+        Code, Codex, and whatever you&rsquo;re building. It runs on your
+        machine, never sends your prompts anywhere you didn&rsquo;t ask it to,
+        and shows you every request as it happens.
+      </p>
+      <a class="intro-spread__skip" href="#start">
+        Set up in three steps&nbsp;&darr;
+      </a>
+    </div>
   </div>
 
-  <div class="flow-rail">
-    <div class="flow-rail__group">
-      <span class="flow-rail__cap">the tools you use</span>
-      <ul class="flow-rail__chips">
-        {
-          tools.map((t) => (
-            <li class="flow-chip">
+  <!-- 2. The dashboard, live: the proof of "every request as it happens" -->
+  <div class="bento-section" aria-label="Usage dashboard">
+    <div class="bento">
+      <!-- Real dashboard capture with a live, zoomed rate overlay -->
+      <figure class="bento-card bento-card--12 bento-card--shot">
+        <div class="appshot__stage">
+          <div class="appshot__frame">
+            <img
+              src={shotDashboard}
+              alt="maximal’s usage dashboard showing Copilot quotas, the live token rate, and today’s token usage by model"
+              width="2000"
+              height="1440"
+              loading="lazy"
+              decoding="async"
+            />
+            <div class="dash-live" aria-hidden="true" data-dash-live>
+              {
+                dashTexts.map((t) => (
+                  <span class="dash-live__text" data-dash={t.key} style={t.style}>
+                    {t.text}
+                  </span>
+                ))
+              }
+            </div>
+          </div>
+
+          <div
+            class="spark-zoom"
+            style={slotStyle}
+            role="img"
+            aria-label="Live tokens per minute over the last 15 minutes, with today’s input, output, and request totals"
+            data-spark
+            data-replay={JSON.stringify(replay)}
+          >
+            <div class="spark-zoom__inner">
+              <div class="spark-zoom__head">
+                <div class="spark-zoom__metric">
+                  <span class="spark-zoom__val" data-spark-val
+                    >{sparkRate.toLocaleString("en-US")}</span
+                  >
+                  <span class="spark-zoom__unit">tokens/min</span>
+                </div>
+              </div>
+              <div class="spark-zoom__plot">
               <svg
-                class="flow__ic"
-                viewBox="0 0 24 24"
-                fill={icon[t.icon].fill ? "currentColor" : "none"}
-                stroke={icon[t.icon].fill ? "none" : "currentColor"}
-                stroke-width="1.6"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                class="spark-zoom__chart"
+                viewBox={`0 0 ${SPARK_W} ${SPARK_H}`}
+                preserveAspectRatio="none"
                 aria-hidden="true"
-                set:html={icon[t.icon].markup}
-              />
-              <span>{t.name}</span>
-            </li>
-          ))
-        }
-      </ul>
-    </div>
+              >
+                <defs>
+                  <linearGradient id="spark-fill" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#7fc1d2" stop-opacity="0.32"
+                    ></stop>
+                    <stop offset="100%" stop-color="#7fc1d2" stop-opacity="0"
+                    ></stop>
+                  </linearGradient>
+                  <clipPath id="spark-clip">
+                    <rect x="0" y="-4" width={SPARK_W} height={SPARK_H + 8}
+                    ></rect>
+                  </clipPath>
+                </defs>
+                <g clip-path="url(#spark-clip)">
+                <path data-spark-area d={sparkArea} fill="url(#spark-fill)"
+                ></path>
+                <path
+                  data-spark-line
+                  d={sparkLine}
+                  fill="none"
+                  stroke="#7fc1d2"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  vector-effect="non-scaling-stroke"></path>
+                </g>
+              </svg>
+                <span
+                  class="spark-zoom__dot"
+                  data-spark-dot
+                  style={`top: ${((sparkLast[1] / SPARK_H) * 100).toFixed(2)}%;`}
+                ></span>
+              </div>
+              <dl class="spark-zoom__figures">
+                {
+                  sparkFigures.map((f) => (
+                    <div>
+                      <dt>{f.label}</dt>
+                      <dd data-spark-figure={f.key}>
+                        {f.value.toLocaleString("en-US")}
+                      </dd>
+                    </div>
+                  ))
+                }
+              </dl>
+            </div>
+          </div>
+        </div>
+      </figure>
 
-    <span class="flow-rail__arrow ink-brand" aria-hidden="true">&#8594;</span>
-
-    <div class="flow-rail__group">
-      <span class="flow-rail__cap">your Copilot models</span>
-      <ul class="flow-rail__chips">
-        {
-          models.map((m) => (
-            <li class="flow-chip">
-              <svg
-                class="flow__ic"
-                viewBox="0 0 24 24"
-                fill={icon[m.icon].fill ? "currentColor" : "none"}
-                stroke={icon[m.icon].fill ? "none" : "currentColor"}
-                stroke-width="1.6"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-                set:html={icon[m.icon].markup}
-              />
-              <span>{m.name}</span>
-            </li>
-          ))
-        }
-      </ul>
+      <article class="bento-card bento-card--12">
+        <div class="bento-card__body">
+          <h3 class="bento-card__title">See what every app consumes</h3>
+          <p class="bento-card__copy">
+            Live token rate, monthly quota, and usage by model.{" "}
+            <a href={`${guideUrl}/usage-and-settings`}>
+              Explore the dashboard&nbsp;&rarr;
+            </a>
+          </p>
+        </div>
+      </article>
     </div>
   </div>
 
-  <p class="flow-payoff">Nothing new to set up. No second bill.</p>
+  <!-- 3. Model family specimens -->
+  <div class="specimens" aria-labelledby="models-heading">
+    <header class="section-head">
+      <h3 id="models-heading" class="section-head__title">
+        Get the latest models as they arrive.
+      </h3>
+      <p class="section-head__sub">
+        When new models are added by a provider, maximal updates
+        automatically.
+      </p>
+    </header>
 
-  <div class="flow-notes">
-    <p>
-      <b>No new keys.</b> Your tools think they're talking to Anthropic or OpenAI
-      — your Copilot plan answers.
-    </p>
-    <p>
-      <b>One plan covers every tool.</b> Without maximal, each tool needs its own
-      paid subscription — here, they all run on the Copilot plan you already have.
-    </p>
+    <div class="specimens__grid">
+      {
+        groups.map((g) => (
+          <article class="specimen">
+            <span
+              class="specimen__glyph"
+              data-glyph={g.glyph}
+              aria-hidden="true"
+            >
+              {g.glyph}
+            </span>
+            <div class="specimen__content">
+              <div class="specimen__mark" aria-hidden="true">
+                <svg
+                  viewBox="0 0 24 24"
+                  set:html={familyIcons[g.icon]}
+                />
+              </div>
+              <h4 class="specimen__headline">{g.headline}</h4>
+              <p class="specimen__note">{g.note}</p>
+              <p class="specimen__tiers">{g.tiers}</p>
+            </div>
+          </article>
+        ))
+      }
+    </div>
   </div>
 
-  <figure class="appshot">
-    <div class="appshot__frame">
-      <img
-        src={shot}
-        alt="maximal's usage dashboard showing token usage broken down by model across your tools over the last 30 days"
-        width="1600"
-        height="1105"
-        loading="lazy"
-        decoding="async"
-      />
+  <!-- 4. Data sources: two cards, each with its real maximal capture -->
+  <div class="bento-section" aria-labelledby="data-heading">
+    <header class="section-head">
+      <h3 id="data-heading" class="section-head__title">
+        Use the data you work with.
+      </h3>
+      <p class="section-head__sub">
+        Maximal sets up your data sources and MCP servers, then keeps them in
+        line.
+      </p>
+    </header>
+
+    <div class="bento">
+      <!-- Traffic cop: Work IQ shared with only the apps you check -->
+      <article class="bento-card bento-card--6">
+        <div class="bento-card__body">
+          <h4 class="bento-card__title">A traffic cop for your data</h4>
+          <p class="bento-card__copy">
+            Mix and match your apps with Microsoft Work IQ. The apps you pick
+            get a green light; everything else waits at the red.
+          </p>
+        </div>
+        <figure class="appshot__frame">
+          <img
+            src={shotMcpServers}
+            alt="maximal’s MCP servers settings with Microsoft Work IQ switched on and shared with Claude Code and Claude Desktop only"
+            width="1408"
+            height="1360"
+            loading="lazy"
+            decoding="async"
+          />
+        </figure>
+      </article>
+
+      <!-- Go-between: a request an app can't show, answered in maximal -->
+      <article class="bento-card bento-card--6">
+        <div class="bento-card__body">
+          <h4 class="bento-card__title">A go-between for your apps</h4>
+          <p class="bento-card__copy">
+            When Work IQ asks a question your app can&rsquo;t show, maximal
+            takes the message, you answer, and the work carries on.
+          </p>
+        </div>
+        <figure class="appshot__frame">
+          <img
+            src={shotRequestDialog}
+            alt="maximal showing a Microsoft Work IQ request that Claude Desktop can’t display, ready for you to answer"
+            width="1408"
+            height="1360"
+            loading="lazy"
+            decoding="async"
+          />
+        </figure>
+      </article>
     </div>
-    <figcaption class="appshot__cap">
-      Every tool, every model, every token. See exactly where your Copilot
-      subscription goes.
-    </figcaption>
-  </figure>
+  </div>
+
+  <!-- 5. Apps and models: bento (6 + 6 / 7 + 5) -->
+  <div class="bento-section" aria-labelledby="apps-heading">
+    <header class="section-head">
+      <h3 id="apps-heading" class="section-head__title">
+        Any app. Any model.
+      </h3>
+      <p class="section-head__sub">
+        Swap models in the tools you know and power what you build.
+      </p>
+    </header>
+
+    <div class="bento">
+      <!-- Any app: the real Apps settings, cropped to the content column -->
+      <article class="bento-card bento-card--6">
+        <div class="bento-card__body">
+          <h4 class="bento-card__title">Turn on the apps you use</h4>
+          <p class="bento-card__copy">
+            Claude Code, Claude Desktop, and Codex each get one switch. Maximal
+            does the setup.
+          </p>
+        </div>
+        <figure class="appshot__frame appshot__frame--crop">
+          <img
+            src={shotApps}
+            alt="maximal’s Apps settings with Claude Code, Claude Desktop, and Codex switched on"
+            width="1408"
+            height="1628"
+            loading="lazy"
+            decoding="async"
+          />
+        </figure>
+      </article>
+
+      <!-- Any model: the whole Models list, drifting past -->
+      <article class="bento-card bento-card--6">
+        <div class="bento-card__body">
+          <h4 class="bento-card__title">Every model in one list</h4>
+          <p class="bento-card__copy">
+            See each model&rsquo;s context size and what it can do, then pick
+            the one that fits the job.
+          </p>
+        </div>
+        <figure class="appshot__frame appshot__frame--scroll">
+          <img
+            src={shotModels}
+            alt={`maximal’s Models list showing all ${catalogCount} GitHub Copilot models with their context size, max output, and capabilities`}
+            width="1408"
+            height="7508"
+            loading="lazy"
+            decoding="async"
+          />
+        </figure>
+      </article>
+
+      <!-- A prototype doing real AI work: a receipt photo read into an expense -->
+      <article class="bento-card bento-card--7">
+        <div class="bento-card__body">
+          <h4 class="bento-card__title">Prototypes that do the real thing</h4>
+          <p class="bento-card__copy">
+            When the app you&rsquo;re building needs AI, point it at maximal.
+            Snap a receipt, and a real model fills in the rest.
+          </p>
+        </div>
+        <figure
+          class="scan"
+          data-proto
+          aria-label="Example: an expense app prototype reading a photographed receipt. A model fills in the merchant, date, and total, and files it under Meals."
+        >
+          <div class="receipt" aria-hidden="true">
+            <p class="receipt__shop">Corner Café</p>
+            <p class="receipt__meta">Oct 27, 2026 &middot; 8:42 AM</p>
+            <dl class="receipt__lines">
+              <div><dt>Flat white</dt><dd>4.50</dd></div>
+              <div><dt>Croissant</dt><dd>3.75</dd></div>
+              <div><dt>Tax</dt><dd>0.69</dd></div>
+              <div class="receipt__total"><dt>Total</dt><dd>8.94</dd></div>
+            </dl>
+            <span class="receipt__beam"></span>
+          </div>
+          <dl class="scan__fields">
+            <div style="--i:0"><dt>Merchant</dt><dd><span>Corner Café</span></dd></div>
+            <div style="--i:1"><dt>Date</dt><dd><span>Oct 27, 2026</span></dd></div>
+            <div style="--i:2"><dt>Total</dt><dd><span>$8.94</span></dd></div>
+            <div style="--i:3"><dt>Category</dt><dd><span>Meals</span></dd></div>
+          </dl>
+        </figure>
+      </article>
+
+      <article class="bento-card bento-card--5">
+        <div class="bento-card__body">
+          <h4 class="bento-card__title">One click between accounts</h4>
+          <p class="bento-card__copy">
+            Work and personal, a click apart. Switch in maximal and every app
+            follows&mdash;no settings to touch.
+          </p>
+        </div>
+        <ul
+          class="accounts"
+          data-accounts
+          aria-label="Example: switching between a work and a personal GitHub account"
+        >
+          <li class="accounts__row" data-active="true">
+            <span class="accounts__mark" aria-hidden="true">A</span>
+            <span class="accounts__id">
+              <span class="accounts__name">ada-northwind</span>
+              <span class="accounts__kind">Work</span>
+            </span>
+            <span class="accounts__state">
+              <span class="accounts__dot" aria-hidden="true"></span>Signed in
+            </span>
+            <button type="button" class="accounts__switch" data-account-switch>
+              Switch
+            </button>
+          </li>
+          <li class="accounts__row" data-active="false">
+            <span class="accounts__mark" aria-hidden="true">A</span>
+            <span class="accounts__id">
+              <span class="accounts__name">ada-kestrel</span>
+              <span class="accounts__kind">Personal</span>
+            </span>
+            <span class="accounts__state">
+              <span class="accounts__dot" aria-hidden="true"></span>Signed in
+            </span>
+            <button type="button" class="accounts__switch" data-account-switch>
+              Switch
+            </button>
+          </li>
+        </ul>
+      </article>
+
+    </div>
+  </div>
 </section>
 
+<script is:inline>
+  // Live usage: replays real maximal usage (timing and token counts per
+  // request) through the dashboard's own rules. Requests land in one-minute
+  // buckets; the rate is the mean of the last five buckets, the current,
+  // partial one included; the sparkline is the last 15 buckets scaled to
+  // their max. The recording plays in real time and the view refreshes every
+  // 3 seconds. It drives both the zoomed overlay and the live copies of the
+  // capture's own totals, so the two always agree.
+  //
+  // Motion: on each refresh the numbers ease to their new values over 0.9s
+  // (a short glide, then still) and the lines ease over 1.6s; when a minute
+  // rolls over, the lines slide left by one step as they ease. The
+  // 10-minute recording loops, so totals keep climbing. Time only runs while
+  // the overlay is on screen.
+  (function () {
+    var root = document.querySelector("[data-spark]");
+    var dash = document.querySelector("[data-dash-live]");
+    if (!root) return;
+    if (
+      window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      return;
+    }
+    var replay;
+    try {
+      replay = JSON.parse(root.getAttribute("data-replay") || "null");
+    } catch (e) {
+      return;
+    }
+    var req = replay && replay.requests;
+    var lineEl = root.querySelector("[data-spark-line]");
+    if (!req || !req.dtMs || !req.dtMs.length || !lineEl) return;
+    var areaEl = root.querySelector("[data-spark-area]");
+    var dotEl = root.querySelector("[data-spark-dot]");
+
+    // Every place a number is shown, keyed by what it shows.
+    var outputs = { rate: [], total: [], input: [], output: [], cacheRead: [], cacheWrite: [], requests: [] };
+    var rateEl = root.querySelector("[data-spark-val]");
+    if (rateEl) outputs.rate.push(rateEl);
+    ["input", "output", "requests"].forEach(function (k) {
+      var el = root.querySelector('[data-spark-figure="' + k + '"]');
+      if (el) outputs[k].push(el);
+    });
+    if (dash) {
+      Object.keys(outputs).forEach(function (k) {
+        var el = dash.querySelector('[data-dash="' + k + '"]');
+        if (el) outputs[k].push(el);
+      });
+    }
+
+    var W = 280;
+    var H = 68;
+    var MINUTE_MS = 60000;
+    var REFRESH_MS = 3000;
+    var NUMBER_MS = 900;
+    var LINE_MS = 1600;
+    var count = req.dtMs.length;
+    var duration = replay.durationMs;
+
+    var buckets = replay.history.concat([0]);
+    var minute = 0; // index of the current (last) bucket's minute
+    var t = 0; // replay clock, ms
+    var cursor = 0;
+    var at = req.dtMs[0]; // replay time of the next request
+    var totals = { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, requests: 0 };
+    replay.baseByModel.forEach(function (row) {
+      totals.input += row.input_tokens;
+      totals.output += row.output_tokens;
+      totals.cacheRead += row.cache_read_input_tokens;
+      totals.cacheWrite += row.cache_creation_input_tokens;
+      totals.requests += row.request_count;
+    });
+
+    var visible = false;
+    var timer = null;
+    var last = 0;
+    var anim = null;
+    var shown = values();
+    var shownLine = buckets.slice();
+
+    function values() {
+      var five = buckets.slice(-5);
+      var sum = 0;
+      for (var i = 0; i < five.length; i++) sum += five[i];
+      return {
+        rate: sum / five.length,
+        total: totals.input + totals.output + totals.cacheRead + totals.cacheWrite,
+        input: totals.input,
+        output: totals.output,
+        cacheRead: totals.cacheRead,
+        cacheWrite: totals.cacheWrite,
+        requests: totals.requests,
+      };
+    }
+
+    function rollTo(m) {
+      var shifted = 0;
+      while (minute < m) {
+        buckets.shift();
+        buckets.push(0);
+        minute += 1;
+        shifted += 1;
+      }
+      return shifted;
+    }
+
+    // Move the replay clock forward, landing every request whose time has come.
+    function advance(ms) {
+      t += ms;
+      var shifted = 0;
+      while (at <= t) {
+        var i = cursor;
+        shifted += rollTo(Math.floor(at / MINUTE_MS));
+        buckets[buckets.length - 1] +=
+          req.input[i] + req.output[i] + req.cacheRead[i] + req.cacheWrite[i];
+        totals.input += req.input[i];
+        totals.output += req.output[i];
+        totals.cacheRead += req.cacheRead[i];
+        totals.cacheWrite += req.cacheWrite[i];
+        totals.requests += 1;
+        cursor = (cursor + 1) % count;
+        // After the last request, wait out the rest of the recording and
+        // start it again, so the gap across the loop matches the original.
+        at += cursor
+          ? req.dtMs[cursor]
+          : duration - (at % duration) + req.dtMs[0];
+      }
+      shifted += rollTo(Math.floor(t / MINUTE_MS));
+      return shifted;
+    }
+
+    function easeOut(k) {
+      return 1 - Math.pow(1 - k, 3);
+    }
+
+    function easeInOut(k) {
+      return k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+    }
+
+    // Both sparklines scale the same bucket values to their own max.
+    function drawLines(vals, slide) {
+      var max = 1;
+      for (var i = 0; i < vals.length; i++) if (vals[i] > max) max = vals[i];
+      var n = vals.length - 1;
+
+      var d = "";
+      var y = 0;
+      for (var j = 0; j < vals.length; j++) {
+        y = H - 4 - (vals[j] / max) * (H - 10);
+        d += (j ? " L" : "M") + ((j + slide) * (W / n)).toFixed(1) + "," + y.toFixed(1);
+      }
+      lineEl.setAttribute("d", d);
+      if (areaEl) {
+        var x0 = (slide * (W / n)).toFixed(1);
+        var x1 = ((n + slide) * (W / n)).toFixed(1);
+        areaEl.setAttribute("d", d + " L" + x1 + "," + H + " L" + x0 + "," + H + " Z");
+      }
+      if (dotEl) dotEl.style.top = ((y / H) * 100).toFixed(2) + "%";
+    }
+
+    function render(shifted) {
+      var fromNums = shown;
+      var toNums = values();
+      // Line values: the old ones, moved left by any minutes that rolled
+      // over, easing to the new ones while the whole line slides into place.
+      var fromLine = shownLine.slice(Math.min(shifted, shownLine.length));
+      while (fromLine.length < buckets.length) fromLine.push(0);
+      var toLine = buckets.slice();
+      var slideFrom = Math.min(shifted, buckets.length);
+      var start = performance.now();
+      if (anim) cancelAnimationFrame(anim);
+      (function frame(now) {
+        var kn = Math.min(1, (now - start) / NUMBER_MS);
+        var kl = Math.min(1, (now - start) / LINE_MS);
+        var en = easeOut(kn);
+        var el = easeInOut(kl);
+        var cur = {};
+        Object.keys(outputs).forEach(function (key) {
+          cur[key] = fromNums[key] + (toNums[key] - fromNums[key]) * en;
+          var text = Math.round(cur[key]).toLocaleString("en-US");
+          outputs[key].forEach(function (el) {
+            el.textContent = text;
+          });
+        });
+        shown = cur;
+        shownLine = fromLine.map(function (v, i) {
+          return v + (toLine[i] - v) * el;
+        });
+        drawLines(shownLine, slideFrom * (1 - el));
+        anim = kn < 1 || kl < 1 ? requestAnimationFrame(frame) : null;
+      })(start);
+    }
+
+    function refresh() {
+      timer = null;
+      if (!visible || document.hidden) return;
+      var now = performance.now();
+      render(advance(now - last));
+      last = now;
+      timer = setTimeout(refresh, REFRESH_MS);
+    }
+
+    function resume() {
+      if (!visible || document.hidden || timer) return;
+      last = performance.now();
+      timer = setTimeout(refresh, REFRESH_MS);
+    }
+
+    function pause() {
+      if (timer) {
+        clearTimeout(timer);
+        timer = null;
+        // Bank the time already spent on screen.
+        var now = performance.now();
+        render(advance(now - last));
+      }
+    }
+
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) pause();
+      else resume();
+    });
+
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(function (entries) {
+        visible = entries[0].isIntersecting;
+        if (visible) resume();
+        else pause();
+      }).observe(root);
+    } else {
+      visible = true;
+      resume();
+    }
+  })();
+</script>
+
+<script is:inline>
+  // Receipt example: when the card is on screen, a scan passes over the
+  // receipt, then the fields fill in (CSS does the motion). It resets off
+  // screen so it plays again on the next visit.
+  (function () {
+    var scan = document.querySelector("[data-proto]");
+    if (!scan) return;
+    if (!("IntersectionObserver" in window)) {
+      scan.setAttribute("data-state", "read");
+      return;
+    }
+    var timers = [];
+    function clear() {
+      timers.forEach(clearTimeout);
+      timers = [];
+    }
+    new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.intersectionRatio >= 0.6) {
+            if (timers.length) return;
+            timers.push(
+              setTimeout(function () {
+                scan.setAttribute("data-state", "scan");
+              }, 500),
+              setTimeout(function () {
+                scan.setAttribute("data-state", "read");
+              }, 1900),
+            );
+          } else if (!entry.isIntersecting) {
+            clear();
+            scan.removeAttribute("data-state");
+          }
+        });
+      },
+      { threshold: [0, 0.6] },
+    ).observe(scan);
+  })();
+
+  // Account example: Switch behaves like maximal's (a moment of
+  // "Switching…", then the other account is the signed-in one).
+  (function () {
+    var list = document.querySelector("[data-accounts]");
+    if (!list) return;
+    list.addEventListener("click", function (event) {
+      var btn = event.target.closest("[data-account-switch]");
+      if (!btn || btn.disabled) return;
+      var label = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = "Switching…";
+      setTimeout(function () {
+        list.querySelectorAll(".accounts__row").forEach(function (row) {
+          row.setAttribute(
+            "data-active",
+            row.contains(btn) ? "true" : "false",
+          );
+        });
+        btn.textContent = label;
+        btn.disabled = false;
+      }, 700);
+    });
+  })();
+</script>
+
 <style>
-  /* The value headline (the section's h2) — the crimson app tile is fused in as
-     the initial "m" of "maximalize". Reset the global h2's variation axes so the
-     display face renders with default optical sizing, matching the rest. */
-  .flow-lede {
-    margin: 0 auto;
+  @property --shader-angle {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
   }
-  .lede-initial {
-    display: inline-block;
-    width: 1.6em;
-    height: 1.6em;
-    /* Drop the tile so the cream glyph's baseline (y=66/100 in the SVG) lands on
-       the text baseline: below-baseline space = 34% of tile height. */
-    vertical-align: -0.544em;
-    margin-right: 0.05em;
+
+  @keyframes border-shader-spin {
+    to {
+      --shader-angle: 360deg;
+    }
   }
-  .lede-initial svg {
+
+  .editorial {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+  }
+
+  /* Section headings: title, then the sub-line directly beneath it. */
+  .section-head {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .section-head__title {
+    font-family: var(--font-display);
+    font-size: clamp(var(--text-xl), 2.8vw, var(--text-2xl));
+    font-weight: var(--weight-lg);
+    line-height: var(--leading-2xl);
+    letter-spacing: var(--tracking-2xl);
+    hyphens: none;
+    color: var(--text-strong);
+    margin: 0;
+  }
+
+  .section-head__sub {
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    line-height: var(--leading-base);
+    color: var(--text-muted);
+    margin: 0;
+    max-width: var(--content-max);
+  }
+
+  /* 1. Intro spread (6 + 6 columns) */
+  .intro-spread {
+    --intro-headline-size: clamp(var(--text-2xl), 3.6vw, var(--text-4xl));
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--space-6);
+    row-gap: var(--space-5);
+    align-items: baseline;
+  }
+
+  .intro-spread__headline {
+    grid-column: 1 / span 6;
+    font-family: var(--font-display);
+    font-weight: var(--weight-md);
+    font-size: var(--intro-headline-size);
+    font-variation-settings: normal;
+    line-height: var(--leading-xl);
+    letter-spacing: var(--tracking-2xl);
+    hyphens: none;
+    color: var(--text-strong);
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  /* The tile initial (BrandInitial) steps in from the column edge: the
+     lines below start with letters whose ink sits inside it by their side
+     bearing ("C" at 0.038em), so the frame's straight edge moves in 0.045em
+     to line up with that ink, the round C overshooting it slightly, as round
+     letters do against straight ones. */
+  .intro-spread__headline :global(.lede-initial) {
+    margin-left: 0.045em;
+  }
+
+  /* Baseline-aligned with the headline, then raised so the lead's cap
+     height meets the tile's top (the headline's ascender line, 0.74em above
+     its baseline). Commissioner's caps are 0.72em tall. */
+  .intro-spread__prose {
+    position: relative;
+    top: calc(0.72 * var(--text-md) - 0.74 * var(--intro-headline-size));
+    grid-column: 7 / -1;
+    display: grid;
+    gap: var(--space-4);
+    font-family: var(--font-body);
+    font-size: var(--text-md);
+    line-height: var(--leading-base);
+    color: var(--text-base-color);
+  }
+
+  .intro-spread__prose p {
+    margin: 0;
+  }
+
+  /* The hook: same size as the paragraph, set apart by ink and weight only. */
+  .intro-spread__lead {
+    color: var(--text-strong);
+    font-weight: var(--weight-md);
+  }
+
+  /* A quiet way past the tour for readers ready to install. */
+  .intro-spread__skip {
+    justify-self: start;
+    font-size: var(--text-sm);
+    font-weight: var(--weight-md);
+    line-height: var(--leading-lg);
+    color: var(--link);
+    text-decoration: none;
+  }
+
+  .intro-spread__skip:hover {
+    color: var(--link-hover);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+  }
+
+  /* 2. Model specimens */
+  .specimens {
+    display: grid;
+    gap: var(--space-5);
+  }
+
+  .specimens__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-5);
+  }
+
+  .specimen {
+    position: relative;
+    overflow: hidden;
+    background: var(--surface-card);
+    border: var(--border-width-hairline) solid var(--border-subtle);
+    border-radius: var(--radius-card);
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 15.5rem;
+  }
+
+  .specimen__glyph {
+    position: absolute;
+    right: -0.06em;
+    bottom: -0.32em;
+    z-index: 0;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-variation-settings: "SOFT" 40, "WONK" 1, "opsz" 144;
+    font-size: clamp(14rem, 22vw, 18rem);
+    line-height: 1;
+    color: color-mix(in srgb, var(--text-strong) 4.5%, transparent);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* Optical correction: at these settings Fraunces' 6 inks about 3% shorter
+     than its 4 and 5 (0.710em vs 0.730em above the baseline), so it read as
+     small and low. Scale it up a touch and lift it so its round top lines up
+     with the 4's apex (measured in place: both 156px above the card bottom at
+     1280px wide). */
+  .specimen__glyph[data-glyph="6"] {
+    font-size: calc(clamp(14rem, 22vw, 18rem) * 1.0125);
+    transform: translateY(-0.0132em);
+  }
+
+  .specimen__content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: var(--space-2);
+  }
+
+  .specimen__mark {
+    width: var(--size-lg);
+    height: var(--size-lg);
+    color: var(--text-muted);
+    margin-bottom: var(--space-2);
+  }
+
+  .specimen__mark svg {
     display: block;
     width: 100%;
     height: 100%;
   }
-  .lede-initial__m {
-    font-family: var(--serif);
-    font-weight: 900;
-    font-size: 72px;
-    font-variation-settings: "SOFT" 30, "WONK" 1, "opsz" 144;
-  }
-  .flow-lede__text {
-    font-family: var(--serif);
-    font-weight: 500;
-    font-size: clamp(1.6rem, 3.2vw, 2.4rem);
-    font-variation-settings: normal;
-    line-height: 1.25;
-    letter-spacing: -0.01em;
-    color: var(--text);
-    text-align: center;
-    text-wrap: balance;
-    max-width: 24ch;
-    margin: 0 auto;
-  }
-  /* The "how" — a quiet sans sub-line that bridges the coined-verb headline into
-     the tools → models rail below. */
-  .flow-lede__how {
-    font-family: var(--sans);
-    font-size: clamp(1rem, 1.6vw, 1.15rem);
-    line-height: 1.55;
-    color: var(--text-muted);
-    text-align: center;
-    text-wrap: balance;
-    max-width: 42ch;
-    margin: 1rem auto 0;
+
+  .specimen__headline {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: var(--weight-lg);
+    line-height: var(--leading-2xl);
+    letter-spacing: var(--tracking-xl);
+    hyphens: none;
+    color: var(--text-strong);
+    margin: 0;
   }
 
-  /* Directional rail — apps on the left, a single crimson arrow, models on the
-     right, in balanced columns. The arrow is the only colour. */
-  .flow-rail {
-    display: grid;
-    grid-template-columns: auto auto auto;
-    justify-content: center;
-    align-items: center;
-    gap: 1.75rem;
-    margin: 2.75rem auto 0;
+  .specimen__note {
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    line-height: var(--leading-base);
+    color: var(--text-base-color);
+    margin: 0;
   }
-  .flow-rail__group {
-    display: grid;
-    gap: 0.6rem;
-  }
-  .flow-rail__cap {
-    font-family: var(--sans);
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
+
+  .specimen__tiers {
+    font-family: var(--font-body);
+    font-size: var(--text-xs);
+    line-height: var(--leading-lg);
     color: var(--text-muted);
+    margin: auto 0 0;
+    padding-top: var(--space-4);
+    white-space: nowrap;
   }
-  .flow-rail__chips {
-    list-style: none;
+
+  /* 3. Bento grid (7 + 5 / 5 + 7) */
+  .bento-section {
     display: grid;
-    gap: 0.5rem;
+    gap: var(--space-5);
+  }
+
+  .bento {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: var(--space-5);
+  }
+
+
+  .bento-card {
+    margin: 0;
+    background: var(--surface-card);
+    border: var(--border-width-hairline) solid var(--border-subtle);
+    border-radius: var(--radius-card);
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--space-5);
+    min-width: 0;
+  }
+
+  .bento-card--7 {
+    grid-column: span 7;
+  }
+
+  .bento-card--12 {
+    grid-column: 1 / -1;
+  }
+
+  .bento-card--6 {
+    grid-column: span 6;
+  }
+
+  /* Account switcher example, laid out like maximal's: who on the left,
+     status or a Switch button on the right, centred on the two-line name.
+     One size, one weight per role. */
+  .accounts {
+    list-style: none;
     margin: 0;
     padding: 0;
+    display: grid;
+    gap: var(--space-4);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    line-height: var(--leading-lg);
   }
-  .flow-chip {
-    display: flex;
+
+  .accounts__row {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas: "mark id action";
+    column-gap: var(--space-3);
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.45rem 0.75rem;
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    font-family: var(--sans);
-    font-size: 0.925rem;
-    color: var(--text-body);
-    line-height: 1.2;
   }
-  .flow__ic {
-    width: 18px;
-    height: 18px;
-    flex: 0 0 auto;
+
+  /* Plain monogram avatars, like a GitHub account without a photo. */
+  .accounts__mark {
+    grid-area: mark;
+    display: inline-grid;
+    place-items: center;
+    width: var(--size-xl);
+    height: var(--size-xl);
+    border-radius: var(--radius-pill);
+    background: var(--surface-control);
+    border: var(--border-width-hairline) solid
+      color-mix(in srgb, var(--border-strong) 40%, transparent);
+    color: var(--text-base-color);
+    font-weight: var(--weight-md);
+    line-height: 1;
+  }
+
+  .accounts__id {
+    grid-area: id;
+    display: grid;
+    min-width: 0;
+  }
+
+  .accounts__name {
+    color: var(--text-strong);
+    font-weight: var(--weight-md);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .accounts__kind {
     color: var(--text-muted);
   }
-  .flow-rail__arrow {
-    font-size: 1.75rem;
-    line-height: 1;
-    justify-self: center;
+
+  /* Status and button share the cell, so swapping never moves the row. */
+  .accounts__state,
+  .accounts__switch {
+    grid-area: action;
+    justify-self: end;
+    transition:
+      opacity 240ms cubic-bezier(0.16, 1, 0.3, 1),
+      visibility 0s linear 240ms;
   }
 
-  /* Payoff — bold Fraunces line, then two flat crimson-ruled notes (not cards). */
-  .flow-payoff {
-    font-family: var(--serif);
-    font-weight: 600;
-    font-size: clamp(1.5rem, 3vw, 2.1rem);
-    line-height: 1.2;
-    letter-spacing: -0.015em;
-    color: var(--text);
-    text-align: center;
-    margin: 2.75rem 0 0;
+  .accounts__state {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--text-muted);
   }
-  .flow-notes {
-    max-width: 62ch;
-    margin: 1.5rem auto 0;
-    display: grid;
-    gap: 1rem;
+
+  .accounts__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: var(--radius-pill);
+    background: var(--status-success);
   }
-  .flow-notes p {
+
+  .accounts__switch {
+    appearance: none;
     margin: 0;
-    padding-left: 1rem;
-    border-left: 2px solid var(--brand-lit);
-    color: var(--text-body);
-    font-size: 1rem;
-    line-height: 1.55;
-  }
-  .flow-notes b {
-    color: var(--text);
-    font-weight: 600;
+    padding: var(--space-1) var(--space-3);
+    font: inherit;
+    font-weight: var(--weight-md);
+    color: var(--text-strong);
+    background: var(--surface-control);
+    border: var(--border-width-hairline) solid
+      color-mix(in srgb, var(--border-strong) 40%, transparent);
+    border-radius: var(--radius-input);
+    cursor: pointer;
   }
 
-  .appshot {
-    margin: 2.75rem 0 0;
+  .accounts__switch:hover {
+    border-color: var(--accent);
   }
+
+  .accounts__switch:disabled {
+    color: var(--text-muted);
+    cursor: progress;
+  }
+
+  .accounts__switch:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  .accounts__row[data-active="true"] .accounts__switch,
+  .accounts__row[data-active="false"] .accounts__state {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .accounts__row[data-active="true"] .accounts__state,
+  .accounts__row[data-active="false"] .accounts__switch {
+    transition-delay: 0s;
+  }
+
+  .bento-card--5 {
+    grid-column: span 5;
+  }
+
+
+  .bento-card--shot {
+    padding: var(--space-4);
+    justify-content: center;
+    overflow: visible;
+  }
+
+  .bento-card__body {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .bento-card__title {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: var(--weight-lg);
+    line-height: var(--leading-xl);
+    letter-spacing: var(--tracking-xl);
+    hyphens: none;
+    color: var(--text-strong);
+    margin: 0;
+  }
+
+  .bento-card__copy {
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    line-height: var(--leading-base);
+    color: var(--text-base-color);
+    margin: 0;
+  }
+
+  /* A prototype reading a receipt: the photo on the left, the expense form
+     it fills in on the right. The scan passes over the paper, then the
+     fields fill one by one. */
+  .scan {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-6);
+    align-items: center;
+    font-family: var(--font-body);
+  }
+
+  /* Side by side while the form has room; stacked on a phone. */
+  .receipt {
+    flex: 0 1 12rem;
+  }
+
+  .scan__fields {
+    flex: 1 1 10rem;
+  }
+
+  .scan p,
+  .scan dl,
+  .scan dd {
+    margin: 0;
+  }
+
+  /* The receipt is a picture, so it keeps its own paper and ink in both
+     themes. Its torn bottom edge is a zigzag mask. */
+  .receipt {
+    position: relative;
+    padding: var(--space-4) var(--space-4) var(--space-5);
+    background: #f5f5f5;
+    color: #2a2a2a;
+    font-size: var(--text-xs);
+    line-height: var(--leading-lg);
+    font-variant-numeric: tabular-nums lining-nums;
+    transform: rotate(-2deg);
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.18);
+    -webkit-mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg)
+      50% / 10px 100%;
+    mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg)
+      50% / 10px 100%;
+  }
+
+  .receipt__shop {
+    font-weight: var(--weight-lg);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    text-align: center;
+  }
+
+  .receipt__meta {
+    color: #6b6b6b;
+    text-align: center;
+    margin-bottom: var(--space-3);
+  }
+
+  .receipt__lines {
+    display: grid;
+    gap: 2px;
+  }
+
+  .receipt__lines div {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+
+  .receipt__total {
+    margin-top: var(--space-2);
+    padding-top: var(--space-2);
+    border-top: 1px dashed #8a8a8a;
+    font-weight: var(--weight-lg);
+  }
+
+  /* The scan: a teal line with a short trail, travelling down the paper. */
+  .receipt__beam {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      transparent calc(100% - 2.5rem),
+      rgb(67 126 137 / 0.18) calc(100% - 2px),
+      #437e89 calc(100% - 2px)
+    );
+    transform: translateY(-100%);
+    pointer-events: none;
+  }
+
+  .scan:is([data-state="scan"], [data-state="read"]) .receipt__beam {
+    animation: receipt-scan 1.3s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+  }
+
+  @keyframes receipt-scan {
+    to {
+      transform: translateY(100%);
+    }
+  }
+
+  .scan__fields {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .scan__fields div {
+    display: grid;
+    gap: 2px;
+  }
+
+  .scan__fields dt {
+    color: var(--text-muted);
+    font-size: var(--text-xs);
+    line-height: var(--leading-lg);
+  }
+
+  /* Each value starts as an empty field and fills in once read. */
+  .scan__fields dd {
+    position: relative;
+    color: var(--text-strong);
+    font-size: var(--text-base);
+    font-weight: var(--weight-md);
+    line-height: var(--leading-base);
+  }
+
+  .scan__fields dd::before {
+    content: "";
+    position: absolute;
+    inset: 0.25em auto 0.25em 0;
+    width: 60%;
+    border-radius: var(--radius-chip);
+    background: var(--surface-control);
+    transition: opacity 300ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .scan__fields dd span {
+    opacity: 0;
+    transition: opacity 300ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .scan[data-state="read"] .scan__fields dd::before {
+    opacity: 0;
+    transition-delay: calc(var(--i) * 180ms);
+  }
+
+  .scan[data-state="read"] .scan__fields dd span {
+    opacity: 1;
+    transition-delay: calc(var(--i) * 180ms);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .receipt__beam,
+    .scan__fields dd::before {
+      display: none;
+    }
+    .scan__fields dd span {
+      opacity: 1;
+    }
+  }
+
+  .appshot__stage {
+    position: relative;
+    z-index: 1;
+    container: dash-stage / inline-size;
+  }
+
   .appshot__frame {
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
+    position: relative;
+    container-type: inline-size;
+    margin: 0;
+    border: var(--border-width-hairline) solid var(--border-subtle);
+    border-radius: var(--radius-input);
     overflow: hidden;
-    box-shadow: var(--shadow-card);
     line-height: 0;
   }
+
+  /* Live copies of the capture's totals, set exactly as the dashboard sets
+     them and scaled with the capture (cqw). */
+  .dash-live {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .dash-live__text {
+    position: absolute;
+    font-family: var(--font-body);
+    white-space: nowrap;
+  }
+
   .appshot__frame img {
     display: block;
     width: 100%;
     height: auto;
   }
-  .appshot__cap {
-    margin: 0.7rem 0 0;
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    text-align: center;
+
+  /* Settings captures share the data cards' proportions; taller ones are
+     cropped from the bottom. */
+  .appshot__frame--crop,
+  .appshot__frame--scroll {
+    aspect-ratio: 1408 / 1360;
   }
 
-  /* Stack the rail and turn the arrow to point DOWN so the story survives on
-     narrow screens (the old braces vanished here). */
-  @media (max-width: 720px) {
-    .flow-rail {
-      grid-template-columns: 1fr;
-      gap: 1rem;
-      max-width: 22rem;
+  .appshot__frame--crop img {
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+  }
+
+  /* The whole Models list drifts past, pausing at each end, and holds still
+     under the pointer. */
+  .appshot__frame--scroll {
+    container-type: size;
+  }
+
+  .appshot__frame--scroll img {
+    animation: model-list-drift 80s ease-in-out infinite alternate;
+  }
+
+  .appshot__frame--scroll:hover img {
+    animation-play-state: paused;
+  }
+
+  @keyframes model-list-drift {
+    0%,
+    6% {
+      transform: translateY(0);
     }
-    .flow-rail__arrow {
-      transform: rotate(90deg);
+    94%,
+    100% {
+      transform: translateY(calc(-100% + 100cqh));
     }
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    .appshot__frame--scroll {
+      overflow-y: auto;
+    }
+    .appshot__frame--scroll img {
+      animation: none;
+    }
+  }
+
+  /* Live rate callout. On a capture wide enough to read it, it takes the
+     place of the dashboard's Chat / Completions card (hidden in the
+     capture, its box recorded as --slot-*) and scales with the capture;
+     on a narrower one it sits below. */
+  .spark-zoom {
+    position: relative;
+    z-index: 20;
+    margin-top: var(--space-3);
+    padding: 1.5px;
+    border-radius: calc(var(--radius-card) + 1.5px);
+    background: conic-gradient(
+      from var(--shader-angle),
+      #2a2a2a 0%,
+      #437e89 22%,
+      #7fc1d2 30%,
+      #c8334a 38%,
+      #2a2a2a 50%,
+      #2a2a2a 100%
+    );
+    animation: border-shader-spin 9s linear infinite;
+    box-shadow:
+      0 14px 36px rgb(0 0 0 / 0.55),
+      0 0 22px rgb(127 193 210 / 0.16);
+    pointer-events: none;
+  }
+
+  .spark-zoom__inner {
+    position: relative;
+    padding: var(--space-4);
+    background: color-mix(in srgb, #141414 95%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: var(--radius-card);
+    color: #f5f5f5;
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .spark-zoom__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0 var(--space-2);
+  }
+
+  .spark-zoom__metric {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+  }
+
+  .spark-zoom__val {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: var(--weight-2xl);
+    line-height: 1;
+    color: #f5f5f5;
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+
+  .spark-zoom__unit,
+  .spark-zoom__figures dt {
+    font-family: var(--font-body);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-base);
+    line-height: var(--leading-lg);
+  }
+
+  .spark-zoom__unit {
+    color: #7fc1d2;
+  }
+
+  .spark-zoom__plot {
+    position: relative;
+    height: 3rem;
+  }
+
+  .spark-zoom__chart {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  /* The live point sits over the chart so it stays round however the chart
+     stretches; the script moves it with the last value. */
+  .spark-zoom__dot {
+    position: absolute;
+    left: 100%;
+    width: 7px;
+    height: 7px;
+    margin: -3.5px 0 0 -3.5px;
+    border-radius: var(--radius-pill);
+    background: #7fc1d2;
+    transition: top 900ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Today's totals: the same figures as the dashboard's totals row. */
+  .spark-zoom__figures {
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-3);
+  }
+
+  .spark-zoom__figures div {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .spark-zoom__figures dt {
+    color: #8a8a8a;
+  }
+
+  .spark-zoom__figures dd {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-md);
+    line-height: var(--leading-lg);
+    color: #f5f5f5;
+    font-variant-numeric: tabular-nums lining-nums;
+    white-space: nowrap;
+  }
+
+  /* In the card's place: rate and totals on one row, the line below. Sizes
+     are fractions of the capture's width (cqw of the stage), set to the
+     tokens' values at a 1142px-wide capture. */
+  @container dash-stage (width >= 900px) {
+    .spark-zoom {
+      position: absolute;
+      margin: 0;
+      left: var(--slot-x);
+      top: var(--slot-y);
+      width: var(--slot-w);
+      height: var(--slot-h);
+    }
+
+    .spark-zoom__inner {
+      box-sizing: border-box;
+      height: 100%;
+      padding: 1.4cqw;
+      grid-template-columns: auto minmax(0, 1fr);
+      grid-template-rows: auto minmax(0, 1fr);
+      grid-template-areas:
+        "head figures"
+        "plot plot";
+      gap: 0.7cqw 2.1cqw;
+    }
+
+    .spark-zoom__head {
+      grid-area: head;
+    }
+
+    .spark-zoom__metric {
+      gap: 0.7cqw;
+    }
+
+    .spark-zoom__val {
+      font-size: 2.1cqw;
+    }
+
+    .spark-zoom__unit,
+    .spark-zoom__figures dt {
+      font-size: 1.05cqw;
+    }
+
+    .spark-zoom__figures {
+      grid-area: figures;
+      justify-self: end;
+      grid-template-columns: repeat(3, auto);
+      gap: 1.4cqw;
+    }
+
+    .spark-zoom__figures dd {
+      font-size: 1.23cqw;
+    }
+
+    .spark-zoom__plot {
+      grid-area: plot;
+      height: auto;
+    }
+
+    .spark-zoom__dot {
+      width: 0.6cqw;
+      height: 0.6cqw;
+      margin: -0.3cqw 0 0 -0.3cqw;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .spark-zoom {
+      animation: none;
+    }
+  }
+
+  /* Three specimens side by side only while each tiers line fits. */
+  @media (max-width: 1099px) {
+    .specimens__grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  @media (max-width: 960px) {
+    /* One column: twelve 32px gutters alone are wider than a phone. */
+    .intro-spread,
+    .bento {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .intro-spread__prose {
+      top: 0;
+    }
+    .intro-spread__headline,
+    .intro-spread__prose,
+    .bento-card--7,
+    .bento-card--6,
+    .bento-card--5,
+    .bento-card--12 {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .specimen {
+      padding: var(--space-5);
+    }
+  }
+
+  @media (max-width: 360px) {
+    .specimen {
+      padding: var(--space-4);
+    }
+  }
+
 </style>

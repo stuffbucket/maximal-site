@@ -1,5 +1,7 @@
 ---
 import "../styles/global.css";
+import BrandInitial from "../components/BrandInitial.astro";
+import SocialCard from "../components/SocialCard.astro";
 import { GUIDE_NAV } from "../lib/guide";
 
 interface Props {
@@ -11,6 +13,10 @@ interface Props {
 const { title, slug, description, bare } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 const href = (s: string) => `${base}/guide/${s}`;
+const summary =
+  description ??
+  GUIDE_NAV.find((p) => p.slug === slug)?.blurb ??
+  "How to install and use maximal.";
 ---
 
 <!doctype html>
@@ -33,7 +39,12 @@ const href = (s: string) => `${base}/guide/${s}`;
       crossorigin
     />
     <title>{title} · maximal</title>
-    {description && <meta name="description" content={description} />}
+    <meta name="description" content={summary} />
+    <SocialCard
+      title={`${title} · maximal`}
+      description={summary}
+      path={slug ? `/guide/${slug}` : "/guide"}
+    />
     <link rel="icon" type="image/svg+xml" href={`${base}/favicon.svg`} />
     <meta
       name="theme-color"
@@ -53,8 +64,9 @@ const href = (s: string) => `${base}/guide/${s}`;
     <div class="guide-shell">
       <aside class="guide-sidebar">
         <a class="guide-home" href={`${base}/`}>
-          <span class="guide-home__mark" aria-hidden="true">m</span>
-          <span class="guide-home__word">maximal</span>
+          <span class="guide-home__word"
+            ><BrandInitial /><span class="sr-only">m</span>aximal</span
+          >
         </a>
         <nav class="guide-nav" aria-label="User guide">
           <p class="guide-nav__label">Guide</p>
@@ -91,24 +103,24 @@ const href = (s: string) => `${base}/guide/${s}`;
     <style>
       .guide-shell {
         display: grid;
-        grid-template-columns: 15rem minmax(0, 1fr);
-        gap: 3rem;
-        max-width: 62rem;
+        grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+        gap: var(--space-7);
+        max-width: var(--max-width);
         margin: 0 auto;
-        padding: 2.5rem 1.5rem 5rem;
+        padding: var(--space-7) var(--space-5) var(--space-8);
         align-items: start;
       }
       @media (max-width: 820px) {
         .guide-shell {
           grid-template-columns: 1fr;
-          gap: 1.5rem;
-          padding: 1.5rem 1.25rem 4rem;
+          gap: var(--space-5);
+          padding: var(--space-5) var(--space-4) var(--space-8);
         }
       }
 
       .guide-sidebar {
         position: sticky;
-        top: 2.5rem;
+        top: var(--space-7);
       }
       @media (max-width: 820px) {
         .guide-sidebar {
@@ -119,121 +131,116 @@ const href = (s: string) => `${base}/guide/${s}`;
       .guide-home {
         display: inline-flex;
         align-items: center;
-        gap: 0.55rem;
+        gap: var(--space-2);
         text-decoration: none;
-        margin-bottom: 1.75rem;
-      }
-      .guide-home__mark {
-        display: inline-grid;
-        place-items: center;
-        width: 1.7rem;
-        height: 1.7rem;
-        border-radius: 6px;
-        background: var(--brand);
-        color: var(--brand-ink);
-        font-family: var(--serif);
-        font-weight: 700;
-        font-size: 1.05rem;
-        line-height: 1;
+        margin-bottom: var(--space-6);
       }
       .guide-home__word {
-        font-family: var(--serif);
-        font-weight: 700;
-        font-size: 1.2rem;
-        letter-spacing: -0.01em;
-        color: var(--text);
+        font-family: var(--font-display);
+        font-weight: var(--weight-2xl);
+        font-size: var(--text-lg);
+        letter-spacing: var(--tracking-xl);
+        color: var(--text-strong);
       }
 
       .guide-nav__label {
-        font-family: var(--sans);
-        font-size: 0.75rem;
-        font-weight: 600;
-        letter-spacing: 0.05em;
+        font-family: var(--font-body);
+        font-size: var(--text-xs);
+        font-weight: var(--weight-lg);
+        letter-spacing: var(--tracking-caps);
+        font-kerning: normal;
         text-transform: uppercase;
         color: var(--text-muted);
-        margin: 0 0 0.6rem;
+        margin: 0 0 var(--space-2);
       }
       .guide-nav ul {
         list-style: none;
         margin: 0;
         padding: 0;
         display: grid;
-        gap: 0.15rem;
+        gap: var(--space-1);
       }
       .guide-nav a {
         display: block;
-        padding: 0.4rem 0.6rem;
-        border-radius: var(--radius-sm);
-        font-family: var(--sans);
-        font-size: 0.95rem;
-        color: var(--text-body);
+        padding: var(--space-2) var(--space-3);
+        border-radius: var(--radius-input);
+        font-family: var(--font-body);
+        font-size: var(--text-sm);
+        color: var(--text-base-color);
         text-decoration: none;
         transition: background 150ms ease-out, color 150ms ease-out;
       }
       .guide-nav a:hover {
-        background: var(--surface-2);
-        color: var(--text);
+        background: var(--surface-control);
+        color: var(--text-strong);
       }
       .guide-nav a:focus-visible {
-        outline: 2px solid var(--accent);
-        outline-offset: 2px;
+        outline: var(--focus-ring);
+        outline-offset: var(--focus-ring-offset);
       }
       .guide-nav a[aria-current="page"] {
-        background: var(--surface-2);
+        background: var(--surface-control);
         color: var(--accent);
-        font-weight: 500;
+        font-weight: var(--weight-md);
       }
 
       .guide-main {
         min-width: 0;
       }
 
-      /* ===== Prose ===== */
+      /* ===== Prose (Design Tokens + Practical Typography) ===== */
       .prose {
-        max-width: 42rem;
+        max-width: var(--content-max);
+      }
+      .prose :global(h1),
+      .prose :global(h2),
+      .prose :global(h3) {
+        hyphens: none;
+        font-kerning: normal;
       }
       .prose :global(h1) {
-        font-family: var(--serif);
-        font-weight: 600;
+        font-family: var(--font-display);
+        font-weight: var(--weight-lg);
         font-optical-sizing: auto;
         font-variation-settings: "SOFT" 30, "opsz" 96;
-        font-size: clamp(2rem, 4vw, 2.75rem);
-        line-height: 1.1;
-        letter-spacing: -0.02em;
-        color: var(--text);
-        margin: 0 0 1.25rem;
+        font-size: clamp(var(--text-2xl), 4vw, var(--text-3xl));
+        line-height: var(--leading-2xl);
+        letter-spacing: var(--tracking-2xl);
+        color: var(--text-strong);
+        margin: 0 0 var(--space-5);
       }
       .prose :global(h2) {
-        font-family: var(--serif);
-        font-weight: 600;
-        font-size: clamp(1.4rem, 3vw, 1.7rem);
-        line-height: 1.2;
-        letter-spacing: -0.015em;
-        color: var(--text);
-        margin: 2.5rem 0 0.85rem;
+        font-family: var(--font-display);
+        font-weight: var(--weight-lg);
+        font-size: clamp(var(--text-xl), 3vw, var(--text-2xl));
+        line-height: var(--leading-2xl);
+        letter-spacing: var(--tracking-2xl);
+        color: var(--text-strong);
+        margin: var(--space-7) 0 var(--space-3);
       }
       .prose :global(h3) {
-        font-family: var(--sans);
-        font-weight: 600;
-        font-size: 1.1rem;
-        color: var(--text);
-        margin: 1.75rem 0 0.6rem;
+        font-family: var(--font-body);
+        font-weight: var(--weight-lg);
+        font-size: var(--text-lg);
+        line-height: var(--leading-xl);
+        color: var(--text-strong);
+        margin: var(--space-6) 0 var(--space-2);
       }
       .prose :global(p),
       .prose :global(li) {
-        color: var(--text-body);
-        line-height: 1.65;
+        color: var(--text-base-color);
+        line-height: var(--leading-base);
       }
       .prose :global(p) {
-        margin: 0 0 1rem;
+        margin: 0 0 var(--space-4);
       }
       .prose :global(ul),
       .prose :global(ol) {
-        margin: 0 0 1rem;
-        padding-left: 1.4rem;
+        margin: 0 0 var(--space-4);
+        padding-left: var(--space-5);
       }
       .prose :global(li) {
-        margin: 0.35rem 0;
+        margin: var(--space-1) 0;
       }
       .prose :global(li::marker) {
         color: var(--text-muted);
@@ -241,36 +248,36 @@ const href = (s: string) => `${base}/guide/${s}`;
       .prose :global(a) {
         color: var(--link);
         text-decoration: underline;
-        text-underline-offset: 3px;
-        text-decoration-thickness: 1.5px;
+        text-underline-offset: 2px;
+        text-decoration-thickness: 1px;
         transition: color 150ms ease-out;
       }
       .prose :global(a:hover) {
         color: var(--link-hover);
       }
       .prose :global(strong) {
-        color: var(--text);
-        font-weight: 600;
+        color: var(--text-strong);
+        font-weight: var(--weight-lg);
       }
       .prose :global(code) {
-        font-family: var(--mono);
-        font-size: 0.875em;
-        background: var(--surface-2);
-        border: 1px solid var(--border);
+        font-family: var(--font-mono);
+        font-size: var(--text-sm);
+        background: var(--surface-control);
+        border: var(--border-width-hairline) solid var(--border-subtle);
         border-radius: var(--radius-chip);
-        padding: 0.05em 0.4em;
-        color: var(--text);
+        padding: 0.05em var(--space-1);
+        color: var(--text-strong);
       }
       .prose :global(pre) {
-        font-family: var(--mono);
-        font-size: 0.85rem;
-        background: var(--surface-2);
-        border: 1px solid var(--border);
-        border-radius: var(--radius-sm);
-        padding: 0.9rem 1.1rem;
+        font-family: var(--font-mono);
+        font-size: var(--text-sm);
+        background: var(--surface-control);
+        border: var(--border-width-hairline) solid var(--border-subtle);
+        border-radius: var(--radius-input);
+        padding: var(--space-3) var(--space-4);
         overflow-x: auto;
-        margin: 0 0 1.25rem;
-        line-height: 1.5;
+        margin: 0 0 var(--space-5);
+        line-height: var(--leading-lg);
       }
       .prose :global(pre code) {
         background: transparent;
@@ -278,21 +285,30 @@ const href = (s: string) => `${base}/guide/${s}`;
         padding: 0;
       }
       .prose :global(blockquote) {
-        margin: 0 0 1.25rem;
-        padding: 0.25rem 0 0.25rem 1rem;
-        border-left: 2px solid var(--accent);
-        color: var(--text-body);
+        margin: 0 0 var(--space-5);
+        padding: var(--space-1) 0 var(--space-1) var(--space-4);
+        border-left: var(--border-width-thick) solid var(--accent);
+        color: var(--text-base-color);
       }
       .prose :global(blockquote p:last-child) {
         margin-bottom: 0;
       }
       .prose :global(hr) {
         border: 0;
-        border-top: 1px solid var(--border);
-        margin: 2.5rem 0;
+        border-top: var(--border-width-hairline) solid var(--border-subtle);
+        margin: var(--space-7) 0;
       }
       .prose :global(:is(h1, h2, h3) + p) {
         margin-top: 0;
+      }
+      .prose :global(img) {
+        display: block;
+        max-width: 100%;
+        height: auto;
+        margin: var(--space-5) 0;
+        border: var(--border-width-hairline) solid var(--border-subtle);
+        border-radius: var(--radius-card);
+        box-shadow: var(--shadow-card);
       }
     </style>
   </body>

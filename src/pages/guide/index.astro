@@ -4,15 +4,16 @@ import { GUIDE_NAV } from "../../lib/guide";
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 const description =
-  "Install maximal, connect it to your GitHub Copilot plan, and point your AI coding tools at it.";
+  "Install maximal, connect your GitHub Copilot plan, and turn on Claude Code, Claude Desktop, Codex, and Work IQ.";
 ---
 
 <GuideLayout title="Guide" description={description} bare>
   <header class="guide-index__head">
     <h1 class="guide-index__title">maximal guide</h1>
     <p class="guide-index__lead">
-      Get maximal running on your GitHub Copilot plan and point your tools at it.
-      Seven short pages, roughly in order.
+      Install maximal, sign in with your GitHub Copilot account, turn on
+      Claude Code, Claude Desktop, and Codex, and share Work IQ across your
+      apps.
     </p>
   </header>
 
@@ -35,25 +36,26 @@ const description =
 
   <style>
     .guide-index__head {
-      margin-bottom: 2.25rem;
+      margin-bottom: var(--space-6);
     }
     .guide-index__title {
-      font-family: var(--serif);
-      font-weight: 600;
+      font-family: var(--font-display);
+      font-weight: var(--weight-lg);
       font-optical-sizing: auto;
       font-variation-settings: "SOFT" 30, "opsz" 96;
-      font-size: clamp(2.25rem, 5vw, 3.25rem);
-      line-height: 1.05;
-      letter-spacing: -0.025em;
-      color: var(--text);
-      margin: 0 0 0.75rem;
+      font-size: clamp(var(--text-2xl), 5vw, var(--text-4xl));
+      line-height: var(--leading-2xl);
+      letter-spacing: var(--tracking-2xl);
+      hyphens: none;
+      color: var(--text-strong);
+      margin: 0 0 var(--space-3);
     }
     .guide-index__lead {
-      font-family: var(--sans);
-      font-size: 1.125rem;
-      line-height: 1.6;
-      color: var(--text-body);
-      max-width: 46ch;
+      font-family: var(--font-body);
+      font-size: var(--text-md);
+      line-height: var(--leading-base);
+      color: var(--text-base-color);
+      max-width: var(--content-max);
       margin: 0;
     }
 
@@ -63,7 +65,7 @@ const description =
       padding: 0;
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 0.75rem;
+      gap: var(--space-3);
     }
     @media (max-width: 640px) {
       .guide-cards {
@@ -74,12 +76,12 @@ const description =
     .guide-card {
       display: flex;
       align-items: flex-start;
-      gap: 0.85rem;
+      gap: var(--space-3);
       height: 100%;
-      padding: 1rem 1.15rem;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
+      padding: var(--space-4);
+      background: var(--surface-card);
+      border: var(--border-width-hairline) solid var(--border-subtle);
+      border-radius: var(--radius-card);
       text-decoration: none;
       color: inherit;
       box-shadow: var(--shadow-card);
@@ -93,36 +95,36 @@ const description =
       transform: translateY(-2px);
     }
     .guide-card:focus-visible {
-      outline: 2px solid var(--accent);
-      outline-offset: 2px;
+      outline: var(--focus-ring);
+      outline-offset: var(--focus-ring-offset);
     }
 
     .guide-card__num {
       flex: 0 0 auto;
-      font-family: var(--serif);
-      font-weight: 600;
-      font-size: 1.05rem;
-      line-height: 1.4;
+      font-family: var(--font-display);
+      font-weight: var(--weight-lg);
+      font-size: var(--text-base);
+      line-height: var(--leading-lg);
       color: var(--accent);
       font-variant-numeric: tabular-nums;
     }
     .guide-card__body {
       display: flex;
       flex-direction: column;
-      gap: 0.2rem;
+      gap: var(--space-1);
       flex: 1 1 auto;
       min-width: 0;
     }
     .guide-card__title {
-      font-family: var(--sans);
-      font-weight: 600;
-      font-size: 1.05rem;
-      color: var(--text);
+      font-family: var(--font-body);
+      font-weight: var(--weight-lg);
+      font-size: var(--text-base);
+      color: var(--text-strong);
     }
     .guide-card__blurb {
-      font-family: var(--sans);
-      font-size: 0.9rem;
-      line-height: 1.45;
+      font-family: var(--font-body);
+      font-size: var(--text-sm);
+      line-height: var(--leading-lg);
       color: var(--text-muted);
     }
     .guide-card__arrow {

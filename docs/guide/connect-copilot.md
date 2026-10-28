@@ -1,70 +1,51 @@
 # Connect GitHub Copilot
 
-maximal runs your AI coding tools on the models in your GitHub Copilot plan. Before your tools can use those models, you sign maximal in to GitHub once. This page walks you through it.
+Before your coding tools can use your GitHub Copilot models, sign in to GitHub once on the **Account** tab.
 
-You'll need an active **GitHub Copilot subscription** — either a personal plan or one from GitHub Enterprise. Because maximal works through your own Copilot license, there are no extra API keys and no second bill.
+![maximal’s Account tab showing Sign in to GitHub and one-click GitHub CLI account reuse](../../public/screenshots/account-signin.png)
 
-New here? [Install maximal](./install) first, then come back.
+## Sign in on the Account tab
 
-## What "connecting" means
+When you open maximal for the first time, it opens directly to the **Account** tab. Pick whichever sign-in option is easiest for you:
 
-When you sign in, maximal links to your GitHub account and uses your Copilot plan to serve your tools. Your tools point at a local address maximal provides. Behind the scenes, Copilot's models answer their requests.
+### Option 1: Reuse an existing GitHub CLI login (one click)
 
-Until you sign in, maximal still runs — but it turns away anything that needs Copilot. Signing in is what turns it on.
+If you already use the `gh` command-line tool on your computer, your GitHub username appears automatically under **Reuse a GitHub CLI account**:
 
-## Sign in
+1. Click **Use this account** next to your username (or click **Refresh** if you just signed in to `gh`).
+2. maximal connects immediately&mdash;no browser code needed.
 
-Open maximal and go to the **Account** section. The simplest path works on any machine:
+### Option 2: Sign in with a browser code
 
-1. Choose **Sign in with GitHub**.
-2. maximal copies a short code to your clipboard and opens `github.com/login/device` in your browser.
-3. Paste the code, then approve the request for maximal.
-4. maximal detects the approval on its own and switches to connected.
+1. Click **Sign in to GitHub**.
+2. Click **Copy `<CODE>` and open GitHub** to copy the 8-character code and open GitHub in your browser.
+3. Paste the code on GitHub and approve. maximal switches to **Connected** automatically.
 
-### Already signed in with GitHub elsewhere?
+## Confirm you are connected
 
-If you already use the `gh` GitHub tool on this machine, maximal can reuse that account — no code to copy. In **Account**, choose the option to **use your existing `gh` login**, pick the account you want, and maximal connects.
+Once signed in, the **Account** tab shows your GitHub username and a `⇄` **Connected** status next to the GitHub Copilot icon.
 
-## Confirm you're connected
+![maximal’s Account tab connected to GitHub Copilot with the multi-account switcher](../../public/screenshots/guide/account-connected.png)
 
-Back in **Account**, you should see a connected status and your Copilot plan. That's it — your tools can now use Copilot's models.
+## Switch between multiple GitHub accounts
 
-Next, [connect your first tool](./connect-your-tools) (like Claude Code), or grab your local address and key from the [Endpoint](./usage-and-settings) section.
+If you have both a personal and a work GitHub account, you can keep both saved under **Switch to**:
 
-## Use more than one account
+- **Add another account:** click **Use another account** and sign in.
+- **Switch accounts:** click **Switch** next to any saved account. Your tools will use that account on their next request.
+- **Sign out or Remove:** signing out or removing an account only forgets maximal&rsquo;s own saved login; it never logs you out of your browser or `gh`.
 
-maximal keeps a registry of accounts, so you can keep work and personal setups side by side.
+## If Copilot shows a notice
 
-- **Add an account** — sign in again with a different GitHub account.
-- **Switch accounts** — pick another account and maximal restarts on it. Any tool already pointed at maximal picks up the change on its next request.
-- **Sign out** — forgets the currently active account.
-- **Remove an account** — drops one specific saved account.
+If your GitHub account doesn&rsquo;t have an active Copilot plan, or if you hit a Copilot quota or billing notice, maximal brings you to the **Account** tab and gives you a direct link to resolve it on GitHub.
 
-Signing out or removing an account only touches maximal's own saved token. It never affects your `gh` login or your GitHub session in the browser.
+## Next step
 
-## If something's not right
-
-- **"Requires a Copilot subscription."** maximal is running, but your account doesn't have an active Copilot plan. Add Copilot to your GitHub account, then sign in again.
-- **maximal keeps turning requests away.** Open **Account** and confirm the status shows connected. If it doesn't, sign in again.
-- **A plan, billing, or rate-limit message from Copilot.** maximal surfaces these in **Account**. Each message includes a link to fix it on GitHub's side.
-- **Approved the device code but nothing happened.** Give it a moment — maximal detects approval on its own. If it's stuck, cancel and start the sign-in again.
-
-## What's next
-
-- [Connect your tools](./connect-your-tools) — wire up Claude Code, Codex, opencode, and more.
-- [Endpoint](./usage-and-settings) — find your local address, keys, and copy-paste helpers.
-- [Install maximal](./install) — if you haven't set it up yet.
+- [Connect your tools](./connect-your-tools) — turn on Claude Code, Claude Desktop, Codex, and Work IQ in **Integrations**.
 
 ---
 
-## For developers
+## Want to know a bit more?
 
-**Sign in from the terminal.** If you installed the `maximal` command-line tool and prefer to stay in the terminal, run:
-
-```sh
-maximal auth
-```
-
-Follow the prompts to complete the GitHub sign-in.
-
-**GitHub Enterprise.** Using Copilot through GitHub Enterprise? Set your enterprise URL so maximal signs in against your organization instead of public GitHub. Set the `COPILOT_API_ENTERPRISE_URL` environment variable before you sign in, then follow the sign-in steps above as usual. We tested maximal end-to-end against an enterprise deployment.
+- **Terminal sign-in:** if you use the CLI, run `maximal auth` (or `maximal setup` to sign in and run a quick connection test).
+- **GitHub Enterprise (`*.ghe.com`):** if your organization uses a custom GitHub Enterprise host with data residency, set `COPILOT_API_ENTERPRISE_URL` in your environment (or `enterpriseUrl` in `~/.config/maximal/config.json`) before signing in.
