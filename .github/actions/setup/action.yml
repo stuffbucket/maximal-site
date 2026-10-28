@@ -1,0 +1,52 @@
+name: Set up the toolchain
+description: >-
+  Install the tools pinned in mise.toml (checksums in mise.lock) and the
+  locked dependencies through the registry proxy in .npmrc, with a pnpm
+  store cache.
+
+inputs:
+  save-cache:
+    description: Save the tool and pnpm store caches on a miss. Only main's caches are visible to every ref, so pass true only there.
+    default: "false"
+
+runs:
+  using: composite
+  steps:
+    # mise itself is pinned by version and checksum (linux-x64 binary), and
+    # installs the tools with --locked against mise.lock.
+    - uses: jdx/mise-action@6be3c7ed4c21d4f76b208d351d95aac273ebb76d # v5.2.4
+      with:
+        version: 2026.9.14
+        sha256: 2b289d1b3074e0b1d3f95bad0bd78bbc517c1a5bcb020cbc1643d260f5d1a351
+        cache: true
+        cache_save: ${{ inputs.save-cache }}
+
+    - name: Locate the pnpm store
+      id: store
+      shell: bash
+      run: echo "path=$(pnpm store path --silent)" >> "$GITHUB_OUTPUT"
+
+    - name: Restore the pnpm store
+      id: pnpm-cache
+      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ${{ steps.store.outputs.path }}
+        key: pnpm-store-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+        restore-keys: pnpm-store-${{ runner.os }}-
+
+    # A rotating shard URL in the lockfile would fail the install with a
+    # tarball mismatch later; say why up front (stuffbucket/pnpm-hooks).
+    - name: Check the lockfile's tarball URLs
+      shell: bash
+      run: node apply-pnpm-tarball-policy.mjs --check
+
+    - name: Install dependencies
+      shell: bash
+      run: pnpm install --frozen-lockfile
+
+    - name: Save the pnpm store
+      if: inputs.save-cache == 'true' && steps.pnpm-cache.outputs.cache-hit != 'true'
+      uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ${{ steps.store.outputs.path }}
+        key: ${{ steps.pnpm-cache.outputs.cache-primary-key }}

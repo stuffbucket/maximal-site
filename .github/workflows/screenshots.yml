@@ -19,41 +19,41 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  contents: write
+  contents: read
 
 defaults:
   run:
     shell: bash -eo pipefail {0}
 
 jobs:
-  screenshots:
+  capture:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     container:
-      image: mcr.microsoft.com/playwright:v1.52.0-noble
+      # v1.52.0-noble, pinned by digest.
+      image: mcr.microsoft.com/playwright@sha256:a021500a801bab0611049217ffad6b9697d827205c15babb86a53bc1a61c02d5
       options: --ipc=host
+    env:
+      MAXIMAL_REF: ${{ inputs.maximal_ref || 'main' }}
     steps:
       - name: Checkout maximal-site
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           path: maximal-site
+          persist-credentials: false
 
       - name: Checkout stuffbucket/maximal
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: stuffbucket/maximal
-          ref: ${{ inputs.maximal_ref || 'main' }}
+          ref: ${{ env.MAXIMAL_REF }}
           path: maximal
+          persist-credentials: false
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version-file: maximal/.bun-version
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
-        with:
-          run_install: false
 
       - name: Build Maximal UI for the mock harness
         working-directory: maximal
@@ -62,42 +62,68 @@ jobs:
           (cd shell && bun install --frozen-lockfile --ignore-scripts)
           bun run build:ui
 
+      # The Playwright client matching the container's browsers, installed
+      # through the registry proxy (this repository's .npmrc).
       - name: Install Playwright JS client in temp directory (uses container browsers)
         env:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
         run: |
           mkdir -p /tmp/pw-runner
+          cp maximal-site/.npmrc /tmp/pw-runner/.npmrc
           cd /tmp/pw-runner
           npm init -y >/dev/null 2>&1
-          npm install --no-save playwright@1.52.0
+          npm install --no-save --ignore-scripts playwright@1.52.0
 
       - name: Capture PII-safe screenshots from UI harness
         working-directory: maximal-site
         env:
           MAXIMAL_DIR: ${{ github.workspace }}/maximal
           NODE_PATH: /tmp/pw-runner/node_modules
-        run: |
-          node scripts/gen-screenshots.mjs
+        run: node scripts/gen-screenshots.mjs
 
+      # The landing page's live dashboard layer reads its positions from
+      # dashboard-shot.json, so it travels with the captures.
       - name: Upload screenshots artifact
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: maximal-site-screenshots-${{ inputs.maximal_ref || 'main' }}
+          name: maximal-site-screenshots
           path: |
             maximal-site/public/screenshots/*.png
             maximal-site/public/screenshots/guide/*.png
+            maximal-site/src/data/dashboard-shot.json
           if-no-files-found: error
 
-      - name: Commit updated screenshots to branch (optional)
-        if: ${{ inputs.commit_to_branch == true }}
-        working-directory: maximal-site
+  commit:
+    if: ${{ inputs.commit_to_branch }}
+    needs: capture
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    env:
+      MAXIMAL_REF: ${{ inputs.maximal_ref || 'main' }}
+    steps:
+      # This job pushes, so it keeps the checkout's token; it uploads no
+      # artifacts for the token to leak through.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1 # zizmor: ignore[artipacked]
+        with:
+          persist-credentials: true
+
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: maximal-site-screenshots
+          path: /tmp/screenshots
+
+      - name: Commit updated screenshots to the branch
         run: |
+          cp -R /tmp/screenshots/public/. public/
+          cp /tmp/screenshots/src/data/dashboard-shot.json src/data/dashboard-shot.json
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add public/screenshots/
+          git add public/screenshots/ src/data/dashboard-shot.json
           if git diff --staged --quiet; then
             echo "No screenshot changes to commit."
           else
-            git commit -m "docs(screenshots): regenerate UI screenshots from maximal (${{ inputs.maximal_ref || 'main' }})"
+            git commit -m "docs(screenshots): regenerate UI screenshots from maximal ($MAXIMAL_REF)"
             git push
           fi

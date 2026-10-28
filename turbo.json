@@ -4,8 +4,6 @@
   "globalDependencies": [
     ".npmrc",
     ".pnpmfile.cjs",
-    ".nvmrc",
-    ".bun-version",
     "mise.toml",
     "mise.lock",
     "pnpm-workspace.yaml"

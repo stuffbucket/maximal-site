@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@11.25.0",
+  "packageManager": "pnpm@12.14.0",
   "scripts": {
     "dev": "astro dev",
     "build": "turbo run build:site",
@@ -17,7 +17,8 @@
     "models:sync": "node scripts/sync-copilot-models.mjs",
     "screenshots": "node scripts/gen-screenshots.mjs",
     "screenshots:docker": "bash scripts/screenshots-docker.sh",
-    "astro": "astro"
+    "astro": "astro",
+    "lockfile:check": "node apply-pnpm-tarball-policy.mjs --check"
   },
   "devDependencies": {
     "@astrojs/markdown-remark": "^7.3.0",
@@ -31,5 +32,16 @@
   },
   "engines": {
     "node": ">=24"
+  },
+  "pnpmTarballUrlPolicy": {
+    "rules": [
+      {
+        "registry": "https://packagefeedproxy.microsoft.io/npm/",
+        "includeTarballHostSuffixes": [
+          "pkgs.visualstudio.com"
+        ],
+        "action": "omit"
+      }
+    ]
   }
 }
