@@ -1,0 +1,1127 @@
+{
+  "schemaVersion": 1,
+  "provider": {
+    "id": "github-copilot",
+    "name": "GitHub Copilot",
+    "sourceRepository": "stuffbucket/model-catalog",
+    "upstreamRepository": "anomalyco/models.dev"
+  },
+  "count": 34,
+  "models": [
+    {
+      "id": "gpt-6.1-terra",
+      "name": "GPT-6.1 Terra",
+      "vendor": "OpenAI",
+      "family": "gpt-terra",
+      "description": "Fast, efficient model for visual reasoning, precise computer use, and clear, natural writing.",
+      "releaseDate": "2026-10-26",
+      "lastUpdated": "2026-10-26",
+      "knowledgeCutoff": "2026-06-01",
+      "canonicalModelId": "openai/gpt-6.1-terra",
+      "modalities": {
+        "input": [
+          "text",
+          "image",
+          "pdf"
+        ],
+        "output": [
+          "text"
+        ]
+      },
+      "limits": {
+        "contextTokens": 1050000,
+        "inputTokens": 922000,
+        "outputTokens": 128000
+      },
+      "capabilities": {
+        "vision": true,
+        "toolCalls": true,
+        "reasoning": true,
+        "structuredOutput": true,
+        "attachments": true
+      }
+    },
+    {
+      "id": "gemini-4-argon",
+      "name": "Gemini 4 Argon",
+      "vendor": "Google",
+      "family": "gemini",
+      "description": "Google's flagship reasoning model for complex software engineering, deep math and science, and long-horizon autonomous agents",
+      "releaseDate": "2026-10-13",
+      "lastUpdated": "2026-10-13",
+      "knowledgeCutoff": "2026-03",
+      "canonicalModelId": "google/gemini-4-argon",
+      "modalities": {
+        "input": [
+          "text",
+          "image",
+          "pdf"
+        ],
+        "output": [
+          "text"
+        ]
+      },
+      "limits": {
+        "contextTokens": 1048576,
+        "inputTokens": null,
+        "outputTokens": 65536
+      },
+      "capabilities": {
+        "vision": true,
+        "toolCalls": true,
+        "reasoning": true,
+        "structuredOutput": true,
+        "attachments": true
+      }
+    },
+    {
+      "id": "claude-haiku-5.5",
+      "name": "Claude Haiku 5.5",
+      "vendor": "Anthropic",
+      "family": "claude-haiku",
+      "description": "Fast Claude model for responsive assistance, classification, and lightweight agents",
+      "releaseDate": "2026-10-07",
+      "lastUpdated": "2026-10-07",
+      "knowledgeCutoff": "2026-06",
+      "canonicalModelId": "anthropic/claude-haiku-5-5",
+      "modalities": {
+        "input": [
+          "text",
+          "image",
+          "pdf"
+        ],
+        "output": [
+          "text"
+        ]
+      },
+      "limits": {
+        "contextTokens": 1000000,
+        "inputTokens": null,
+        "outputTokens": 128000
+      },
+      "capabilities": {
+        "vision": true,
+        "toolCalls": true,
+        "reasoning": true,
+        "structuredOutput": true,
+        "attachments": true
+      }
+    },
+    {
+      "id": "gpt-6.1-sol",
+      "name": "GPT-6.1 Sol",
+      "vendor": "OpenAI",
+      "family": "gpt-sol",
+      "description": "Near-Astra performance for complex coding, computer use, and professional work at a lower cost.",
+      "releaseDate": "2026-09-29",
+      "lastUpdated": "2026-09-29",
+      "knowledgeCutoff": "2026-04-30",
+      "canonicalModelId": "openai/gpt-6.1-sol",
+      "modalities": {
+        "input": [
+          "text",
+          "image",
+          "pdf"
+        ],
+        "output": [
+          "text"
+        ]
+      },
+      "limits": {
+        "contextTokens": 1050000,
+        "inputTokens": 922000,
+        "outputTokens": 128000
+      },
+      "capabilities": {
+        "vision": true,
+        "toolCalls": true,
+        "reasoning": true,
+        "structuredOutput": true,
+        "attachments": true
+      }
+    },
+    {
+      "id": "claude-sonnet-5.5",
+      "name": "Claude Sonnet 5.5",
+      "vendor": "Anthropic",
+      "family": "claude-sonnet",
+      "description": "Fast Claude model for everyday coding, agents, and knowledge work",
+      "releaseDate": "2026-09-28",
+      "lastUpdated": "2026-09-28",
+      "knowledgeCutoff": "2026-06",
+      "canonicalModelId": "anthropic/claude-sonnet-5-5",
+      "modalities": {
+        "input": [
+          "text",
+          "image",
+          "pdf"
+        ],
+        "output": [
+          "text"
+        ]
+      },
+      "limits": {
+        "contextTokens": 1000000,
+        "inputTokens": null,
+        "outputTokens": 128000
+      },
+      "capabilities": {
+        "vision": true,
+        "toolCalls": true,
+        "reasoning": true,
+        "structuredOutput": true,
+        "attachments": true
+      }
+    },
+    {
+      "id": "claude-opus-5.5",
+      "name": "Claude Opus 5.5",
+      "vendor": "Anthropic",
+      "family": "claude-opus",
+      "description": "Claude model for long-running agentic coding and knowledge work",
+      "releaseDate": "2026-09-22",
+      "lastUpdated": "2026-09-22",
+      "knowledgeCutoff": "2026-06",
+      "canonicalModelId": "anthropic/claude-opus-5-5",
+      "modalities": {
+        "input": [
+          "text",
+          "image",
+          "pdf"
+        ],
+        "output": [
+          "text"
+        ]
+      },
+      "limits": {
+        "contextTokens": 1000000,
+        "inputTokens": null,
+        "outputTokens": 128000
+      },
+      "capabilities": {
+        "vision": true,
+        "toolCalls": true,
+        "reasoning": true,
+        "structuredOutput": true,
+        "attachments": true
+      }
+    },
+    {
+      "id": "gpt-6-luna",
+      "name": "GPT-6 Luna",
+      "vendor": "OpenAI",
+      "family": "gpt-luna",
+      "description": "OpenAI's most efficient model for focused, high-volume tasks",
+      "releaseDate": "2026-09-22",
+      "lastUpdated": "2026-09-22",
+      "knowledgeCutoff": "2026-05-18",
+      "canonicalModelId": "openai/gpt-6-luna",
+      "modalities": {
+        "input": [
+          "text",
+          "image",
+          "pdf"
+        ],
+        "output": [
+          "text"
+        ]
+      },
+      "limits": {
+        "contextTokens": 1050000,
+        "inputTokens": 922000,
+        "outputTokens": 128000
+      },
+      "capabilities": {
+        "vision": true,
+        "toolCalls": true,
+        "reasoning": true,
+        "structuredOutput": true,
+        "attachments": true
+      }
+    },
+    {
+      "id": "gpt-6-sol",
+      "name": "GPT-6 Sol",
+      "vendor": "OpenAI",
+      "family": "gpt-sol",
+      "description": "OpenAI model for complex coding and agentic workflows",
+      "releaseDate": "2026-09-22",
+      "lastUpdated": "2026-09-22",
+      "knowledgeCutoff": "2026-04-20",
+      "canonicalModelId": "openai/gpt-6-sol",
+      "modalities": {
+        "input": [
+          "text",
+          "image",
+          "pdf"
+        ],
+        "output": [
+          "text"
+        ]
+      },
+      "limits": {
+        "contextTokens": 1050000,
+        "inputTokens": 922000,
+        "outputTokens": 128000
+      },
+      "capabilities": {
+        "vision": true,
+        "toolCalls": true,
+        "reasoning": true,
+        "structuredOutput": true,
+        "attachments": true
+      }
+    },
+    {
+      "id": "grok-4.7",
+      "name": "Grok 4.7",
+      "vendor": "xAI",
+      "family": "grok",
+      "description": "xAI's frontier model for long-running agents, coding, knowledge work, and visual projects",
+      "releaseDate": "2026-09-21",
+      "lastUpdated": "2026-09-21",
+      "knowledgeCutoff": "2026-05",
+      "canonicalModelId": "xai/grok-4.7",
+      "modalities": {
+        "input": [
+          "text",
+          "image"
+        ],
+        "output": [
+          "text"
+        ]
+      },
+      "limits": {
+        "contextTokens": 500000,
+        "inputTokens": 372000,
+        "outputTokens": 128000
+      },
+      "capabilities": {
+        "vision": true,
+        "toolCalls": true,
+        "reasoning": true,
+        "structuredOutput": true,
+        "attachments": true
+      }
+    },
+    {
+      "id": "gpt-6-astra",
+      "name": "GPT-6 Astra",
+      "vendor": "OpenAI",
+      "family": "gpt-astra",
+      "description": "GPT-6 Astra is OpenAI's most capable model for complex reasoning, coding, computer use, research, and document creation.",
+      "releaseDate": "2026-09-04",
+      "lastUpdated": "2026-09-04",
+      "knowledgeCutoff": "2026-04-30",
+      "canonicalModelId": "openai/gpt-6-astra",
+      "modalities": {
+        "input": [
+          "text",
+          "image",
+          "pdf"
+        ],
+        "output": [
+          "text"
+        ]
+      },
+      "limits": {
+        "contextTokens": 1050000,
+        "inputTokens": 922000,
+        "outputTokens": 128000
+      },
+      "capabilities": {
+        "vision": true,
+        "toolCalls": true,
+        "reasoning": true,
+        "structuredOutput": true,
+        "attachments": true
+      }
+    },
+    {
+      "id": "gemini-3.8-flash",
+      "name": "Gemini 3.8 Flash",
+      "vendor": "Google",
+      "family": "gemini-flash",
+      "description": "Google's most intelligent Flash model, engineered for long-horizon software engineering, autonomous agents, and complex enterprise workflows",
+      "releaseDate": "2026-09-02",
+      "lastUpdated": "2026-09-02",
+      "knowledgeCutoff": null,
+      "canonicalModelId": "google/gemini-3.8-flash",
+      "modalities": {
+        "input": [
+          "text",
+          "image",
+          "pdf"
+        ],
+        "output": [
+          "text"
+        ]
+      },
+      "limits": {
+        "contextTokens": 1000000,
+        "inputTokens": 936000,
+        "outputTokens": 64000
+      },
+      "capabilities": {
+        "vision": true,
+        "toolCalls": true,
+        "reasoning": true,
+        "structuredOutput": true,
+        "attachments": true
+      }
+    },
+    {
+      "id": "gemini-3.7-flash",
+      "name": "Gemini 3.7 Flash",
+      "vendor": "Google",
+      "family": "gemini-flash",
+      "description": "High-efficiency Gemini model for agentic workflows, coding, and multimodal reasoning",
+      "releaseDate": "2026-08-13",
+      "lastUpdated": "2026-08-13",
+      "knowledgeCutoff": "2026-03",
+      "canonicalModelId": "google/gemini-3.7-flash",
+      "modalities": {
+        "input": [
+          "text",
+          "image"
+        ],
+        "output": [
+          "text"
+        ]
+      },
+      "limits": {
+        "contextTokens": 1000000,
+        "inputTokens": 936000,
+        "outputTokens": 64000
+      },
+      "capabilities": {
+        "vision": true,
+        "toolCalls": true,
+        "reasoning": true,
+        "structuredOutput": true,
+        "attachments": true
+      }
+    },
+    {
+      "id": "grok-4.6",
+      "name": "Grok 4.6",
+      "vendor": "xAI",
+      "family": "grok",
+      "description": "xAI's frontier model for long-running agents, coding, knowledge work, and visual projects",
+      "releaseDate": "2026-08-12",
+      "lastUpdated": "2026-08-12",
+      "knowledgeCutoff": "2026-02-01",
+      "canonicalModelId": "xai/grok-4.6",
+      "modalities": {
+        "input": [
+          "text",
+          "image"
+        ],
+        "output": [
+          "text"
+        ]
+      },
+      "limits": {
+        "contextTokens": 500000,
+        "inputTokens": 372000,
+        "outputTokens": 128000
+      },
+      "capabilities": {
+        "vision": true,
+        "toolCalls": true,
+        "reasoning": true,
+        "structuredOutput": true,
+        "attachments": true
+      }
+    },
+    {
+      "id": "mai-code-1.1-flash",
+      "name": "MAI-Code-1.1-Flash",
+      "vendor": "Microsoft",
+      "family": "mai",
+      "description": "Microsoft coding model with native vision support, optimized for fast and efficient software development",
+      "releaseDate": "2026-08-11",
+      "lastUpdated": "2026-08-11",
+      "knowledgeCutoff": null,
+      "canonicalModelId": "microsoft/mai-code-1.1-flash",
+      "modalities": {
+        "input": [
+          "text",
+          "image",
+          "pdf"
+        ],
+        "output": [
+          "text"
+        ]
+      },
+      "limits": {
+        "contextTokens": 256000,
+        "inputTokens": 128000,
+        "outputTokens": 128000
+      },
+      "capabilities": {
+        "vision": true,
+        "toolCalls": true,
+        "reasoning": true,
+        "structuredOutput": true,
+        "attachments": true
+      }
+    },
+    {
+      "id": "claude-opus-5",
+      "name": "Claude Opus 5",
+      "vendor": "Anthropic",
+      "family": "claude-opus",
+      "description": "Strongest Claude Opus model for coding, agents, and professional work",
+      "releaseDate": "2026-07-24",
+      "lastUpdated": "2026-07-24",
+      "knowledgeCutoff": "2026-05",
+      "canonicalModelId": "anthropic/claude-opus-5",
+      "modalities": {
+        "input": [
+          "text",
+          "image",
+          "pdf"
+        ],
+        "output": [
+          "text"
+        ]
+      },
+      "limits": {
+        "contextTokens": 1000000,
+        "inputTokens": 936000,
+        "outputTokens": 64000
+      },
+      "capabilities": {
+        "vision": true,
+        "toolCalls": true,
+        "reasoning": true,
+        "structuredOutput": true,
+        "attachments": true
+      }
+    },
+    {
+      "id": "gemini-3.6-flash",
+      "name": "Gemini 3.6 Flash",
+      "vendor": "Google",
+      "family": "gemini-flash",
+      "description": "Fast Gemini model balancing multimodal reasoning, tool use, and cost",
+      "releaseDate": "2026-07-21",
+      "lastUpdated": "2026-07-21",
+      "knowledgeCutoff": "2026-03",
+      "canonicalModelId": "google/gemini-3.6-flash",
+      "modalities": {
+        "input": [
+          "text",
+          "image",
+          "pdf"
+        ],
+        "output": [
+          "text"
+        ]
+      },
+      "limits": {
+        "contextTokens": 1000000,
+        "inputTokens": 936000,
+        "outputTokens": 64000
+      },
+      "capabilities": {
+        "vision": true,
+        "toolCalls": true,
+        "reasoning": true,
+        "structuredOutput": true,
+        "attachments": true
+      }
+    },
+    {
+      "id": "kimi-k3",
+      "name": "Kimi K3",
+      "vendor": "Moonshot AI",
+      "family": "kimi-k3",
+      "description": "Multimodal Kimi model with 1M context and toggleable max-effort thinking for long-horizon agent work",
+      "releaseDate": "2026-07-16",
+      "lastUpdated": "2026-07-16",
+      "knowledgeCutoff": null,
+      "canonicalModelId": "moonshotai/kimi-k3",
+      "modalities": {
+        "input": [
+          "text",
+          "image"
+        ],
+        "output": [
+          "text"
+        ]
+      },
+      "limits": {
+        "contextTokens": 1048576,
+        "inputTokens": null,
+        "outputTokens": 131072
+      },
+      "capabilities": {
+        "vision": true,
+        "toolCalls": true,
+        "reasoning": true,
+        "structuredOutput": true,
+        "attachments": true
+      }
+    },
+    {
+      "id": "gpt-5.6-luna",
+      "name": "GPT-5.6 Luna",
+      "vendor": "OpenAI",
+      "family": "gpt-luna",
+      "description": "Cost-efficient GPT-5.6 model for fast, high-volume workloads",
+      "releaseDate": "2026-07-09",
+      "lastUpdated": "2026-07-09",
+      "knowledgeCutoff": "2026-02-16",
+      "canonicalModelId": "openai/gpt-5.6-luna",
+      "modalities": {
+        "input": [
+          "text",
+          "image",
+          "pdf"
+        ],
+        "output": [
+          "text"
+        ]
+      },
+      "limits": {
+        "contextTokens": 1050000,
+        "inputTokens": 922000,
+        "outputTokens": 128000
+      },
+      "capabilities": {
+        "vision": true,
+        "toolCalls": true,
+        "reasoning": true,
+        "structuredOutput": true,
+        "attachments": true
+      }
+    },
+    {
+      "id": "gpt-5.6-sol",
+      "name": "GPT-5.6 Sol",
+      "vendor": "OpenAI",
+      "family": "gpt-sol",
+      "description": "Frontier GPT-5.6 model for complex professional work, coding, and agentic workflows",
+      "releaseDate": "2026-07-09",
+      "lastUpdated": "2026-07-09",
+      "knowledgeCutoff": "2026-02-16",
+      "canonicalModelId": "openai/gpt-5.6-sol",
+      "modalities": {
+        "input": [
+          "text",
+          "image",
+          "pdf"
+        ],
+        "output": [
+          "text"
+        ]
+      },
+      "limits": {
+        "contextTokens": 1050000,
+        "inputTokens": 922000,
+        "outputTokens": 128000
+      },
+      "capabilities": {
+        "vision": true,
+        "toolCalls": true,
+        "reasoning": true,
+        "structuredOutput": true,
+        "attachments": true
+      }
+    },
+    {
+      "id": "gpt-5.6-terra",
+      "name": "GPT-5.6 Terra",
+      "vendor": "OpenAI",
+      "family": "gpt-terra",
+      "description": "Balanced GPT-5.6 model for capable, cost-efficient everyday work",
+      "releaseDate": "2026-07-09",
+      "lastUpdated": "2026-07-09",
+      "knowledgeCutoff": "2026-02-16",
+      "canonicalModelId": "openai/gpt-5.6-terra",
+      "modalities": {
+        "input": [
+          "text",
+          "image",
+          "pdf"
+        ],
+        "output": [
+          "text"
+        ]
+      },
+      "limits": {
+        "contextTokens": 1050000,
+        "inputTokens": 922000,
+        "outputTokens": 128000
+      },
+      "capabilities": {
+        "vision": true,
+        "toolCalls": true,
+        "reasoning": true,
+        "structuredOutput": true,
+        "attachments": true
+      }
+    },
+    {
+      "id": "grok-4.5",
+      "name": "Grok 4.5",
+      "vendor": "xAI",
+      "family": "grok",
+      "description": "xAI's Grok model for chat, coding, agentic tools, and lower hallucination risk",
+      "releaseDate": "2026-07-08",
+      "lastUpdated": "2026-07-08",
+      "knowledgeCutoff": null,
+      "canonicalModelId": "xai/grok-4.5",
+      "modalities": {
+        "input": [
+          "text",
+          "image"
+        ],
+        "output": [
+          "text"
+        ]
+      },
+      "limits": {
+        "contextTokens": 500000,
+        "inputTokens": 372000,
+        "outputTokens": 128000
+      },
+      "capabilities": {
+        "vision": true,
+        "toolCalls": true,
+        "reasoning": true,
+        "structuredOutput": true,
+        "attachments": true
+      }
+    },
+    {
+      "id": "claude-sonnet-5",
+      "name": "Claude Sonnet 5",
+      "vendor": "Anthropic",
+      "family": "claude-sonnet",
+      "description": "Everyday Claude agent model for coding, planning, browsing, and general work",
+      "releaseDate": "2026-06-30",
+      "lastUpdated": "2026-06-30",
+      "knowledgeCutoff": "2026-01-31",
+      "canonicalModelId": "anthropic/claude-sonnet-5",
+      "modalities": {
+        "input": [
+          "text",
+          "image",
+          "pdf"
+        ],
+        "output": [
+          "text"
+        ]
+      },
+      "limits": {
+        "contextTokens": 1000000,
+        "inputTokens": null,
+        "outputTokens": 128000
+      },
+      "capabilities": {
+        "vision": true,
+        "toolCalls": true,
+        "reasoning": true,
+        "structuredOutput": true,
+        "attachments": true
+      }
+    },
+    {
+      "id": "kimi-k2.7-code",
+      "name": "Kimi K2.7 Code",
+      "vendor": "Moonshot AI",
+      "family": "kimi-k2",
+      "description": "Coding-focused Kimi model, stronger on long-horizon repo work with less overthinking",
+      "releaseDate": "2026-06-12",
+      "lastUpdated": "2026-06-12",
+      "knowledgeCutoff": "2025-01",
+      "canonicalModelId": "moonshotai/kimi-k2.7-code",
+      "modalities": {
+        "input": [
+          "text",
+          "image"
+        ],
+        "output": [
+          "text"
+        ]
+      },
+      "limits": {
+        "contextTokens": 256000,
+        "inputTokens": 224000,
+        "outputTokens": 32000
+      },
+      "capabilities": {
+        "vision": true,
+        "toolCalls": true,
+        "reasoning": true,
+        "structuredOutput": true,
+        "attachments": true
+      }
+    },
+    {
+      "id": "claude-opus-4.8",
+      "name": "Claude Opus 4.8",
+      "vendor": "Anthropic",
+      "family": "claude-opus",
+      "description": "Top Claude Opus tier for the hardest reasoning, coding, and long-horizon agents",
+      "releaseDate": "2026-05-28",
+      "lastUpdated": "2026-05-28",
+      "knowledgeCutoff": "2026-01",
+      "canonicalModelId": "anthropic/claude-opus-4-8",
+      "modalities": {
+        "input": [
+          "text",
+          "image",
+          "pdf"
+        ],
+        "output": [
+          "text"
+        ]
+      },
+      "limits": {
+        "contextTokens": 200000,
+        "inputTokens": 168000,
+        "outputTokens": 64000
+      },
+      "capabilities": {
+        "vision": true,
+        "toolCalls": true,
+        "reasoning": true,
+        "structuredOutput": true,
+        "attachments": true
+      }
+    },
+    {
+      "id": "gemini-3.5-flash",
+      "name": "Gemini 3.5 Flash",
+      "vendor": "Google",
+      "family": "gemini-flash",
+      "description": "Fast Gemini model balancing multimodal reasoning, tool use, and cost",
+      "releaseDate": "2026-05-19",
+      "lastUpdated": "2026-05-19",
+      "knowledgeCutoff": "2025-01",
+      "canonicalModelId": "google/gemini-3.5-flash",
+      "modalities": {
+        "input": [
+          "text",
+          "image",
+          "video",
+          "audio",
+          "pdf"
+        ],
+        "output": [
+          "text"
+        ]
+      },
+      "limits": {
+        "contextTokens": 200000,
+        "inputTokens": 128000,
+        "outputTokens": 64000
+      },
+      "capabilities": {
+        "vision": true,
+        "toolCalls": true,
+        "reasoning": true,
+        "structuredOutput": true,
+        "attachments": true
+      }
+    },
+    {
+      "id": "gpt-5.5",
+      "name": "GPT-5.5",
+      "vendor": "OpenAI",
+      "family": "gpt",
+      "description": "Default frontier GPT for coding, computer use, research, and knowledge work",
+      "releaseDate": "2026-04-23",
+      "lastUpdated": "2026-04-23",
+      "knowledgeCutoff": "2025-12-01",
+      "canonicalModelId": "openai/gpt-5.5",
+      "modalities": {
+        "input": [
+          "text",
+          "image",
+          "pdf"
+        ],
+        "output": [
+          "text"
+        ]
+      },
+      "limits": {
+        "contextTokens": 1050000,
+        "inputTokens": 922000,
+        "outputTokens": 128000
+      },
+      "capabilities": {
+        "vision": true,
+        "toolCalls": true,
+        "reasoning": true,
+        "structuredOutput": true,
+        "attachments": true
+      }
+    },
+    {
+      "id": "claude-opus-4.7",
+      "name": "Claude Opus 4.7",
+      "vendor": "Anthropic",
+      "family": "claude-opus",
+      "description": "Stronger Opus tier for advanced software work and high-stakes reasoning",
+      "releaseDate": "2026-04-16",
+      "lastUpdated": "2026-04-16",
+      "knowledgeCutoff": "2026-01-31",
+      "canonicalModelId": "anthropic/claude-opus-4-7",
+      "modalities": {
+        "input": [
+          "text",
+          "image",
+          "pdf"
+        ],
+        "output": [
+          "text"
+        ]
+      },
+      "limits": {
+        "contextTokens": 200000,
+        "inputTokens": 168000,
+        "outputTokens": 32000
+      },
+      "capabilities": {
+        "vision": true,
+        "toolCalls": true,
+        "reasoning": true,
+        "structuredOutput": false,
+        "attachments": true
+      }
+    },
+    {
+      "id": "gpt-5.4-mini",
+      "name": "GPT-5.4 mini",
+      "vendor": "OpenAI",
+      "family": "gpt-mini",
+      "description": "Strong small GPT for coding subagents, quick tool use, and high-volume work",
+      "releaseDate": "2026-03-17",
+      "lastUpdated": "2026-03-17",
+      "knowledgeCutoff": "2025-08-31",
+      "canonicalModelId": "openai/gpt-5.4-mini",
+      "modalities": {
+        "input": [
+          "text",
+          "image"
+        ],
+        "output": [
+          "text"
+        ]
+      },
+      "limits": {
+        "contextTokens": 400000,
+        "inputTokens": 272000,
+        "outputTokens": 128000
+      },
+      "capabilities": {
+        "vision": true,
+        "toolCalls": true,
+        "reasoning": true,
+        "structuredOutput": true,
+        "attachments": true
+      }
+    },
+    {
+      "id": "gpt-5.4-nano",
+      "name": "GPT-5.4 nano",
+      "vendor": "OpenAI",
+      "family": "gpt-nano",
+      "description": "Cheapest GPT-5.4 lane for simple routing, extraction, and bulk automation",
+      "releaseDate": "2026-03-17",
+      "lastUpdated": "2026-03-17",
+      "knowledgeCutoff": "2025-08-31",
+      "canonicalModelId": "openai/gpt-5.4-nano",
+      "modalities": {
+        "input": [
+          "text",
+          "image"
+        ],
+        "output": [
+          "text"
+        ]
+      },
+      "limits": {
+        "contextTokens": 400000,
+        "inputTokens": 272000,
+        "outputTokens": 128000
+      },
+      "capabilities": {
+        "vision": true,
+        "toolCalls": true,
+        "reasoning": true,
+        "structuredOutput": true,
+        "attachments": true
+      }
+    },
+    {
+      "id": "gpt-5.4",
+      "name": "GPT-5.4",
+      "vendor": "OpenAI",
+      "family": "gpt",
+      "description": "Agent-ready GPT for coding and computer-use workflows at a lower cost",
+      "releaseDate": "2026-03-05",
+      "lastUpdated": "2026-03-05",
+      "knowledgeCutoff": "2025-08-31",
+      "canonicalModelId": "openai/gpt-5.4",
+      "modalities": {
+        "input": [
+          "text",
+          "image",
+          "pdf"
+        ],
+        "output": [
+          "text"
+        ]
+      },
+      "limits": {
+        "contextTokens": 1050000,
+        "inputTokens": 922000,
+        "outputTokens": 128000
+      },
+      "capabilities": {
+        "vision": true,
+        "toolCalls": true,
+        "reasoning": true,
+        "structuredOutput": true,
+        "attachments": true
+      }
+    },
+    {
+      "id": "claude-sonnet-4.6",
+      "name": "Claude Sonnet 4.6",
+      "vendor": "Anthropic",
+      "family": "claude-sonnet",
+      "description": "Claude workhorse for coding agents, careful analysis, and production cost control",
+      "releaseDate": "2026-02-17",
+      "lastUpdated": "2026-03-13",
+      "knowledgeCutoff": "2025-08-31",
+      "canonicalModelId": "anthropic/claude-sonnet-4-6",
+      "modalities": {
+        "input": [
+          "text",
+          "image",
+          "pdf"
+        ],
+        "output": [
+          "text"
+        ]
+      },
+      "limits": {
+        "contextTokens": 200000,
+        "inputTokens": 168000,
+        "outputTokens": 32000
+      },
+      "capabilities": {
+        "vision": true,
+        "toolCalls": true,
+        "reasoning": true,
+        "structuredOutput": false,
+        "attachments": true
+      }
+    },
+    {
+      "id": "gpt-5.3-codex",
+      "name": "GPT-5.3 Codex",
+      "vendor": "OpenAI",
+      "family": "gpt-codex",
+      "description": "Coding-optimized GPT model for repository edits, reviews, and agentic software work",
+      "releaseDate": "2026-02-05",
+      "lastUpdated": "2026-02-05",
+      "knowledgeCutoff": "2025-08-31",
+      "canonicalModelId": "openai/gpt-5.3-codex",
+      "modalities": {
+        "input": [
+          "text",
+          "image",
+          "pdf"
+        ],
+        "output": [
+          "text"
+        ]
+      },
+      "limits": {
+        "contextTokens": 400000,
+        "inputTokens": 272000,
+        "outputTokens": 128000
+      },
+      "capabilities": {
+        "vision": true,
+        "toolCalls": true,
+        "reasoning": true,
+        "structuredOutput": true,
+        "attachments": true
+      }
+    },
+    {
+      "id": "claude-haiku-4.5",
+      "name": "Claude Haiku 4.5 (latest)",
+      "vendor": "Anthropic",
+      "family": "claude-haiku",
+      "description": "Fast Claude lane for lightweight agents, office tasks, and responsive chat",
+      "releaseDate": "2025-10-15",
+      "lastUpdated": "2025-10-15",
+      "knowledgeCutoff": "2025-02-28",
+      "canonicalModelId": "anthropic/claude-haiku-4-5",
+      "modalities": {
+        "input": [
+          "text",
+          "image",
+          "pdf"
+        ],
+        "output": [
+          "text"
+        ]
+      },
+      "limits": {
+        "contextTokens": 200000,
+        "inputTokens": 136000,
+        "outputTokens": 64000
+      },
+      "capabilities": {
+        "vision": true,
+        "toolCalls": true,
+        "reasoning": true,
+        "structuredOutput": false,
+        "attachments": true
+      }
+    },
+    {
+      "id": "gpt-5-mini",
+      "name": "GPT-5 Mini",
+      "vendor": "OpenAI",
+      "family": "gpt-mini",
+      "description": "Small GPT-5 for responsive agents, coding help, and everyday automation",
+      "releaseDate": "2025-08-07",
+      "lastUpdated": "2025-08-07",
+      "knowledgeCutoff": "2024-05-30",
+      "canonicalModelId": "openai/gpt-5-mini",
+      "modalities": {
+        "input": [
+          "text",
+          "image"
+        ],
+        "output": [
+          "text"
+        ]
+      },
+      "limits": {
+        "contextTokens": 264000,
+        "inputTokens": 128000,
+        "outputTokens": 64000
+      },
+      "capabilities": {
+        "vision": true,
+        "toolCalls": true,
+        "reasoning": true,
+        "structuredOutput": true,
+        "attachments": true
+      }
+    }
+  ]
+}

@@ -4,7 +4,8 @@ import StarButton from "../components/StarButton.astro"
 import { getDownloadInfo } from "../lib/downloads"
 import "../styles/global.css"
 
-const { macDmg, versionLabel, releasesUrl, repoUrl } = await getDownloadInfo()
+const { macDmg, winSetup, hasWindows, versionLabel, releasesUrl, repoUrl } =
+  await getDownloadInfo()
 const base = import.meta.env.BASE_URL.replace(/\/$/, "")
 const guideUrl = `${base}/guide`
 
@@ -25,9 +26,9 @@ const codingTools = [
 
 const reel = ["Claude Code", "Cursor", "Codex", "opencode", "v0", "Lovable"]
 
-const ogTitle = "maximal for designers · the tools you love, the plan you have"
+const ogTitle = "maximal for designers · Run Claude Code and Codex on GitHub Copilot"
 const ogDescription =
-  "maximal runs tools like Codex and Claude Code on your existing GitHub Copilot plan. No keys to request, no sign-off to wait on."
+  "maximal routes tools like Claude Code, Claude Desktop, and Codex through your existing GitHub Copilot subscription."
 ---
 
 <!doctype html>
@@ -61,16 +62,26 @@ const ogDescription =
     </header>
 
     <main id="main" class="dt">
-      <!-- Hero — full-width statement, the tile as the initial "m". -->
+      <!-- Hero — full-width statement -->
       <section class="dt-hero">
         <h1 class="dt-h1">
-          <span class="dt-badge">maximize</span> the AI tools you love
-          <span class="ink-brand">on the Copilot plan that's already paid for.</span>
+          <span class="dt-badge">maximal</span> runs the AI coding tools you use
+          <span class="ink-brand">on your GitHub Copilot plan.</span>
         </h1>
         <div class="dt-cta">
           <a class="btn btn--primary" data-os="mac" href={macDmg} rel="noopener">
             <span class="btn-label">Download for macOS</span>
             {versionLabel && <span class="btn-meta" data-version-pill>{versionLabel}</span>}
+          </a>
+          {hasWindows && (
+            <a class="btn btn--primary" data-os="windows" href={winSetup} rel="noopener">
+              <span class="btn-label">Download for Windows</span>
+              {versionLabel && <span class="btn-meta" data-version-pill>{versionLabel}</span>}
+            </a>
+          )}
+          <a class="btn" data-os="linux" href={`${guideUrl}/install#install-on-linux`}>
+            <span class="btn-label">Linux</span>
+            <span class="btn-meta">CLI &amp; web UI</span>
           </a>
           <a class="btn" href={guideUrl}>
             <span class="btn-label">Read the guide</span>
@@ -82,18 +93,16 @@ const ogDescription =
       <!-- Evidence — text beside a compact chart. -->
       <section class="dt-evidence">
         <div class="dt-evidence__text">
-          <p class="dt-eyebrow">You're not the only one</p>
-          <h2 class="dt-h2">Coding agents are core design tooling now.</h2>
+          <p class="dt-eyebrow">Designers use coding agents</p>
+          <h2 class="dt-h2">Use your organization's Copilot subscription with your preferred tools.</h2>
           <p class="dt-lede">
             Designers today use an average of seven AI tools, up from three last year.
-            More and more of them are coding tools, and they fit your work fine.
-            Getting to them is the hard part.
+            Tools like Claude Code, Claude Desktop, and Codex are standard for prototyping and UI engineering,
+            and maximal lets you run them on an existing GitHub Copilot license without separate API keys.
           </p>
-          <!-- The rolodex moment. Lead and reel share one baseline, so it
-               reads as a sentence rather than three stacked objects. -->
           <div class="dt-reel-block">
             <p class="dt-reel__line">
-              <span class="dt-reel__lead">So keep using</span>
+              <span class="dt-reel__lead">Run</span>
               <span class="sr-only">Claude Code, Cursor, Codex, opencode, v0, and more.</span>
               <span class="reel" aria-hidden="true">
                 <span class="reel__list" id="reel">
@@ -103,7 +112,7 @@ const ogDescription =
               </span>
             </p>
             <p class="dt-reel__tail">
-              maximal runs it on the Copilot plan you already have.
+              on the GitHub Copilot plan you already have.
             </p>
           </div>
         </div>        
@@ -121,23 +130,33 @@ const ogDescription =
       <!-- Blockers, removed -->
       <section class="dt-block">
         <ul class="dt-triad">
-          <li>No keys to request.</li>
-          <li>No out-of-pocket subscription.</li>
-          <li>No sign-off to wait on.</li>
+          <li>No separate API keys.</li>
+          <li>No additional subscription.</li>
+          <li>One-click setup for Claude Code, Claude Desktop, and Codex.</li>
         </ul>
       </section>
 
       <!-- Close -->
       <section class="dt-close">
-        <h2 class="dt-h2 dt-h2--close">Start now. No one has to sign off.</h2>
+        <h2 class="dt-h2 dt-h2--close">Get started with maximal.</h2>
         <p class="dt-lede">
-          Download it, point your tools at your Copilot plan, and get back to
-          work. Then tell the rest of your team.
+          Install maximal on macOS or Windows, sign in with your GitHub account,
+          and enable your coding tools in the Integrations tab.
         </p>
         <div class="dt-cta">
           <a class="btn btn--primary" data-os="mac" href={macDmg} rel="noopener">
             <span class="btn-label">Download for macOS</span>
             {versionLabel && <span class="btn-meta" data-version-pill>{versionLabel}</span>}
+          </a>
+          {hasWindows && (
+            <a class="btn btn--primary" data-os="windows" href={winSetup} rel="noopener">
+              <span class="btn-label">Download for Windows</span>
+              {versionLabel && <span class="btn-meta" data-version-pill>{versionLabel}</span>}
+            </a>
+          )}
+          <a class="btn" data-os="linux" href={`${guideUrl}/install#install-on-linux`}>
+            <span class="btn-label">Linux</span>
+            <span class="btn-meta">CLI &amp; web UI</span>
           </a>
           <a class="btn" href={guideUrl}>
             <span class="btn-label">Read the guide</span>

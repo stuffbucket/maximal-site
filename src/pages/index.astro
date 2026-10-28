@@ -22,9 +22,9 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 const siteBase = new URL(`${base}/`, Astro.site ?? "https://stuffbucket.github.io").href
   .replace(/\/$/, "");
 const ogImage = `${siteBase}/og.png`;
-const ogTitle = "maximal · your AI tools, powered by GitHub Copilot";
+const ogTitle = "maximal · Run Claude Code, Claude Desktop, and Codex on GitHub Copilot";
 const ogDescription =
-  "Use Claude Code, Codex, and opencode with the models in your GitHub Copilot plan — no extra API keys, no second bill.";
+  "Run Claude Code, Claude Desktop, Codex, and shared MCP servers like Work IQ on your GitHub Copilot subscription.";
 ---
 
 <!doctype html>
@@ -48,10 +48,10 @@ const ogDescription =
       crossorigin
     />
 
-    <title>maximal · your AI tools, powered by GitHub Copilot</title>
+    <title>maximal · Run Claude Code, Claude Desktop, and Codex on GitHub Copilot</title>
     <meta
       name="description"
-      content="maximal swaps the engine inside the AI coding tools you use, like Claude Code, Codex, and opencode, so they run on the models in your GitHub Copilot subscription."
+      content="maximal is a local proxy for macOS and Windows that routes Claude Code, Claude Desktop, Codex, and opencode to the models in your GitHub Copilot subscription, and shares MCP servers like Work IQ across your apps."
     />
     <link
       rel="icon"

@@ -1,236 +1,817 @@
 ---
-// Get started in 3 steps. Step 1 carries the actual download (macOS live,
-// Windows "coming soon"); the standalone download section folded in here.
-// Homebrew + other install options live in the repo README.
+// Setup section: three steps with light, single-size controls (no card
+// behind them), then the Work IQ row and the footer.
 import { getDownloadInfo } from "../../lib/downloads";
+
+// Fictional GitHub logins: one person's personal and work accounts.
+// (Northwind is Microsoft's long-standing sample company.)
+const ACCOUNTS = ["ada-kestrel", "ada-northwind"];
+const APPS = ["Claude Code", "Claude Desktop", "OpenAI Codex"];
 
 const { macDmg, winSetup, hasWindows, versionLabel, releasesUrl, repoUrl } =
   await getDownloadInfo();
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+const guideUrl = `${base}/guide`;
 const readmeUrl = `${repoUrl}#readme`;
-
-const M = `<span class="brandword">maximal</span>`;
-// Step screenshots are served from public/screenshots/ (base-prefixed for
-// GitHub Pages), matching ShowTell's app-dashboard shot.
-const shotBase = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/screenshots`;
-const steps = [
-  {
-    title: "Install maximal",
-    body: hasWindows
-      ? "Grab the desktop app for macOS or Windows and open it — it runs quietly in the background."
-      : "Grab the macOS desktop app and open it. Windows is coming soon.",
-  },
-  {
-    title: "Sign in with GitHub",
-    body: "One click connects your GitHub Copilot plan. No new account, no extra cost.",
-    shot: {
-      src: `${shotBase}/account-signin.png`,
-      alt: "maximal's Account panel showing 'Not signed in' with a Sign in to GitHub button.",
-      width: 2000,
-      height: 1065,
-    },
-  },
-  {
-    title: "Pick your tools",
-    body: `Point Claude Code, Codex, or opencode at ${M}. They run on your Copilot models.`,
-    shot: {
-      src: `${shotBase}/apps.png`,
-      alt: "maximal's Apps panel with one-click toggles for Claude Code and Claude Desktop pointed at maximal.",
-      width: 2000,
-      height: 1175,
-    },
-  },
-];
 ---
 
-<section id="start" class="getstarted">
-  <header class="getstarted__head">
-    <h2>Get started</h2>
-    <p class="getstarted__sub">Up and running in three steps.</p>
+<section id="start" class="setup">
+  <header class="setup__head">
+    <h2 class="setup__title">Up and running in a minute</h2>
+    <p class="setup__sub">
+      Install maximal, connect your GitHub account once, and turn on the apps
+      you want to use.
+    </p>
   </header>
 
-  <ol class="getstarted__steps">
-    {
-      steps.map((step, i) => (
-        <li class="step">
-          <span class="step__num" aria-hidden="true">
-            {i + 1}
-          </span>
-          <div class="step__body">
-            <h3 class="step__title">{step.title}</h3>
-            <p class="step__text" set:html={step.body} />
-            {step.shot && (
-              <figure class="step__shot">
-                <img
-                  src={step.shot.src}
-                  alt={step.shot.alt}
-                  width={step.shot.width}
-                  height={step.shot.height}
-                  loading="lazy"
-                  decoding="async"
-                />
-              </figure>
-            )}
-            {i === 0 && (
-              <div class="step__install">
-                <div
-                  class="downloads"
-                  role="group"
-                  aria-label="Downloads by platform"
-                >
-                  <a
-                    class="btn btn--primary"
-                    data-os="mac"
-                    href={macDmg}
-                    rel="noopener"
-                  >
-                    <span class="btn-label">macOS</span>
-                    {versionLabel && (
-                      <span class="btn-meta" data-version-pill>
-                        {versionLabel}
-                      </span>
-                    )}
-                  </a>
-                  {hasWindows ? (
-                    <a
-                      class="btn btn--primary"
-                      data-os="windows"
-                      href={winSetup}
-                      rel="noopener"
-                    >
-                      <span class="btn-label">Windows</span>
-                      {versionLabel && (
-                        <span class="btn-meta" data-version-pill>
-                          {versionLabel}
-                        </span>
-                      )}
-                    </a>
-                  ) : (
-                    <div
-                      class="btn btn--soon"
-                      data-os="windows"
-                      aria-disabled="true"
-                    >
-                      <span class="btn-label">Windows</span>
-                      <span class="btn-meta">coming soon</span>
-                    </div>
-                  )}
-                </div>
-                <p class="step__readme">
-                  Homebrew and other options are in the{" "}
-                  <a href={readmeUrl} rel="noopener">
-                    README
-                  </a>
-                  {" · "}
-                  <a href={releasesUrl} rel="noopener">
-                    all releases
-                  </a>
-                  .
-                </p>
+  <ol class="setup__steps">
+    <!-- Step 1 -->
+    <li class="setup-step">
+      <span class="setup-step__num" aria-hidden="true">1</span>
+      <h3 class="setup-step__title">Open maximal</h3>
+      <p class="setup-step__copy">
+        {
+          hasWindows
+            ? "Download the desktop app for macOS or Windows, or install on Linux."
+            : "Download the macOS desktop app, or install on Linux."
+        }
+      </p>
+      <div class="setup-step__foot">
+        <div
+          class="setup-downloads"
+          role="group"
+          aria-label="Downloads by platform"
+        >
+          <a
+            class="btn btn--primary"
+            data-os="mac"
+            href={macDmg}
+            rel="noopener"
+          >
+            <span class="btn-label">Download for macOS</span>
+            {
+              versionLabel && (
+                <span class="btn-meta" data-version-pill>
+                  {versionLabel}
+                </span>
+              )
+            }
+          </a>
+          {
+            hasWindows ? (
+              <a
+                class="btn btn--primary"
+                data-os="windows"
+                href={winSetup}
+                rel="noopener"
+              >
+                <span class="btn-label">Download for Windows</span>
+                {versionLabel && (
+                  <span class="btn-meta" data-version-pill>
+                    {versionLabel}
+                  </span>
+                )}
+              </a>
+            ) : (
+              <div
+                class="btn btn--soon"
+                data-os="windows"
+                aria-disabled="true"
+              >
+                <span class="btn-label">Windows</span>
+                <span class="btn-meta">coming soon</span>
               </div>
-            )}
-          </div>
-        </li>
-      ))
-    }
+            )
+          }
+          <a
+            class="btn btn--quiet"
+            data-os="linux"
+            href={`${guideUrl}/install#install-on-linux`}
+          >
+            <span class="btn-label">Install on Linux *</span>
+          </a>
+        </div>
+      </div>
+    </li>
+
+    <!-- Step 2: two accounts, one-click switching -->
+    <li class="setup-step">
+      <span class="setup-step__num" aria-hidden="true">2</span>
+      <h3 class="setup-step__title">Sign in with GitHub</h3>
+      <p class="setup-step__copy">
+        Reuse your GitHub login in one click, and switch accounts just as fast.
+      </p>
+      <ul class="accounts" id="demo-accounts" aria-label="GitHub accounts">
+        {
+          ACCOUNTS.map((login, i) => (
+            <li class="account" data-account data-active={i === 0 ? "true" : "false"}>
+              <svg class="account__avatar" viewBox="0 0 100 100" aria-hidden="true">
+                <circle cx="50" cy="50" r="50" />
+                <text x="50" y="69" text-anchor="middle">m</text>
+              </svg>
+              <span class="control-label">{login}</span>
+              <span class="account__state" data-account-current>
+                Signed in
+              </span>
+              <button
+                type="button"
+                class="account__switch"
+                data-account-switch
+                aria-label={`Switch to ${login}`}
+              >
+                Switch
+              </button>
+            </li>
+          ))
+        }
+      </ul>
+    </li>
+
+    <!-- Step 3: app toggles that switch on as the list scrolls into view -->
+    <li class="setup-step">
+      <span class="setup-step__num" aria-hidden="true">3</span>
+      <h3 class="setup-step__title">Enable the apps you want to use</h3>
+      <p class="setup-step__copy">
+        Turn on Claude Code, Claude Desktop, or Codex, then open the app and
+        start working.
+      </p>
+      <div class="apps" id="demo-apps" data-auto role="group" aria-label="Apps">
+        {
+          APPS.map((name) => (
+            <button
+              type="button"
+              class="control-toggle"
+              role="switch"
+              aria-checked="true"
+              data-app-switch
+            >
+              <span class="control-label">{name}</span>
+              <span class="control-switch" aria-hidden="true">
+                <span class="control-switch__thumb" />
+              </span>
+            </button>
+          ))
+        }
+      </div>
+    </li>
   </ol>
+
+  <!-- Work IQ: copy on the left, one stacked flow on the right -->
+  <div class="workiq-row" aria-labelledby="workiq-title">
+    <div class="workiq-row__intro">
+      <h3 id="workiq-title" class="workiq-row__title">
+        Bring your Microsoft 365 context into your apps
+      </h3>
+      <p class="workiq-row__copy">
+        Enable Microsoft Work IQ once so Claude Desktop and Claude Code can
+        work with your mail, calendar, Teams threads, and SharePoint files, and
+        approve access when an app asks for it.
+      </p>
+      <p class="workiq-row__more">
+        <a href={`${guideUrl}/connect-your-tools`}>
+          Read the Work IQ guide &rarr;
+        </a>
+      </p>
+    </div>
+
+    <div class="workiq-flow">
+      <button
+        type="button"
+        class="control-toggle"
+        role="switch"
+        aria-checked="true"
+        data-app-switch
+      >
+        <span class="control-label">Microsoft Work IQ</span>
+        <span class="control-switch" aria-hidden="true">
+          <span class="control-switch__thumb"></span>
+        </span>
+      </button>
+      <p class="control-checks">
+        <span class="sr-only">Shared with</span>
+        <span class="control-check">
+          <svg viewBox="0 0 14 14" aria-hidden="true">
+              <path
+                d="M3 7.2l2.5 2.5L11 4.2"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"></path>
+            </svg>
+          Claude Code
+        </span>
+        <span class="control-check">
+          <svg viewBox="0 0 14 14" aria-hidden="true">
+              <path
+                d="M3 7.2l2.5 2.5L11 4.2"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"></path>
+            </svg>
+          Claude Desktop
+        </span>
+      </p>
+      <figure
+        class="request-card"
+        aria-label="A Work IQ sign-in request waiting in maximal"
+      >
+        <p class="control-label">Work IQ sign-in request</p>
+        <p class="request-card__msg">
+          Sign in to Microsoft 365 to let Work IQ read your calendar.
+        </p>
+        <div class="request-card__actions" aria-hidden="true">
+          <span class="control-action control-action--quiet">Decline</span>
+          <span class="control-action">Sign in</span>
+        </div>
+      </figure>
+    </div>
+  </div>
+
+  <!-- Footer with Linux asterisk note and site links -->
+  <footer class="site-foot">
+    <p class="site-foot__note">
+      * On Linux, maximal runs via the CLI and serves the same Settings and
+      Dashboard interface in your browser.
+    </p>
+    <nav class="site-foot__links" aria-label="Project links">
+      <a href={guideUrl}>User guide</a>
+      <span aria-hidden="true">&middot;</span>
+      <a href={releasesUrl} rel="noopener">All releases</a>
+      <span aria-hidden="true">&middot;</span>
+      <a href={readmeUrl} rel="noopener">GitHub</a>
+    </nav>
+  </footer>
 </section>
 
+<script is:inline>
+  (function () {
+    var reduce =
+      window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    // Step 2: two accounts, one-click switching.
+    var accountList = document.getElementById("demo-accounts");
+    var accounts = accountList
+      ? accountList.querySelectorAll("[data-account]")
+      : [];
+    var touchedAccounts = false;
+
+    function activate(row) {
+      accounts.forEach(function (r) {
+        r.dataset.active = r === row ? "true" : "false";
+      });
+    }
+
+    accounts.forEach(function (row) {
+      var btn = row.querySelector("[data-account-switch]");
+      if (!btn) return;
+      btn.addEventListener("click", function () {
+        touchedAccounts = true;
+        activate(row);
+      });
+    });
+
+    if (!reduce && accountList && accounts.length > 1) {
+      // Switch back and forth slowly while the list is on screen, until the
+      // visitor clicks one.
+      var swapTimer = null;
+      var idx = 0;
+      function startSwaps() {
+        if (swapTimer) return;
+        swapTimer = setInterval(function () {
+          if (touchedAccounts || document.hidden) return;
+          idx = (idx + 1) % accounts.length;
+          activate(accounts[idx]);
+        }, 3200);
+      }
+      function stopSwaps() {
+        clearInterval(swapTimer);
+        swapTimer = null;
+      }
+      if ("IntersectionObserver" in window) {
+        new IntersectionObserver(function (entries) {
+          if (entries[0].isIntersecting) startSwaps();
+          else stopSwaps();
+        }).observe(accountList);
+      }
+    }
+
+    // Switches: every one is clickable.
+    var apps = document.getElementById("demo-apps");
+    document.querySelectorAll("[data-app-switch]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        if (apps && apps.contains(btn)) apps.removeAttribute("data-auto");
+        var on = btn.getAttribute("aria-checked") !== "true";
+        btn.setAttribute("aria-checked", on ? "true" : "false");
+      });
+    });
+
+    // Step 3: the switches turn on one by one as the list scrolls into view.
+    // Browsers with scroll-driven animations do it in CSS (animation-timeline:
+    // view()); others get the same sequence from an IntersectionObserver.
+    if (!apps) return;
+    var scrollDriven =
+      window.CSS && CSS.supports && CSS.supports("animation-timeline: view()");
+    if (reduce || scrollDriven || !("IntersectionObserver" in window)) return;
+
+    apps.removeAttribute("data-auto");
+    var appSwitches = apps.querySelectorAll("[data-app-switch]");
+    appSwitches.forEach(function (btn) {
+      btn.setAttribute("aria-checked", "false");
+    });
+    var io = new IntersectionObserver(
+      function (entries) {
+        if (!entries[0].isIntersecting) return;
+        io.disconnect();
+        appSwitches.forEach(function (btn, i) {
+          setTimeout(function () {
+            btn.setAttribute("aria-checked", "true");
+          }, 200 + i * 320);
+        });
+      },
+      { rootMargin: "0px 0px -30% 0px" },
+    );
+    io.observe(apps);
+  })();
+</script>
+
 <style>
-  .getstarted__head {
-    display: flex;
-    align-items: baseline;
-    flex-wrap: wrap;
-    gap: 0.5rem 0.75rem;
-    margin-bottom: 1.75rem;
+  .setup {
+    display: grid;
+    gap: var(--space-7);
   }
 
-  .getstarted__sub {
-    font-family: var(--sans);
+  .setup__head {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .setup__title {
+    font-family: var(--font-display);
+    font-size: clamp(var(--text-xl), 2.8vw, var(--text-2xl));
+    font-weight: var(--weight-lg);
+    line-height: var(--leading-2xl);
+    letter-spacing: var(--tracking-2xl);
+    hyphens: none;
+    color: var(--text-strong);
+    margin: 0;
+  }
+
+  .setup__sub {
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    line-height: var(--leading-base);
     color: var(--text-muted);
     margin: 0;
-    flex-basis: 100%;
+    max-width: var(--content-max);
   }
 
-  .getstarted__steps {
+  .setup__steps {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
-    gap: 2rem;
-  }
-
-  .step {
-    display: grid;
-    grid-template-columns: auto 1fr;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-6);
     align-items: start;
-    gap: 1.25rem;
-    padding-top: 2rem;
-    border-top: 1px solid var(--border);
   }
 
-  .step:first-child {
-    padding-top: 0;
-    border-top: none;
+  .setup-step {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    min-width: 0;
   }
 
-  .step__num {
-    font-family: var(--serif);
-    font-size: 3rem;
-    line-height: 0.9;
-    font-weight: 600;
-    color: var(--accent);
+  .setup-step__num {
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    font-weight: var(--weight-lg);
+    line-height: 1;
+    color: var(--text-strong);
     font-variant-numeric: lining-nums;
   }
 
-  .step__title {
-    font-family: var(--sans);
-    font-size: 1.15rem;
-    font-weight: 600;
-    color: var(--text);
-    margin: 0.15rem 0 0.4rem;
-  }
-
-  .step__text {
-    font-family: var(--sans);
-    color: var(--text-body);
-    line-height: 1.55;
+  .setup-step__title {
+    font-family: var(--font-body);
+    font-size: var(--text-lg);
+    font-weight: var(--weight-lg);
+    line-height: var(--leading-xl);
+    hyphens: none;
+    color: var(--text-strong);
     margin: 0;
   }
 
-  .step__install {
-    margin-top: 1rem;
+  .setup-step__copy {
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    line-height: var(--leading-base);
+    color: var(--text-base-color);
+    margin: 0 0 var(--space-2);
   }
 
-  /* Step screenshots reuse ShowTell's framed-image treatment so the panels
-     read as the same product surface across sections. */
-  .step__shot {
-    margin: 1rem 0 0;
-    max-width: 30rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-    box-shadow: var(--shadow-card);
-    line-height: 0;
-  }
-  .step__shot img {
-    display: block;
-    width: 100%;
-    height: auto;
+  .setup-step__foot {
+    display: grid;
+    gap: var(--space-3);
   }
 
-  .step__readme {
-    margin: 0.7rem 0 0;
-    font-size: 0.85rem;
+  .setup-downloads {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  /* Quiet subordinate button for Linux */
+  .btn--quiet {
+    background: var(--surface-control);
+    border-color: var(--border-subtle);
+    color: var(--text-muted);
+    font-weight: var(--weight-base);
+  }
+  .btn--quiet:hover {
+    border-color: var(--border-strong);
+    color: var(--text-strong);
+  }
+
+  /* Controls: one typeface, one size (--text-sm), weights 400/500, and no
+     card behind them. */
+  .control-label {
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-md);
+    line-height: var(--leading-lg);
+    color: var(--text-strong);
+    margin: 0;
+  }
+
+  .control-action {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-md);
+    line-height: var(--leading-lg);
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-input);
+    border: var(--border-width-thin) solid var(--accent);
+    background: var(--accent);
+    color: var(--accent-ink);
+    white-space: nowrap;
+  }
+
+  .control-action--quiet {
+    background: transparent;
+    border-color: transparent;
     color: var(--text-muted);
   }
 
-  @media (max-width: 640px) {
-    .step {
-      grid-template-columns: 1fr;
-      gap: 0.4rem;
+  .control-toggle {
+    appearance: none;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    text-align: left;
+    font: inherit;
+    background: transparent;
+    border: 0;
+    color: var(--text-strong);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+
+  .control-toggle:focus-visible,
+  .account__switch:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: var(--focus-ring-offset);
+    border-radius: var(--radius-chip);
+  }
+
+  .control-toggle .control-label {
+    transition: color 240ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .control-toggle[aria-checked="false"] .control-label {
+    color: var(--text-muted);
+  }
+
+  .control-switch {
+    width: 40px;
+    height: 22px;
+    border-radius: var(--radius-pill);
+    background: var(--accent);
+    padding: 3px;
+    display: inline-flex;
+    align-items: center;
+    flex: 0 0 auto;
+    transition: background 240ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .control-toggle[aria-checked="false"] .control-switch {
+    background: var(--border-strong);
+  }
+
+  .control-switch__thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: var(--radius-pill);
+    background: var(--accent-fg);
+    transform: translateX(18px);
+    transition: transform 240ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .control-toggle[aria-checked="false"] .control-switch__thumb {
+    transform: translateX(0);
+  }
+
+  .control-checks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-4);
+    margin: 0;
+  }
+
+  .control-check {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    line-height: var(--leading-lg);
+    color: var(--text-base-color);
+  }
+
+  .control-check svg {
+    width: 14px;
+    height: 14px;
+    color: var(--link);
+  }
+
+  /* Step 2: accounts */
+  .accounts {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .account {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .account__avatar {
+    width: var(--size-xl);
+    height: var(--size-xl);
+    transition: opacity 280ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .account__avatar circle {
+    fill: var(--brand);
+  }
+
+  .account__avatar text {
+    fill: var(--brand-ink);
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 64px;
+    font-variation-settings: "SOFT" 30, "WONK" 1, "opsz" 144;
+  }
+
+  .account .control-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: color 280ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* The right-hand cell holds either "Signed in" or a Switch button; both
+     share the cell so swapping never shifts the row. */
+  .account__state,
+  .account__switch {
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    line-height: var(--leading-lg);
+    transition:
+      opacity 280ms cubic-bezier(0.16, 1, 0.3, 1),
+      visibility 0s linear 280ms;
+  }
+
+  .account__state {
+    font-weight: var(--weight-base);
+    color: var(--text-muted);
+  }
+
+  .account__switch {
+    appearance: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    font-weight: var(--weight-md);
+    color: var(--link);
+    cursor: pointer;
+  }
+
+  .account__switch:hover {
+    color: var(--link-hover);
+  }
+
+  .account[data-active="true"] .account__switch,
+  .account[data-active="false"] .account__state {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .account[data-active="true"] .account__state,
+  .account[data-active="false"] .account__switch {
+    transition-delay: 0s;
+  }
+
+  .account[data-active="false"] .account__avatar {
+    opacity: 0.45;
+  }
+
+  .account[data-active="false"] .control-label {
+    color: var(--text-muted);
+  }
+
+  /* Step 3: apps */
+  .apps {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  @keyframes app-track-on {
+    from {
+      background: var(--border-strong);
     }
-    .step__num {
-      font-size: 2.25rem;
+    to {
+      background: var(--accent);
+    }
+  }
+
+  @keyframes app-thumb-on {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(18px);
+    }
+  }
+
+  @keyframes app-light-up {
+    from {
+      color: var(--text-muted);
+    }
+    to {
+      color: var(--text-strong);
+    }
+  }
+
+  /* Each switch flips over a short stretch of scroll, one after another,
+     while the list rises through the lower part of the viewport. */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .apps[data-auto] {
+        view-timeline: --apps block;
+      }
+      .apps[data-auto] .control-switch {
+        animation: app-track-on ease-in-out both;
+      }
+      .apps[data-auto] .control-switch__thumb {
+        animation: app-thumb-on cubic-bezier(0.16, 1, 0.3, 1) both;
+      }
+      .apps[data-auto] .control-label {
+        animation: app-light-up ease-in-out both;
+      }
+      /* Kept in its own rule: the minifier would otherwise fold the timeline
+         into the animation shorthand, which browsers reject. */
+      .apps[data-auto]
+        :is(.control-switch, .control-switch__thumb, .control-label) {
+        animation-duration: auto;
+        animation-timeline: --apps;
+      }
+      .apps[data-auto] > :nth-child(1) * {
+        animation-range: cover 18% cover 22%;
+      }
+      .apps[data-auto] > :nth-child(2) * {
+        animation-range: cover 24% cover 28%;
+      }
+      .apps[data-auto] > :nth-child(3) * {
+        animation-range: cover 30% cover 34%;
+      }
+    }
+  }
+
+  /* Work IQ: copy on the left, one stacked flow on the right */
+  .workiq-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-6) var(--space-7);
+    align-items: center;
+  }
+
+  .workiq-row__intro {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .workiq-row__title {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: var(--weight-lg);
+    line-height: var(--leading-2xl);
+    letter-spacing: var(--tracking-xl);
+    hyphens: none;
+    color: var(--text-strong);
+    margin: 0;
+  }
+
+  .workiq-row__copy {
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    line-height: var(--leading-base);
+    color: var(--text-base-color);
+    margin: 0;
+  }
+
+  .workiq-row__more {
+    margin: 0;
+    font-size: var(--text-sm);
+    font-weight: var(--weight-md);
+  }
+
+  .workiq-flow {
+    display: grid;
+    gap: var(--space-4);
+    max-width: 26rem;
+  }
+
+  .request-card {
+    margin: var(--space-2) 0 0;
+    padding: var(--space-4);
+    display: grid;
+    gap: var(--space-1);
+    background: var(--surface-card);
+    border: var(--border-width-hairline) solid var(--border-subtle);
+    border-radius: var(--radius-card);
+  }
+
+  .request-card__msg {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    line-height: var(--leading-base);
+    color: var(--text-muted);
+  }
+
+  .request-card__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-2);
+    margin-top: var(--space-3);
+  }
+
+  /* Footer for footnotes and project links */
+  .site-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-3) var(--space-6);
+    font-family: var(--font-body);
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+  }
+
+  .site-foot__note {
+    margin: 0;
+  }
+
+  .site-foot__links {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  @media (max-width: 960px) {
+    .setup__steps,
+    .workiq-row {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .setup-step {
+      max-width: 26rem;
     }
   }
 </style>
