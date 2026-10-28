@@ -7,12 +7,12 @@ If you or your employer already pay for GitHub Copilot, you can use those tools 
 ## What you need
 
 - **An active GitHub Copilot plan** (Individual, Business, or Enterprise).
-- **macOS (Apple Silicon)**, **Windows 10/11 (64-bit)**, or **Linux**.
+- **macOS (Apple Silicon)**, **Windows 10/11 (64-bit)**, or **Linux** (Debian 13, Ubuntu 24.04, or Ubuntu 26.04).
 - One or more tools you want to use: **Claude Code**, **Claude Desktop**, **Codex**, or **Work IQ**.
 
 ## How setup works
 
-1. **[Install maximal](./install.md).** Open the desktop app on macOS or Windows, or start maximal on Linux and open its local web interface.
+1. **[Install maximal](./install.md).** Download the desktop app on macOS or Windows, or install it from maximal's apt repository on Linux.
 2. **[Sign in to GitHub](./connect-copilot.md).** On the **Account** tab, connect your GitHub account with one click if you already use the GitHub CLI, or sign in with a short browser code.
 3. **[Turn on your apps and Work IQ](./connect-your-tools.md).** On the **Integrations** tab:
    - Under **Apps**, flip on the switches for **Claude Code**, **Claude Desktop**, and **Codex**.
