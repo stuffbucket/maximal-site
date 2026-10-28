@@ -1,6 +1,13 @@
 // Generate the social / link-unfurl card: a screenshot of the hero, written to
-// public/og.png (referenced only by the OG/Twitter <meta> tags in
-// src/pages/index.astro, so it never appears in the visible page).
+// public/og.png (used only by the OG/Twitter <meta> tags in
+// src/components/SocialCard.astro, so it never appears in the visible page).
+//
+// The current og.png is a frozen capture of the old site's hero (maximal #184):
+// the wordmark on its red candy-paint card over the god-rays backdrop. The
+// landing page has the god rays (src/components/GodRays.astro) but not the
+// paint, which is kept for reference in src/components/reference/Paint.astro,
+// so running this now would replace that card with a different one. It
+// refuses unless OG_OVERWRITE=1 is set.
 //
 // Needs a running site server. Easiest:
 //   bun run dev      # in another terminal (serves http://localhost:4321/)
@@ -9,10 +16,18 @@
 //
 // Uses Playwright's bundled Chromium (installed at the repo root). Renders dark
 // (the hero's intended canvas) with reduced motion.
-import { chromium } from "playwright";
 import { fileURLToPath } from "node:url";
 
-const TARGET = process.env.OG_URL ?? "http://localhost:4321/";
+if (process.env.OG_OVERWRITE !== "1") {
+  console.error(
+    "public/og.png is the frozen #184 card; set OG_OVERWRITE=1 to replace it with a capture of the current hero.",
+  );
+  process.exit(1);
+}
+
+const { chromium } = await import("playwright");
+
+const TARGET = process.env.OG_URL ?? "http://localhost:4321/maximal-site/";
 const OUT = fileURLToPath(new URL("../public/og.png", import.meta.url));
 const W = 1200;
 const H = 630; // 1.91:1 — the standard Open Graph / large-summary card ratio

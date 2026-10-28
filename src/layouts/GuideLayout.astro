@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import BrandInitial from "../components/BrandInitial.astro";
+import SocialCard from "../components/SocialCard.astro";
 import { GUIDE_NAV } from "../lib/guide";
 
 interface Props {
@@ -12,6 +13,10 @@ interface Props {
 const { title, slug, description, bare } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
 const href = (s: string) => `${base}/guide/${s}`;
+const summary =
+  description ??
+  GUIDE_NAV.find((p) => p.slug === slug)?.blurb ??
+  "How to install and use maximal.";
 ---
 
 <!doctype html>
@@ -34,7 +39,12 @@ const href = (s: string) => `${base}/guide/${s}`;
       crossorigin
     />
     <title>{title} · maximal</title>
-    {description && <meta name="description" content={description} />}
+    <meta name="description" content={summary} />
+    <SocialCard
+      title={`${title} · maximal`}
+      description={summary}
+      path={slug ? `/guide/${slug}` : "/guide"}
+    />
     <link rel="icon" type="image/svg+xml" href={`${base}/favicon.svg`} />
     <meta
       name="theme-color"
