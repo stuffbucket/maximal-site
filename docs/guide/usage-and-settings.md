@@ -65,11 +65,11 @@ Helpful when troubleshooting or reporting an issue.
 
 ---
 
-## Usage Dashboard (`⌘D` / `Ctrl+D`)
+## Usage Dashboard
 
-Click the chart icon in the top-right corner to check your Copilot quotas and token usage:
+Click the chart icon in the top-right corner (or press `⌘D`, or `Ctrl+D` on Windows) to check your Copilot quotas and token usage:
 
-![maximal’s Usage Dashboard showing Copilot quotas, live tokens-per-minute sparkline, and 30-day usage by model](../../public/screenshots/app-dashboard.png)
+![maximal’s Usage Dashboard showing Copilot quotas, the live tokens-per-minute rate, and today’s usage by model](../../public/screenshots/app-dashboard.png)
 
 - **Time range (`1 day`, `7 days`, `30 days`)** — switch the window at the top of the screen.
 - **Usage Quotas** — see how much of your monthly GitHub Copilot *Premium Interactions* quota is used, how many interactions remain, and when it resets.

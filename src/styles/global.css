@@ -42,13 +42,56 @@
     U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
+/* Fallbacks shaped like the web fonts, so text set before Fraunces and
+   Commissioner arrive takes the same room and little moves when they swap
+   in. size-adjust is the web font's width over the fallback's for running
+   text at the sizes each weight range is used (Fraunces with its optical
+   sizing), measured in Chromium on macOS; ascent and descent are the web
+   font's, divided by that factor. */
+@font-face {
+  font-family: "Fraunces Fallback";
+  font-weight: 300 599;
+  src: local("Georgia");
+  size-adjust: 103.4%;
+  ascent-override: 94.78%;
+  descent-override: 25.15%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Fraunces Fallback";
+  font-weight: 600 900;
+  src: local("Georgia Bold"), local("Georgia-Bold");
+  size-adjust: 94.4%;
+  ascent-override: 103.81%;
+  descent-override: 27.54%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Commissioner Fallback";
+  font-weight: 200 599;
+  src: local("Arial"), local("ArialMT");
+  size-adjust: 100.2%;
+  ascent-override: 101.8%;
+  descent-override: 20.96%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Commissioner Fallback";
+  font-weight: 600 900;
+  src: local("Arial Bold"), local("Arial-BoldMT");
+  size-adjust: 94.47%;
+  ascent-override: 107.97%;
+  descent-override: 22.23%;
+  line-gap-override: 0%;
+}
+
 /* ===== Canonical Design Tokens (from shell/src/ui/styles/theme.ts) ===== */
 :root {
   color-scheme: light dark;
 
   /* ---- Font stacks ---- */
-  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
-  --font-body: "Commissioner", "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-display: "Fraunces", "Fraunces Fallback", Georgia, "Times New Roman", serif;
+  --font-body: "Commissioner", "Commissioner Fallback", "Segoe UI", Helvetica, Arial, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
     "Liberation Mono", monospace;
 
@@ -82,6 +125,8 @@
   --tracking-xl: -0.01em;
   --tracking-2xl: -0.015em;
   --tracking-caps: 0.06em;
+  /* Text sizes: Commissioner sets a touch tight at reading sizes. */
+  --tracking-body: 0.01em;
 
   /* ---- Spacing ---- */
   --space-1: 4px;
@@ -137,7 +182,9 @@
 
   /* ---- Layout constants ---- */
   --sidebar-width: 200px;
-  --content-max: 65ch;
+  /* 65ch of Commissioner (its "0" is 0.653em), in em so the measure doesn't
+     change width when the web font swaps in for its fallback. */
+  --content-max: 42.5em;
   --max-width: 1240px;
   --nav-height: 60px;
 }
@@ -268,6 +315,7 @@ body {
   position: relative;
   overflow-x: hidden;
 
+  letter-spacing: var(--tracking-body);
   font-optical-sizing: auto;
   font-kerning: normal;
   font-variant-ligatures: common-ligatures contextual;
@@ -275,6 +323,13 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Re-declared on text blocks so the em resolves at each one's own size
+   (an inherited em is fixed at the body's). Headings, display classes, and
+   spans inside them keep their own tracking. */
+:where(p, li, dt, dd, figcaption, label, button, td, th) {
+  letter-spacing: var(--tracking-body);
 }
 
 /* ===== Utilities ===== */
@@ -451,7 +506,7 @@ main:not(.guide-main) > article {
   hyphens: none;
   margin: 0 0 var(--space-6);
   color: var(--brand-ink);
-  max-width: 34ch;
+  max-width: 21.9em; /* 34ch of Fraunces, font-independent */
   text-wrap: balance;
 }
 

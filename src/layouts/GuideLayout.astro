@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import BrandInitial from "../components/BrandInitial.astro";
 import { GUIDE_NAV } from "../lib/guide";
 
 interface Props {
@@ -53,8 +54,9 @@ const href = (s: string) => `${base}/guide/${s}`;
     <div class="guide-shell">
       <aside class="guide-sidebar">
         <a class="guide-home" href={`${base}/`}>
-          <span class="guide-home__mark" aria-hidden="true">m</span>
-          <span class="guide-home__word">maximal</span>
+          <span class="guide-home__word"
+            ><BrandInitial /><span class="sr-only">m</span>aximal</span
+          >
         </a>
         <nav class="guide-nav" aria-label="User guide">
           <p class="guide-nav__label">Guide</p>
@@ -122,19 +124,6 @@ const href = (s: string) => `${base}/guide/${s}`;
         gap: var(--space-2);
         text-decoration: none;
         margin-bottom: var(--space-6);
-      }
-      .guide-home__mark {
-        display: inline-grid;
-        place-items: center;
-        width: var(--size-lg);
-        height: var(--size-lg);
-        border-radius: var(--radius-input);
-        background: var(--brand);
-        color: var(--brand-ink);
-        font-family: var(--font-display);
-        font-weight: var(--weight-2xl);
-        font-size: var(--text-base);
-        line-height: 1;
       }
       .guide-home__word {
         font-family: var(--font-display);

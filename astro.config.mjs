@@ -1,8 +1,22 @@
 // @ts-check
 import markdoc from "@astrojs/markdoc";
+import { readFileSync } from "node:fs";
 import { defineConfig } from "astro/config";
 
 const base = "/maximal-site";
+
+// A screenshot's size in CSS pixels (captures are @2x), read from its PNG
+// header, so the page reserves its space before the image loads.
+function screenshotSize(file) {
+  try {
+    // Resolved from the project root: Astro bundles this config elsewhere
+    // before running it, so import.meta.url doesn't point here.
+    const png = readFileSync(`public/screenshots/${file}`);
+    return { width: png.readUInt32BE(16) / 2, height: png.readUInt32BE(20) / 2 };
+  } catch {
+    return null;
+  }
+}
 
 // Rewrite the guide docs' repo-relative links (./slug or ./slug.md, kept
 // GitHub-friendly in docs/guide/) to the site's absolute /guide/<slug> route,
@@ -28,6 +42,11 @@ function rewriteGuideLinks() {
       const m = s.match(/^(?:\.\.\/\.\.\/public)?\/screenshots\/(.+)$/);
       if (m) {
         node.properties.src = `${base}/screenshots/${m[1]}`;
+        const size = screenshotSize(m[1]);
+        if (size) {
+          node.properties.width ??= size.width;
+          node.properties.height ??= size.height;
+        }
         node.properties.loading ??= "lazy";
         node.properties.decoding ??= "async";
       }
