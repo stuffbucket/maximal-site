@@ -1,97 +1,55 @@
 # Troubleshooting and FAQ
 
-When something isn't working, start here. Most issues come down to one of a few things. Maybe you're not signed in. Maybe a tool is pointed at the wrong place. Or maybe a key changed out from under a long-running session. Below are the fixes for the problems people hit most, plus quick answers to common questions.
-
-If you're just getting started, run through [Install maximal](./install) and [Sign in](./connect-copilot) first.
+Quick fixes for the most common snags, followed by a short section for manual and CLI setups.
 
 ## Quick checklist
 
-Before digging in, confirm the basics:
+1. **maximal is open:** check for maximal in your menu bar or system tray, or in your Dock or taskbar.
+2. **You are signed in:** open the **Account** tab and make sure it says **Connected** next to your GitHub username.
+3. **Your app switch is on:** open the **Integrations** tab and check that **Claude Code**, **Claude Desktop**, or **Codex** is switched **On** under **Apps**.
 
-- **maximal is open.** It runs in the background, so even if you don't see a window it may still be running.
-- **You're signed in.** Open the **Account** section. It should show a connected GitHub account. Because maximal runs your tools through your own Copilot license, you need an active GitHub Copilot plan.
-- **Your tools are switched on.** In the **Apps** section, check that the tool you're using has its switch flipped on. maximal sets those tools up for you. If you wired a tool up by hand, confirm it's still pointed at maximal — the exact values live in the **Endpoint** section.
+## &ldquo;I&rsquo;m signed in, but my tool gets errors&rdquo;
 
-## "I'm signed in, but my tool gets errors"
+- **Check the Account tab:** if GitHub Copilot turns a request away (for example, if your account doesn&rsquo;t have an active Copilot plan, or needs updated terms or billing), maximal shows a banner on the **Account** tab with a link to fix it on GitHub.
+- **Check your Copilot quota:** click the chart icon in the top-right corner (`⌘D` or `Ctrl+D`) and check **Usage Quotas** to see if your *Premium Interactions* quota is used up for the month.
 
-If maximal is open and your tool still fails, maximal is probably reaching Copilot but Copilot is rejecting the request.
+## Codex isn&rsquo;t using maximal after flipping its switch
 
-1. Open **Account** and check the status. It surfaces upstream rejections — billing, plan, rate-limit, or terms issues — with a link to fix them.
-2. Confirm your Copilot subscription is active. Without one, maximal still runs, but Copilot rejects every call.
-3. If you're on **GitHub Enterprise**, maximal needs to be pointed at your company's Copilot deployment instead of public GitHub. See the [For developers](#for-developers) section below for the setting.
-4. Check the **Usage** section for rate-limit quotas. If you're out of quota, requests fail until it resets. See [Usage](./usage-and-settings) for how maximal displays quotas.
+- **Restart Codex and start a new session:** after turning **Codex** on or off in **Integrations → Apps**, quit and reopen Codex (CLI or Desktop) and start a new local session so it picks up the change.
+- **If the Codex card says &ldquo;Manual cleanup required&rdquo;:** open `~/.codex/config.toml`, remove the `# >>> maximal codex start >>>` … `# <<< maximal codex end <<<` section, and click **Re-scan**.
 
-## My tool suddenly can't authenticate
+## &ldquo;Enabling this app was refused&rdquo;
 
-The key that maximal generates automatically **changes every time the app restarts**. Any tool that saved the old key will start failing after a restart.
+If an app already has its own custom gateway settings configured, maximal won&rsquo;t overwrite them. The card in **Integrations → Apps** tells you which setting conflicted so you can clear it in that tool first, then flip the switch on again.
 
-The fix: create a **stable, named key** in the **API clients** section and use that for anything long-running. Named keys don't change. See [API keys](./usage-and-settings) for the steps.
+## Work IQ is waiting or hanging in Claude Desktop
 
-## A tool won't connect at all
+Sometimes **Work IQ** (or another MCP server) asks you to fill out a form or open a sign-in link during a request. Because Claude Desktop can&rsquo;t show that prompt itself, maximal holds it for you:
 
-maximal doesn't set up every tool automatically.
-
-- maximal auto-detects **Claude Code** and **Claude Desktop (Cowork mode)**. Flip their switch in the **Apps** section and maximal wires them up.
-- **Codex**, **opencode**, and any other Anthropic- or OpenAI-SDK client you point at maximal yourself. See [Connect your tools](./connect-your-tools) for per-tool steps, and the [For developers](#for-developers) section below for the address and key details.
-- **Copilot CLI** appears in **Apps** with a coming-soon label — there's no switch yet.
-
-## "Enabling this app was refused"
-
-Turn an app on, and maximal might back off with a warning. That means the app already has its own address or key helper configured, and maximal won't overwrite settings you (or your admin) put there.
-
-To fix it, clear the conflicting setting from that tool's own config, then flip the switch again. The card explains exactly what conflicted.
-
-## Where are the logs?
-
-Open the **Logs** section. maximal keeps daily-rotated, per-handler request logs (7 days by default) and gives you a reveal-folder button and tail hints. It shows the paths for your platform.
-
-For a fuller picture, open the **Diagnostics** section. It shows your effective config and where each secret comes from (env, file, config, or unset — never the values themselves). It also shows your version, git SHA, and branch. That's the best thing to copy when you report an issue.
+1. Open **Integrations → Requests** (or click **Answer requests…** from maximal&rsquo;s menu bar or Dock icon).
+2. Click **Answer…** or **Review link…** before the 5-minute timer runs out.
 
 ## Frequently asked questions
 
-**Do I need an API key from Anthropic or OpenAI?**
-No. That's the point — maximal runs your tools on the models in your GitHub Copilot plan. No separate keys, no second bill.
+**Do I need an Anthropic or OpenAI API key?**
+No. maximal uses the models included in your GitHub Copilot subscription.
+
+**Which tools have a one-click switch?**
+**Claude Code**, **Claude Desktop**, and **OpenAI Codex (CLI and Desktop)** all have switches in **Integrations → Apps**.
+
+**How do I share Work IQ across Claude Code and Claude Desktop?**
+In **Integrations → MCP servers**, click **Add** on **Work IQ** under **Available to add** (if Work IQ isn&rsquo;t installed yet, copy the install command on the card first and click **Re-scan**), flip it **On**, and check **Claude Code** and **Claude Desktop**.
 
 **Does signing out of maximal log me out of GitHub?**
-No. Signing out or removing an account only forgets maximal's own saved token. maximal leaves your `gh` CLI login and your GitHub browser session untouched.
+No. Signing out or removing an account in **Account** only removes maximal&rsquo;s saved login.
 
-**Can I use more than one GitHub account?**
-Yes. maximal keeps a multi-account registry — add several accounts and quick-switch between them. Switching restarts maximal into the account you picked.
-
-**I have no API keys listed. Is that a problem?**
-It's a security note to be aware of: when no keys exist, maximal accepts **all** local requests without a client key. If that's not what you want, create a key in **API clients**. See [API keys](./usage-and-settings).
-
-**Which platforms do you support?**
-macOS on Apple Silicon is the primary target, and the Homebrew formula is Apple-Silicon-only. Windows is coming soon. On other platforms you can run from source or a release binary. Details in [Install maximal](./install).
-
-**Which models can I use?**
-Whatever your Copilot plan includes. The **Models** section lists them live, grouped by kind, with a refresh button. See [Models](./usage-and-settings).
-
-**Why does it feel rough around the edges?**
-maximal is pre-alpha. We've verified it end-to-end against a real enterprise deployment, but expect some sharp corners — and please report what you find.
-
-## Still stuck?
-
-Grab the details from **Diagnostics** (version, branch, secret sources) and the relevant lines from **Logs**, then open an issue. Those two together are usually enough to sort out what's happening fast.
+**How do I hide maximal from my Dock or taskbar?**
+Open the **Appearance** tab and turn off **Always show in Dock / taskbar**. maximal will stay in your menu bar or system tray when its window is closed.
 
 ---
 
-## For developers
+## Want to know a bit more?
 
-### Pointing a tool by hand
-
-Not every tool auto-configures, so Codex, opencode, and other Anthropic- or OpenAI-SDK clients need the address and a key. Grab both from the **Endpoint** section:
-
-- **Anthropic-compatible** base URL: `http://localhost:4141`
-- **OpenAI-compatible** base URL: `http://localhost:4141/v1`
-- Send your key as `x-api-key` or `Authorization: Bearer <key>`.
-
-The canonical local address is `http://localhost:4141`. Always read the exact values from the **Endpoint** section rather than older notes — some early docs mention a different port. See [Connect your tools](./connect-your-tools) for per-tool steps.
-
-### GitHub Enterprise
-
-The default is public GitHub Copilot, so Enterprise accounts need `COPILOT_API_ENTERPRISE_URL` pointed at your deployment. If that isn't set, maximal reaches public GitHub and Copilot rejects your Enterprise requests.
-
-### Web search says "unavailable"
-
-maximal can resolve web-search and web-fetch requests that Copilot doesn't handle natively, but live **search** needs a backend. Set `OLLAMA_API_KEY` to enable it. Without that key, search reports unavailable — in-process **fetch** still works.
+- **Connecting manual tools (`opencode`, scripts) across restarts:** the default key shown in **Models & keys → Endpoint** changes when maximal restarts. For any tool you configure by hand, click **+ Add a connection** under **Models & keys → API keys** to create a named key that never changes.
+- **GitHub Enterprise (`*.ghe.com`):** if your company uses a custom GitHub Enterprise Cloud data-residency URL, set `COPILOT_API_ENTERPRISE_URL` in your environment before signing in.
+- **CLI diagnostics:** if you installed the command-line tool, run `maximal setup` to test your connection or `maximal debug` to print a secret-safe diagnostic summary.

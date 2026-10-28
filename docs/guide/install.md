@@ -1,69 +1,59 @@
 # Install maximal
 
-maximal is a small desktop app that lets your AI coding tools run on the models in your GitHub Copilot plan. Install it, sign in with GitHub, and switch on the tools you want. No extra API keys, no second bill.
+Install maximal on macOS, Windows, or Linux, then head to [Connect GitHub Copilot](./connect-copilot) and [Connect your tools](./connect-your-tools).
 
-This page covers getting maximal onto your machine. Once it's installed, head to [Sign in](./connect-copilot) and [Connect your tools](./connect-your-tools).
+## What you need
 
-## Before you start
+- **An active GitHub Copilot subscription** (Individual, Business, or Enterprise).
+- **macOS on Apple Silicon** (M1 or newer), **Windows 10/11 (64-bit)**, or **Linux** (`x86_64` or `arm64`).
 
-You'll need:
+## Install on macOS
 
-- **A GitHub Copilot plan.** maximal runs your tools on the models in your existing Copilot subscription, so you need an active plan. GitHub Enterprise works too.
-- **A Mac with Apple Silicon** (M1 or newer) for the app. Windows is coming soon.
+1. Download the `.dmg` from the [home page](https://stuffbucket.github.io/maximal-site/) or the [releases page](https://github.com/stuffbucket/maximal/releases).
+2. Open the `.dmg` and drag **maximal** into your **Applications** folder.
+3. Open **maximal** from Applications. It stays in your menu bar and Dock while running.
 
-That's it. You don't need any Anthropic or OpenAI API keys.
+> **First launch on macOS:** if macOS blocks the app because it is a pre-release build, right-click **maximal** in Applications, choose **Open**, and confirm.
 
-## Install on your Mac
+## Install on Windows
 
-1. Download the latest `.dmg` from the [releases page](https://github.com/stuffbucket/maximal/releases).
-2. Open the `.dmg` and drag **maximal** into your Applications folder.
-3. Open maximal. It runs quietly in the background — click its icon any time to open it.
+1. Download the Windows installer (`.exe` or `.msi`) from the [home page](https://stuffbucket.github.io/maximal-site/) or the [releases page](https://github.com/stuffbucket/maximal/releases).
+2. Run the installer and open **maximal** from the Start menu.
+3. maximal stays in your system tray and taskbar while running.
 
-> **First launch on macOS:** because maximal is pre-alpha and not yet notarized, macOS may warn you the first time you open it. If it does, right-click the app and choose **Open**, then confirm. You only need to do this once.
+> **First launch on Windows:** if SmartScreen shows &ldquo;Windows protected your PC,&rdquo; click **More info** and then **Run anyway**.
+
+## Install on Linux
+
+On Linux, maximal runs its local service alongside the same unified Settings and Dashboard interface in your browser (`http://127.0.0.1:4141/ui/settings/`), including full support for Claude Code, Codex, and the Microsoft **Work IQ** MCP broker:
+
+1. Clone the repository and build the UI and isolated MCP broker with [Bun](https://bun.sh) and [mise](https://mise.jdx.dev):
+   ```sh
+   git clone https://github.com/stuffbucket/maximal
+   cd maximal
+   bun install --frozen-lockfile --ignore-scripts
+   (cd shell && bun install --frozen-lockfile --ignore-scripts)
+   bun run ensure:ui-embed
+   bun run build:ui
+   bun run build
+   mise -C packages/mcp-broker exec -- pnpm install --frozen-lockfile
+   mise -C packages/mcp-broker exec -- pnpm build
+   ```
+2. Start maximal and open `http://127.0.0.1:4141/ui/settings/` in your browser:
+   ```sh
+   HOST=127.0.0.1 NODE_ENV=production MAXIMAL_UI_DIST="$PWD/shell/dist/ui" \
+     bun dist/main.js start --port 4141
+   ```
 
 ## Next steps
 
-1. **[Sign in](./connect-copilot)** with your GitHub account so maximal can use your Copilot plan.
-2. **[Connect your tools](./connect-your-tools)** — flip a switch for Claude Code and Claude Desktop.
-3. **[Get started](./overview)** with your first request.
-
-Something not working? See [Troubleshooting](./troubleshooting).
+1. **[Connect GitHub Copilot](./connect-copilot)** on the **Account** tab.
+2. **[Connect your tools](./connect-your-tools)** on the **Integrations** tab.
 
 ---
 
-## For developers
+## Want to know a bit more?
 
-### Windows and other platforms
-
-- **Windows** — support is on the way. The app already speaks Windows in a few places, but there's no packaged installer yet. Check the [releases page](https://github.com/stuffbucket/maximal/releases) for the latest.
-- **Linux and everything else** — grab a release binary from the [releases page](https://github.com/stuffbucket/maximal/releases), or run from source with [Bun](https://bun.sh). Clone the repo and start it:
-
-  ```sh
-  git clone https://github.com/stuffbucket/maximal
-  cd maximal
-  bun install
-  bun start
-  ```
-
-### Homebrew CLI
-
-Prefer the terminal? Install the `maximal` command-line tool with Homebrew:
-
-```sh
-brew install stuffbucket/tap/maximal
-```
-
-From there you can sign in and start the local service straight from your terminal:
-
-```sh
-maximal auth      # sign in with GitHub
-maximal           # start the service
-```
-
-Most people install both the app and the CLI eventually, but either one gets you running.
-
-### Confirm it's running
-
-Once you start maximal, it serves a local address on your machine — by default `http://localhost:4141`. Open the app (or run `maximal`) and you should see it listening. You can point any Anthropic- or OpenAI-compatible tool at that address.
-
-You're not done until you sign in, though — until then the service runs but can't reach Copilot's models.
+- **macOS CLI (Homebrew):** if you prefer the terminal on macOS, run `brew install stuffbucket/tap/maximal` and then `maximal setup` to sign in and verify your connection.
+- **Windows PowerShell:** you can also install via PowerShell with `irm https://github.com/stuffbucket/maximal/releases/latest/download/install.ps1 | iex`.
+- **Work IQ on Linux:** on Linux, run maximal under your normal desktop user session with a running D-Bus session and unlocked Secret Service keyring (such as GNOME Keyring) so Work IQ (`@microsoft/workiq`) can access its credential store via `DBUS_SESSION_BUS_ADDRESS`.

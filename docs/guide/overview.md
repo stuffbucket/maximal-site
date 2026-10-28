@@ -1,49 +1,30 @@
 # What is maximal?
 
-If you pay for GitHub Copilot, you already have access to top AI models — Claude, GPT, and more. maximal lets the AI tools you already use run on those models, so you don't pay for a second AI subscription on top of Copilot.
+maximal is an app for macOS, Windows, and Linux that lets you run **Claude Code**, **Claude Desktop**, and **OpenAI Codex** on the models included in your **GitHub Copilot** subscription.
 
-Here's the whole idea: you install a small desktop app, sign in with GitHub once, and switch on the tools you want. From then on, they run on your Copilot plan.
+If you or your employer already pay for GitHub Copilot, you can use those tools without buying separate Anthropic or OpenAI subscriptions. You can also turn on Microsoft **Work IQ** once in maximal to share Microsoft 365 context across your apps.
 
-## Who it's for
+## What you need
 
-- You have a **GitHub Copilot** plan — your own, or one from work or GitHub Enterprise.
-- You use an AI coding tool like **Claude Code**, **Claude Desktop**, **Codex**, or **opencode** — or you'd like to.
-- You're on a **Mac**. (Windows is coming soon.)
+- **An active GitHub Copilot plan** (Individual, Business, or Enterprise).
+- **macOS (Apple Silicon)**, **Windows 10/11 (64-bit)**, or **Linux**.
+- One or more tools you want to use: **Claude Code**, **Claude Desktop**, **Codex**, or **Work IQ**.
 
-You don't need to be a developer, and you don't need any other accounts or keys. If you have Copilot, you have everything maximal needs.
+## How setup works
 
-## Get set up (about five minutes)
+1. **[Install maximal](./install.md).** Open the desktop app on macOS or Windows, or start maximal on Linux and open its local web interface.
+2. **[Sign in to GitHub](./connect-copilot.md).** On the **Account** tab, connect your GitHub account with one click if you already use the GitHub CLI, or sign in with a short browser code.
+3. **[Turn on your apps and Work IQ](./connect-your-tools.md).** On the **Integrations** tab:
+   - Under **Apps**, flip on the switches for **Claude Code**, **Claude Desktop**, and **Codex**.
+   - Under **MCP servers**, add **Work IQ** and flip it on to share it across Claude Code and Claude Desktop.
+   - Under **Requests**, answer form or sign-in link prompts when an app like Claude Desktop cannot show them directly.
 
-1. **Install maximal.** Download the maximal app and drag it into your Applications folder, then open it. → [Install maximal](./install.md)
-2. **Sign in with GitHub.** Open maximal, click *Sign in with GitHub*, and approve the short code it shows you. This is what connects your Copilot plan. → [Connect GitHub Copilot](./connect-copilot.md)
-3. **Switch on your tools.** In the **Apps** section, flip the switch next to a tool like Claude Code. maximal sets it up for you. → [Connect your tools](./connect-your-tools.md)
-
-Now open your tool and use it the way you always have. It's running on your Copilot models.
-
-## One heads-up: it's early
-
-maximal is pre-alpha. It works — it's been used against a real company's GitHub Enterprise setup — but you'll hit the occasional rough edge. If something looks off, [Troubleshooting](./troubleshooting.md) has the common fixes.
+The first time a request goes through maximal, you&rsquo;ll get a one-time notification confirming that your tool is connected.
 
 ---
 
-## For developers
+## Want to know a bit more?
 
-Want to wire things up yourself, or connect a tool that isn't in the **Apps** list (like Codex, opencode, or your own scripts)? maximal runs a small local server that speaks the Anthropic and OpenAI APIs, so any compatible tool can point at it:
+Behind the scenes, maximal runs a small local server on your computer (`http://127.0.0.1:4141`). When you flip a switch in **Integrations**, maximal points that tool&rsquo;s local settings at maximal and translates its requests to your GitHub Copilot plan. Turning the switch off restores your previous settings.
 
-- Anthropic-compatible: `http://localhost:4141`
-- OpenAI-compatible: `http://localhost:4141/v1`
-
-Set your tool's base URL to that address and use a key from the **Endpoint** section. For Claude Code, that looks like:
-
-```sh
-export ANTHROPIC_BASE_URL=http://localhost:4141
-export ANTHROPIC_AUTH_TOKEN=<your-maximal-key>
-```
-
-Prefer the terminal? There's a `maximal` command-line tool too:
-
-```sh
-brew install stuffbucket/tap/maximal
-```
-
-Full details are in [Connect your tools](./connect-your-tools.md) and [How maximal works](./how-it-works.md).
+If you want to connect another tool manually (like `opencode` or your own scripts), or prefer using the command line (`brew install stuffbucket/tap/maximal`), see the bottom of [Connect your tools](./connect-your-tools.md) and [How maximal works](./how-it-works.md).

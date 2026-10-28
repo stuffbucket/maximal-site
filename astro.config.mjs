@@ -19,6 +19,18 @@ function rewriteGuideLinks() {
       if (/^\.\/README(?:\.md)?$/.test(h)) node.properties.href = `${base}/guide`;
       else if ((m = h.match(/^\.\/([\w-]+)(?:\.md)?(#[\w-]+)?$/)))
         node.properties.href = `${base}/guide/${m[1]}${m[2] || ""}`;
+    } else if (
+      node.tagName === "img" &&
+      node.properties &&
+      typeof node.properties.src === "string"
+    ) {
+      const s = node.properties.src;
+      const m = s.match(/^(?:\.\.\/\.\.\/public)?\/screenshots\/(.+)$/);
+      if (m) {
+        node.properties.src = `${base}/screenshots/${m[1]}`;
+        node.properties.loading ??= "lazy";
+        node.properties.decoding ??= "async";
+      }
     }
     (node.children || []).forEach(walk);
   };
