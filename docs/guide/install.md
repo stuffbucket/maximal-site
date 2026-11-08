@@ -27,8 +27,6 @@ Install maximal on macOS, Windows, or Linux, then head to [Connect GitHub Copilo
 
 maximal installs from its own signed apt repository on **Debian 13**, **Ubuntu 24.04**, and **Ubuntu 26.04**, on `amd64` and `arm64`.
 
-> **Packages are available from 0.5.0.** Until 0.5.0 ships, use `Suites: rc` instead of `Suites: stable` below.
-
 1. Add the repository and install:
    ```sh
    sudo install -d -m 0755 /etc/apt/keyrings
