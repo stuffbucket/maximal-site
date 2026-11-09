@@ -34,12 +34,18 @@ adds what maximal owns on top:
 - `/apt/*`, the signed apt repository;
 - `/maximal/`, the redirect for old app builds.
 
-maximal decides when mxml.sh updates; merging here only updates the preview.
-A maximal deploy builds whatever is on `main` at that moment:
+maximal decides when mxml.sh updates, and tags here decide what it shows.
+Merging to `main` only updates the preview. A maximal deploy builds the newest
+tag here whose version is at or below the stable version it is publishing:
 
-- **A maximal release** redeploys with the current `main`.
-- **An editorial update** goes live when someone runs maximal's *Deploy Pages*
-  workflow by hand (`gh workflow run deploy-pages.yml -R stuffbucket/maximal`).
+- **Content for a release:** tag `v0.5.3` whenever it's ready. It goes live
+  when maximal 0.5.3 becomes stable. Release candidates don't change the
+  content.
+- **An editorial update between releases:** tag `v0.5.2.1`, then run maximal's
+  *Deploy Pages* workflow (`gh workflow run deploy-pages.yml -R
+  stuffbucket/maximal`), or let the next release pick it up.
+- **No tag at or below the stable version** fails the deploy, and mxml.sh stays
+  as it was.
 
 The download buttons and version pills are baked from maximal's
 `site/public/updates/manifest.json` at build time, then refreshed in the

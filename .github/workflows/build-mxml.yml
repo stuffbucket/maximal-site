@@ -6,22 +6,34 @@ name: Build mxml.sh
 # CNAME, /updates/*, the signed /apt repository and the legacy /maximal/
 # redirect. This workflow runs in the caller's context, so `github.repository`
 # and `github.sha` name the maximal commit being deployed.
+#
+# Which content goes live is chosen by tag, not by main. The build takes the
+# newest tag here whose version is at or below the stable version in the
+# caller's update manifest:
+#   v0.5.3    content for 0.5.3, ready ahead of time; live once 0.5.3 is stable
+#   v0.5.2.1  an editorial revision for 0.5.2; live on maximal's next deploy
+# Release candidates don't move the stable version, so they don't move the
+# content. No matching tag fails the build, which leaves mxml.sh as it was.
 
 on:
   workflow_call:
     inputs:
       manifest-path:
-        description: The caller's update manifest, baked into the download buttons and version pills.
+        description: The caller's update manifest. Its stable version picks the content tag, and it is baked into the download buttons and version pills.
         type: string
         required: true
       ref:
-        description: The maximal-site ref to build.
+        description: Build this maximal-site ref instead of the tag matching the stable version (testing or rollback).
         type: string
-        default: main
+        default: ""
       artifact-name:
         description: Name of the uploaded dist artifact.
         type: string
         default: content
+    outputs:
+      ref:
+        description: The maximal-site ref that was built.
+        value: ${{ jobs.build.outputs.ref }}
 
 permissions:
   contents: read
@@ -34,33 +46,61 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    outputs:
+      ref: ${{ steps.content.outputs.ref }}
     env:
       TURBO_TELEMETRY_DISABLED: 1
     steps:
+      - name: Fetch the caller's update manifest
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.sha }}
+          MANIFEST_PATH: ${{ inputs.manifest-path }}
+        run: |
+          gh api "repos/$REPO/contents/$MANIFEST_PATH?ref=$SHA" \
+            -H "Accept: application/vnd.github.raw" > "$RUNNER_TEMP/manifest.json"
+          jq -e '.channels.stable.version' "$RUNNER_TEMP/manifest.json" >/dev/null
+
+      - name: Pick the content tag
+        id: content
+        env:
+          REF: ${{ inputs.ref }}
+        run: |
+          if [ -n "$REF" ]; then
+            echo "Building the requested ref $REF."
+            echo "ref=$REF" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          version=$(jq -r '.channels.stable.version' "$RUNNER_TEMP/manifest.json")
+          tag=$(
+            git ls-remote --tags --refs https://github.com/stuffbucket/maximal-site 'refs/tags/v*' \
+              | sed 's#.*refs/tags/##' \
+              | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+(\.[0-9]+)?$' \
+              | while read -r t; do
+                  release=$(echo "${t#v}" | cut -d. -f1-3)
+                  newest=$(printf '%s\n%s\n' "$release" "$version" | sort -V | tail -1)
+                  [ "$newest" = "$version" ] && echo "$t"
+                done \
+              | sort -V | tail -1 || true
+          )
+          if [ -z "$tag" ]; then
+            echo "::error::No maximal-site tag at or below stable $version. Tag the content (e.g. v$version) in stuffbucket/maximal-site."
+            exit 1
+          fi
+          echo "Stable is $version; building maximal-site $tag."
+          echo "ref=$tag" >> "$GITHUB_OUTPUT"
+
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: stuffbucket/maximal-site
-          ref: ${{ inputs.ref }}
+          ref: ${{ steps.content.outputs.ref }}
           persist-credentials: false
 
-      - name: Check out the caller's update manifest
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          repository: ${{ github.repository }}
-          ref: ${{ github.sha }}
-          path: .caller
-          sparse-checkout: ${{ inputs.manifest-path }}
-          sparse-checkout-cone-mode: false
-          persist-credentials: false
-
-      # The live manifest the caller is about to deploy, so the baked versions
-      # match it rather than this repo's older committed copy.
+      # The manifest the caller is about to deploy, so the baked versions match
+      # it rather than the tag's older committed copy.
       - name: Use the caller's update manifest
-        env:
-          MANIFEST: .caller/${{ inputs.manifest-path }}
-        run: |
-          cp "$MANIFEST" public/updates/manifest.json
-          rm -rf .caller
+        run: cp "$RUNNER_TEMP/manifest.json" public/updates/manifest.json
 
       - uses: ./.github/actions/setup
 
