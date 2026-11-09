@@ -11,6 +11,7 @@
   "tasks": {
     "build:site": {
       "outputs": ["dist/**"],
+      "env": ["SITE_URL", "SITE_BASE"],
       "inputs": ["$TURBO_DEFAULT$", "docs/guide/**"]
     },
     "test:site": {

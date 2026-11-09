@@ -1,10 +1,13 @@
-// Post-build guard: assert the built dist/ will render correctly once the
-// GitHub Pages deploy action publishes it — so a regression FAILS THE DEPLOY
-// instead of silently shipping a broken page. Run after `astro build`, before
-// the artifact upload (wired into .github/workflows/deploy-pages.yml).
+// Post-build guard: assert the built dist/ will render correctly once it is
+// published — so a regression FAILS THE BUILD instead of silently shipping a
+// broken page. Run after `astro build`, before any artifact upload.
 //
-// GitHub Pages serves this repository below /maximal-site/. Root-relative URLs
-// outside that base render locally but 404 after deployment, so reject them.
+// The same build serves two places (see astro.config.mjs):
+//   - this repo's preview at stuffbucket.github.io/maximal-site (the defaults);
+//   - mxml.sh at the root (SITE_URL=https://mxml.sh SITE_BASE=/), assembled by
+//     stuffbucket/maximal's Pages deploy, which adds CNAME, /updates and /apt.
+// Root-relative URLs outside the base render locally but 404 once deployed,
+// so reject them, and reject anything left pointing at the other base.
 //
 // Exits non-zero with a precise message on any violation.
 import { readdirSync, readFileSync, existsSync, statSync } from "node:fs";
@@ -13,8 +16,11 @@ import { dirname, join, resolve } from "node:path";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const DIST = resolve(HERE, "..", "dist");
-const SITE_URL = "https://stuffbucket.github.io/maximal-site/";
-const BASE = "/maximal-site";
+const SITE = process.env.SITE_URL || "https://stuffbucket.github.io";
+const BASE = (process.env.SITE_BASE ?? "/maximal-site").replace(/\/$/, "");
+const SITE_URL = `${SITE}${BASE}/`;
+const CANONICAL_ORIGIN = "https://mxml.sh";
+const isCanonicalBuild = SITE_URL === `${CANONICAL_ORIGIN}/`;
 
 const errors = [];
 
@@ -28,25 +34,47 @@ function walk(dir, test, out = []) {
   return out;
 }
 
-// A GitHub Pages project URL is not a custom domain and must not emit CNAME.
-const cnamePath = join(DIST, "CNAME");
-if (existsSync(cnamePath)) {
-  errors.push("dist/CNAME exists, but project Pages must use the github.io URL.");
+// The custom domain belongs to stuffbucket/maximal's deploy, which adds CNAME.
+if (existsSync(join(DIST, "CNAME"))) {
+  errors.push("dist/CNAME exists, but the custom domain is added by stuffbucket/maximal's deploy.");
 }
 
-// Every root-relative HTML asset or route must stay inside the project base.
+// Every root-relative HTML asset or route must stay inside the base, and no
+// HTML or CSS may still name the preview's /maximal-site/ path in a root build.
 const html = walk(DIST, (n) => n.endsWith(".html"));
+const css = existsSync(join(DIST, "_astro"))
+  ? walk(join(DIST, "_astro"), (n) => n.endsWith(".css"))
+  : [];
 const rootUrlRe = /(?:src|href)="(\/(?!\/)[^"]*)"/g;
 for (const file of html) {
+  const rel = file.slice(DIST.length + 1);
   const body = readFileSync(file, "utf8");
-  const badUrls = [...body.matchAll(rootUrlRe)]
-    .map((match) => match[1])
-    .filter((url) => url !== BASE && !url.startsWith(`${BASE}/`));
-  if (badUrls.length > 0) {
-    const rel = file.slice(DIST.length + 1);
-    errors.push(
-      `${rel}: root-relative URL(s) escape ${BASE}: ${[...new Set(badUrls)].join(", ")}`,
-    );
+  if (BASE) {
+    const badUrls = [...body.matchAll(rootUrlRe)]
+      .map((match) => match[1])
+      .filter((url) => url !== BASE && !url.startsWith(`${BASE}/`));
+    if (badUrls.length > 0) {
+      errors.push(
+        `${rel}: root-relative URL(s) escape ${BASE}: ${[...new Set(badUrls)].join(", ")}`,
+      );
+    }
+  }
+
+  if (!body.includes(`<link rel="canonical" href="${CANONICAL_ORIGIN}/`)) {
+    errors.push(`${rel}: no canonical link to ${CANONICAL_ORIGIN}.`);
+  }
+  const noindex = body.includes('<meta name="robots" content="noindex"');
+  if (isCanonicalBuild && noindex) {
+    errors.push(`${rel}: the ${CANONICAL_ORIGIN} build must not be noindex.`);
+  } else if (!isCanonicalBuild && !noindex) {
+    errors.push(`${rel}: the preview build must be noindex so it doesn't compete with ${CANONICAL_ORIGIN}.`);
+  }
+}
+if (!BASE) {
+  for (const file of [...html, ...css]) {
+    if (readFileSync(file, "utf8").includes("/maximal-site/")) {
+      errors.push(`${file.slice(DIST.length + 1)}: still references /maximal-site/ in a root build.`);
+    }
   }
 }
 
@@ -55,32 +83,13 @@ if (guidePages.length < 2) {
   errors.push("dist/guide contains no routed guide pages.");
 }
 
-// 3. The core styling/entry assets actually exist (a build that emitted zero
-//    CSS would "render" but be blank — belt-and-braces).
-const astroDir = join(DIST, "_astro");
-const css = existsSync(astroDir)
-  ? walk(astroDir, (n) => n.endsWith(".css"))
-  : [];
+// The core styling/entry assets actually exist (a build that emitted zero
+// CSS would "render" but be blank — belt-and-braces).
 if (css.length === 0) {
   errors.push("dist/_astro contains no .css — the styled build didn't emit.");
 }
 if (!existsSync(join(DIST, "favicon.svg"))) {
   errors.push("dist/favicon.svg is missing.");
-}
-
-// The historical /maximal/ path inside the project redirects to its root.
-const redirectPath = join(DIST, "maximal", "index.html");
-if (!existsSync(redirectPath)) {
-  errors.push(
-    "dist/maximal/index.html is missing — the legacy /maximal/ path (old app DOWNLOAD_URL) would 404. It lives at public/maximal/index.html.",
-  );
-} else {
-  const body = readFileSync(redirectPath, "utf8");
-  if (!body.includes(`url=${BASE}/`) || !body.includes(`location.replace("${BASE}/"`)) {
-    errors.push(
-      `dist/maximal/index.html does not redirect to ${BASE}/.`,
-    );
-  }
 }
 
 if (errors.length > 0) {
@@ -93,5 +102,5 @@ if (errors.length > 0) {
 }
 
 console.log(
-  `verify-dist: OK — no CNAME, ${html.length} HTML file(s) stay within ${BASE}, ${css.length} CSS asset(s) present.`,
+  `verify-dist: OK — ${SITE_URL}: no CNAME, ${html.length} HTML file(s) stay within ${BASE || "/"}, ${css.length} CSS asset(s) present.`,
 );

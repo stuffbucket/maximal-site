@@ -1,0 +1,82 @@
+name: Build mxml.sh
+
+# The production build of this site, called by stuffbucket/maximal's Pages
+# deploy (`uses: stuffbucket/maximal-site/.github/workflows/build-mxml.yml@main`).
+# maximal keeps the domain and adds what it owns on top of this artifact:
+# CNAME, /updates/*, the signed /apt repository and the legacy /maximal/
+# redirect. This workflow runs in the caller's context, so `github.repository`
+# and `github.sha` name the maximal commit being deployed.
+
+on:
+  workflow_call:
+    inputs:
+      manifest-path:
+        description: The caller's update manifest, baked into the download buttons and version pills.
+        type: string
+        required: true
+      ref:
+        description: The maximal-site ref to build.
+        type: string
+        default: main
+      artifact-name:
+        description: Name of the uploaded dist artifact.
+        type: string
+        default: content
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash -eo pipefail {0}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      TURBO_TELEMETRY_DISABLED: 1
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: stuffbucket/maximal-site
+          ref: ${{ inputs.ref }}
+          persist-credentials: false
+
+      - name: Check out the caller's update manifest
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: ${{ github.repository }}
+          ref: ${{ github.sha }}
+          path: .caller
+          sparse-checkout: ${{ inputs.manifest-path }}
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+
+      # The live manifest the caller is about to deploy, so the baked versions
+      # match it rather than this repo's older committed copy.
+      - name: Use the caller's update manifest
+        env:
+          MANIFEST: .caller/${{ inputs.manifest-path }}
+        run: |
+          cp "$MANIFEST" public/updates/manifest.json
+          rm -rf .caller
+
+      - uses: ./.github/actions/setup
+
+      - name: Build for mxml.sh
+        env:
+          SITE_URL: https://mxml.sh
+          SITE_BASE: /
+        run: pnpm build
+
+      # The caller serves /updates itself; don't ship a second copy.
+      - name: Drop the endpoints the caller serves
+        run: rm -rf dist/updates
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: ${{ inputs.artifact-name }}
+          path: dist
+          if-no-files-found: error
+          retention-days: 1

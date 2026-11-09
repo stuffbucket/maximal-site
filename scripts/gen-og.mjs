@@ -27,7 +27,8 @@ if (process.env.OG_OVERWRITE !== "1") {
 
 const { chromium } = await import("playwright");
 
-const TARGET = process.env.OG_URL ?? "http://localhost:4321/maximal-site/";
+const base = (process.env.SITE_BASE ?? "/maximal-site").replace(/\/$/, "");
+const TARGET = process.env.OG_URL ?? `http://localhost:4321${base}/`;
 const OUT = fileURLToPath(new URL("../public/og.png", import.meta.url));
 const W = 1200;
 const H = 630; // 1.91:1 — the standard Open Graph / large-summary card ratio

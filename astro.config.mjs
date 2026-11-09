@@ -3,7 +3,12 @@ import markdoc from "@astrojs/markdoc";
 import { readFileSync } from "node:fs";
 import { defineConfig } from "astro/config";
 
-const base = "/maximal-site";
+// The production build for mxml.sh runs in stuffbucket/maximal's Pages deploy
+// (through .github/workflows/build-mxml.yml) with SITE_URL=https://mxml.sh and
+// SITE_BASE=/. The defaults build this repo's own preview at
+// stuffbucket.github.io/maximal-site.
+const site = process.env.SITE_URL || "https://stuffbucket.github.io";
+const base = (process.env.SITE_BASE ?? "/maximal-site").replace(/\/$/, "");
 
 // A screenshot's size in CSS pixels (captures are @2x), read from its PNG
 // header, so the page reserves its space before the image loads.
@@ -56,16 +61,15 @@ function rewriteGuideLinks() {
   return (tree) => walk(tree);
 }
 
-// GitHub Pages serves this project repository under /maximal-site/. Keep the
-// base separate from the origin so a future custom domain can switch back to
-// root hosting without changing route code throughout the site.
+// Keep the base separate from the origin so the same route code serves both
+// the preview below /maximal-site/ and mxml.sh at the root.
 // The landing copy + page structure live in a Markdoc content collection
 // (src/content/landing/index.mdoc) rendered through custom tag-components.
 // index.astro stays a thin shell that resolves the release (lib/version.ts)
 // and passes it in as Markdoc variables, so the version logic is untouched.
 export default defineConfig({
-  site: "https://stuffbucket.github.io",
-  base,
+  site,
+  base: base || "/",
   output: "static",
   trailingSlash: "ignore",
   integrations: [markdoc()],
