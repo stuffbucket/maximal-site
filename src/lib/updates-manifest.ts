@@ -1,6 +1,8 @@
-// Schema + pure builder for the update manifest the project publishes at the
-// canonical, CDN-cached, no-auth URL:
-//   https://stuffbucket.github.io/maximal-site/updates/manifest.json
+// Read-side schema of the update manifest that stuffbucket/maximal publishes
+// at the canonical, CDN-cached, no-auth URL:
+//   https://mxml.sh/updates/manifest.json
+// maximal owns the writer (site/src/lib/updates-manifest.ts and
+// scripts/write-updates-manifest.ts there); keep these types in step with it.
 //
 // Two independent consumers read this file at runtime:
 //   1. The desktop updater (src/lib/update-check.ts → parseManifestVersion),
@@ -73,92 +75,4 @@ export interface UpdateManifest {
   /** Channel-keyed map (stable / beta / nightly / …). Adding a stream is a
    *  server-side write, no schema change. */
   channels: Record<string, ManifestChannel>;
-}
-
-const REPO_URL = "https://github.com/stuffbucket/maximal";
-
-/** A minimal asset shape — a subset of `src/lib/version.ts`'s ReleaseAsset
- *  — so this pure builder has no dependency on the build-time GitHub lookup. */
-export interface ManifestAsset {
-  name: string;
-  url: string;
-}
-
-/** Input describing one channel's resolved release, as the build already knows
- *  it (from resolveLatestRelease / resolveLatestPrerelease). */
-export interface ChannelReleaseInput {
-  /** The release tag, e.g. "v0.4.39". */
-  tag: string;
-  /** The release's assets (empty for a pinned version). */
-  assets: ManifestAsset[];
-}
-
-/** Match a release's assets to the well-known download slots. Mirrors the
- *  build-time selection in `src/lib/downloads.ts` so the site and the
- *  manifest advertise the same artifacts. An unmatched slot is omitted. */
-export function resolveDownloads(
-  assets: ManifestAsset[],
-): Partial<Record<DownloadSlot, ManifestDownload>> {
-  const downloads: Partial<Record<DownloadSlot, ManifestDownload>> = {};
-  const add = (slot: DownloadSlot, asset: ManifestAsset | null | undefined) => {
-    if (asset) downloads[slot] = { name: asset.name, url: asset.url };
-  };
-
-  add(
-    "macos-arm64-dmg",
-    assets.find((a) => /\.dmg$/i.test(a.name) && /arm64|aarch64/i.test(a.name)),
-  );
-  add(
-    "macos-x64-dmg",
-    assets.find((a) => /\.dmg$/i.test(a.name) && /x64|x86_64|intel/i.test(a.name)),
-  );
-  add(
-    "windows-x64-setup",
-    assets.find((a) => /-setup\.exe$/i.test(a.name)),
-  );
-  add(
-    "windows-x64-msi",
-    assets.find((a) => /\.msi$/i.test(a.name)),
-  );
-  add(
-    "windows-x64-zip",
-    assets.find((a) => /\.zip$/i.test(a.name) && /windows|win/i.test(a.name)),
-  );
-  add(
-    "windows-install-ps1",
-    assets.find((a) => /\.ps1$/i.test(a.name)),
-  );
-
-  return downloads;
-}
-
-/** Build one schema-2 channel entry from a resolved release. */
-export function buildChannel(input: ChannelReleaseInput): ManifestChannel {
-  const { tag, assets } = input;
-  const channel: ManifestChannel = {
-    version: tag.replace(/^v/, ""),
-    tag,
-    notes: `${REPO_URL}/releases/tag/${tag}`,
-  };
-  const downloads = resolveDownloads(assets);
-  if (Object.keys(downloads).length > 0) channel.downloads = downloads;
-  return channel;
-}
-
-/** Assemble the full schema-2 manifest from the channels that have a release.
- *  A channel key maps to null/undefined when that stream has no current release
- *  and is omitted (matching schema 1's "beta absent when no prerelease"). */
-export function buildManifest(
-  channels: Record<string, ChannelReleaseInput | null | undefined>,
-  generated: string = new Date().toISOString(),
-): UpdateManifest {
-  const out: Record<string, ManifestChannel> = {};
-  for (const [name, input] of Object.entries(channels)) {
-    if (input) out[name] = buildChannel(input);
-  }
-  return {
-    schema: MANIFEST_SCHEMA_VERSION,
-    generated,
-    channels: out,
-  };
 }

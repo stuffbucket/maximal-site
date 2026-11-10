@@ -9,7 +9,7 @@ Install maximal on macOS, Windows, or Linux, then head to [Connect GitHub Copilo
 
 ## Install on macOS
 
-1. Download the `.dmg` from the [home page](https://stuffbucket.github.io/maximal-site/) or the [releases page](https://github.com/stuffbucket/maximal/releases).
+1. Download the `.dmg` from the [home page](https://mxml.sh/) or the [releases page](https://github.com/stuffbucket/maximal/releases).
 2. Open the `.dmg` and drag **maximal** into your **Applications** folder.
 3. Open **maximal** from Applications. It stays in your menu bar and Dock while running.
 
@@ -17,7 +17,7 @@ Install maximal on macOS, Windows, or Linux, then head to [Connect GitHub Copilo
 
 ## Install on Windows
 
-1. Download the Windows installer (`.exe` or `.msi`) from the [home page](https://stuffbucket.github.io/maximal-site/) or the [releases page](https://github.com/stuffbucket/maximal/releases).
+1. Download the Windows installer (`.exe` or `.msi`) from the [home page](https://mxml.sh/) or the [releases page](https://github.com/stuffbucket/maximal/releases).
 2. Run the installer and open **maximal** from the Start menu.
 3. maximal stays in your system tray and taskbar while running.
 

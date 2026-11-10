@@ -1,18 +1,13 @@
-// Build-time release resolution, shared by the landing page (Hero/GetStarted via
-// lib/downloads.ts) and the update-manifest route (pages/updates/manifest.json.ts)
-// so the version they advertise can never drift apart.
+// Build-time release resolution for the landing page (Hero/GetStarted via
+// lib/downloads.ts).
 //
-// SOURCE OF TRUTH — the committed static manifest at
-// `public/updates/manifest.json`. As of issue #223 (Phase 4 of #218) the
-// build no longer queries the GitHub releases API: there is NO build-time
-// `GITHUB_TOKEN` lookup and NO `SITE_PIN_VERSION` knob. The committed manifest
-// IS the pin — updating what the site advertises is a data change (a manifest
-// write), exactly as the design doc (docs/decisions/site-runtime-version-manifest.md)
-// planned. release.yml's `manifest` job commits a fresh copy on every publish
-// via scripts/write-updates-manifest.ts, so this file stays current with no
-// unauthenticated API call, no rate limit, and a deterministic offline build.
-// The manifest is imported directly (Vite inlines it at build time), so the
-// baked SSR data is byte-derived from the very file public/ serves at runtime.
+// SOURCE OF TRUTH — the static manifest at `public/updates/manifest.json`.
+// stuffbucket/maximal's release.yml writes it (scripts/write-updates-manifest.ts)
+// and serves it at https://mxml.sh/updates/manifest.json. The mxml.sh build
+// (.github/workflows/build-mxml.yml) copies maximal's current file over this
+// one before building; the committed copy here only feeds the preview build.
+// The build makes no GitHub API call, so it is deterministic and offline.
+// The manifest is imported directly (Vite inlines it at build time).
 //
 // The site layers runtime hydration (#221) OVER this: hydrate-downloads.ts
 // re-fetches /updates/manifest.json in the browser so a release advertises
@@ -25,9 +20,7 @@ import { MANIFEST_SCHEMA_VERSION } from "./updates-manifest";
 // The committed static manifest is the build-time source of truth. Import it
 // directly so Vite inlines it at build time (a file-relative fs read via
 // import.meta.url does NOT survive Astro/Vite bundling — it resolved to the
-// wrong path and silently fell back to "no release"). The SAME file is served
-// verbatim from public/ at runtime (public/** wins the /updates/manifest.json
-// route collision), so the baked SSR data and the hydrated data agree.
+// wrong path and silently fell back to "no release").
 import rawManifest from "../../public/updates/manifest.json";
 
 export interface ReleaseAsset {
