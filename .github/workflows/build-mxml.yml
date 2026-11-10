@@ -1,7 +1,9 @@
 name: Build mxml.sh
 
 # The production build of this site, called by stuffbucket/maximal's Pages
-# deploy (`uses: stuffbucket/maximal-site/.github/workflows/build-mxml.yml@main`).
+# deploy, which pins it to a commit
+# (`uses: stuffbucket/maximal-site/.github/workflows/build-mxml.yml@<sha> # vX.Y.Z`).
+# A change here reaches mxml.sh only when maximal moves that pin.
 # maximal keeps the domain and adds what it owns on top of this artifact:
 # CNAME, /updates/*, the signed /apt repository and the legacy /maximal/
 # redirect. This workflow runs in the caller's context, so `github.repository`
