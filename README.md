@@ -26,8 +26,8 @@ for mxml.sh.
 
 mxml.sh stays stuffbucket/maximal's Pages site, because maximal's release
 pipeline produces the endpoints installed apps and apt rely on. Its deploy
-builds this repository's `main` through `.github/workflows/build-mxml.yml` and
-adds what maximal owns on top:
+builds a tagged version of this repository through
+`.github/workflows/build-mxml.yml` and adds what maximal owns on top:
 
 - `CNAME`;
 - `/updates/*`, read by installed apps' update checks;
@@ -45,12 +45,15 @@ tag here whose version is at or below the stable version it is publishing:
   *Deploy Pages* workflow. That redeploys mxml.sh without an app release:
 
   ```sh
-  git tag -f v0.5.2 && git push -f origin v0.5.2
+  git tag -f v0.5.2 <fix-commit> && git push -f origin v0.5.2
   gh workflow run deploy-pages.yml -R stuffbucket/maximal
   ```
 
-  A fourth component (`v0.5.2.1`) also works when the earlier tag should stay
-  as it was.
+  Name the commit: if `main` already holds content for the next release,
+  build the fix on a branch from `v0.5.2`, tag that, and merge it to `main`
+  too. A fourth component (`v0.5.2.1`) also works when the earlier tag should
+  stay as it was. The `publishing-mxml-content` skill in `.claude/skills/`
+  walks through each case.
 - **No tag at or below the stable version** fails the deploy, and mxml.sh stays
   as it was.
 
