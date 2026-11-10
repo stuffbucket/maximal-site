@@ -41,9 +41,16 @@ tag here whose version is at or below the stable version it is publishing:
 - **Content for a release:** tag `v0.5.3` whenever it's ready. It goes live
   when maximal 0.5.3 becomes stable. Release candidates don't change the
   content.
-- **An editorial update between releases:** tag `v0.5.2.1`, then run maximal's
-  *Deploy Pages* workflow (`gh workflow run deploy-pages.yml -R
-  stuffbucket/maximal`), or let the next release pick it up.
+- **A fix to the live content:** move the tag to the fix, then run maximal's
+  *Deploy Pages* workflow. That redeploys mxml.sh without an app release:
+
+  ```sh
+  git tag -f v0.5.2 && git push -f origin v0.5.2
+  gh workflow run deploy-pages.yml -R stuffbucket/maximal
+  ```
+
+  A fourth component (`v0.5.2.1`) also works when the earlier tag should stay
+  as it was.
 - **No tag at or below the stable version** fails the deploy, and mxml.sh stays
   as it was.
 
