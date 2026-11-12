@@ -2,7 +2,7 @@
 
 maximal is an app for macOS, Windows, and Linux that lets you run **Claude Code**, **Claude Desktop**, and **OpenAI Codex** on the models included in your **GitHub Copilot** subscription.
 
-If you or your employer already pay for GitHub Copilot, you can use those tools without buying separate Anthropic or OpenAI subscriptions. You can also turn on Microsoft **Work IQ** once in maximal to share Microsoft 365 context across your apps.
+If you or your employer already pay for GitHub Copilot, you can use those tools without buying separate Anthropic or OpenAI subscriptions. You can also turn on Microsoft **Work IQ** in maximal to give Claude Code your Microsoft 365 context.
 
 ## What you need
 
@@ -16,8 +16,7 @@ If you or your employer already pay for GitHub Copilot, you can use those tools 
 2. **[Sign in to GitHub](./connect-copilot.md).** On the **Account** tab, connect your GitHub account with one click if you already use the GitHub CLI, or sign in with a short browser code.
 3. **[Turn on your apps and Work IQ](./connect-your-tools.md).** On the **Integrations** tab:
    - Under **Apps**, flip on the switches for **Claude Code**, **Claude Desktop**, and **Codex**.
-   - Under **MCP servers**, add **Work IQ** and flip it on to share it across Claude Code and Claude Desktop.
-   - Under **Requests**, answer form or sign-in link prompts when an app like Claude Desktop cannot show them directly.
+   - Under **Connectors**, open **Work IQ**, switch it on, sign in with your Microsoft 365 account, and check **Claude Code**.
 
 The first time a request goes through maximal, you&rsquo;ll get a one-time notification confirming that your tool is connected.
 

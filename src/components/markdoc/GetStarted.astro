@@ -163,9 +163,9 @@ const readmeUrl = `${repoUrl}#readme`;
         Bring your Microsoft 365 context into your apps
       </h3>
       <p class="workiq-row__copy">
-        Enable Microsoft Work IQ once so Claude Desktop and Claude Code can
-        work with your mail, calendar, Teams threads, and SharePoint files, and
-        approve access when an app asks for it.
+        Turn on Microsoft Work IQ so Claude Code can work with your mail,
+        calendar, Teams threads, and SharePoint files. You choose what each of
+        its tools may do.
       </p>
       <p class="workiq-row__more">
         <a href={`${guideUrl}/connect-your-tools`}>
@@ -201,30 +201,19 @@ const readmeUrl = `${repoUrl}#readme`;
             </svg>
           Claude Code
         </span>
-        <span class="control-check">
-          <svg viewBox="0 0 14 14" aria-hidden="true">
-              <path
-                d="M3 7.2l2.5 2.5L11 4.2"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.8"
-                stroke-linecap="round"
-                stroke-linejoin="round"></path>
-            </svg>
-          Claude Desktop
-        </span>
       </p>
       <figure
-        class="request-card"
-        aria-label="A Work IQ sign-in request waiting in maximal"
+        class="permission-card"
+        aria-label="Work IQ's write and delete tools set to ask before every call"
       >
-        <p class="control-label">Work IQ sign-in request</p>
-        <p class="request-card__msg">
-          Sign in to Microsoft 365 to let Work IQ read your calendar.
+        <p class="control-label">Write/delete tools</p>
+        <p class="permission-card__msg">
+          You approve every call before it runs.
         </p>
-        <div class="request-card__actions" aria-hidden="true">
-          <span class="control-action control-action--quiet">Decline</span>
-          <span class="control-action">Sign in</span>
+        <div class="permission-card__actions" aria-hidden="true">
+          <span class="control-action control-action--quiet">Allowed</span>
+          <span class="control-action">Asks</span>
+          <span class="control-action control-action--quiet">Blocked</span>
         </div>
       </figure>
     </div>
@@ -763,7 +752,7 @@ const readmeUrl = `${repoUrl}#readme`;
     gap: var(--space-4);
   }
 
-  .request-card {
+  .permission-card {
     margin: var(--space-2) 0 0;
     padding: var(--space-4);
     display: grid;
@@ -774,7 +763,7 @@ const readmeUrl = `${repoUrl}#readme`;
     border-radius: var(--radius-card);
   }
 
-  .request-card__msg {
+  .permission-card__msg {
     margin: 0;
     font-family: var(--font-body);
     font-size: var(--text-sm);
@@ -782,7 +771,7 @@ const readmeUrl = `${repoUrl}#readme`;
     color: var(--text-muted);
   }
 
-  .request-card__actions {
+  .permission-card__actions {
     display: flex;
     justify-content: flex-end;
     gap: var(--space-2);

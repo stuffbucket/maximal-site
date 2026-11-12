@@ -20,12 +20,12 @@ export const GUIDE_NAV = [
   {
     slug: "connect-your-tools",
     title: "Connect your tools",
-    blurb: "Configure Claude Code, Claude Desktop, Codex, opencode, and Work IQ (MCP).",
+    blurb: "Configure Claude Code, Claude Desktop, Codex, opencode, and the Work IQ connector.",
   },
   {
     slug: "how-it-works",
     title: "How maximal works",
-    blurb: "How the local API proxy, config management, and MCP broker operate.",
+    blurb: "How the local API proxy, config management, and connectors operate.",
   },
   {
     slug: "usage-and-settings",
@@ -35,7 +35,7 @@ export const GUIDE_NAV = [
   {
     slug: "troubleshooting",
     title: "Troubleshooting and FAQ",
-    blurb: "Fixes for common authentication, config, and MCP request issues.",
+    blurb: "Fixes for common authentication, config, and Work IQ issues.",
   },
 ] as const;
 

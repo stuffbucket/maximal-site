@@ -68,4 +68,4 @@ For other distributions, building from source, and more detail, see the [full Li
 
 - **macOS CLI (Homebrew):** if you prefer the terminal on macOS, run `brew install stuffbucket/tap/maximal` and then `maximal setup` to sign in and verify your connection.
 - **Windows PowerShell:** you can also install via PowerShell with `irm https://github.com/stuffbucket/maximal/releases/latest/download/install.ps1 | iex`.
-- **Work IQ on Linux:** on Linux, run maximal under your normal desktop user session with a running D-Bus session and unlocked Secret Service keyring (such as GNOME Keyring) so Work IQ (`@microsoft/workiq`) can access its credential store via `DBUS_SESSION_BUS_ADDRESS`.
+- **Work IQ on Linux:** maximal keeps your Work IQ sign-in encrypted, with the key in your desktop keyring. Ubuntu and Debian with GNOME include one; otherwise run `sudo apt install gnome-keyring libsecret-1-0` and restart maximal. Without a keyring (for example over SSH), you stay signed in only until maximal restarts, and signing in needs a desktop session with a browser.
