@@ -1,6 +1,6 @@
 # Connect your tools
 
-In the **Integrations** tab, flip a switch to run your coding apps on your GitHub Copilot plan and share Microsoft **Work IQ** across your apps.
+In the **Integrations** tab, flip a switch to run your coding apps on your GitHub Copilot plan, and turn on Microsoft **Work IQ** to give Claude Code your Microsoft 365 context.
 
 ## 1. Turn on your coding apps
 
@@ -14,55 +14,51 @@ Open maximal and select the **Integrations** tab. Under **Apps**, you&rsquo;ll s
 
 ### Good to know
 
-- **If a tool isn&rsquo;t installed yet:** its card shows the install command with a **Copy command** button. Install the tool, then click **Re-scan**.
+- **If a tool isn&rsquo;t installed yet:** its card shows the install command with a **Copy command** button. Install the tool and maximal notices it by itself; then switch it on.
 - **Turning a switch off:** flipping a switch **Off** returns that app to its previous settings.
 - **If an app already has custom settings:** maximal won&rsquo;t overwrite existing custom gateway settings&mdash;instead, the card tells you what conflicted so you can clear it first.
 
 ---
 
-## 2. Turn on Work IQ (MCP servers)
+## 2. Turn on Work IQ
 
-Microsoft **Work IQ** lets your coding assistant look up context from your Microsoft 365 account (emails, calendar events, Teams messages, SharePoint docs, and OneDrive files).
+Microsoft **Work IQ** lets your coding assistant look up context from your Microsoft 365 account: mail, meetings, chats, files, and people. It&rsquo;s built into maximal as a **connector**, so there&rsquo;s nothing else to install.
 
-Instead of setting up Work IQ separately in every app, you can turn it on once in **Integrations → MCP servers** (available on macOS and Linux):
+You&rsquo;ll need a Microsoft 365 work or school account with a Microsoft 365 Copilot license, and your organization must have approved Work IQ.
 
-![maximal’s MCP servers section showing Work IQ enabled and shared with Claude Code and Claude Desktop](../../public/screenshots/guide/mcp-servers.png)
+1. In the **Integrations** tab, scroll to **Connectors** and open **Work IQ**.
+2. Flip the switch **On**.
+3. Click **Accept terms** after reviewing Microsoft&rsquo;s Work IQ terms.
+4. Click **Sign in**. Your browser opens Microsoft&rsquo;s sign-in page; finish there within 5 minutes and come back to maximal. The status changes to **Connected as** your account, and maximal sends a notification that Work IQ is connected.
+5. Under **Connect to apps**, check **Claude Code**, then start a new Claude Code session.
 
-1. Scroll to **MCP servers** in the **Integrations** tab and look under **Available to add**:
-   - **If Work IQ isn&rsquo;t installed yet:** click **Copy command** on the Work IQ card, run the command in your terminal, and click **Re-scan**.
-   - **Once Work IQ is found:** click **Add** and confirm.
+Claude Code needs to be switched on under **Apps** first. If Claude Code already has its own Work IQ set up, maximal tells you on the Work IQ page and doesn&rsquo;t add a second one.
 
-![Available to add section showing Work IQ ready to add](../../public/screenshots/guide/mcp-available-to-add.png)
-
-2. Flip the **Work IQ** switch **On**.
-3. Check the apps that should get it (**All apps**, **Claude Code**, or **Claude Desktop**).
+maximal keeps your sign-in encrypted, with the key in your system&rsquo;s credential store (Keychain on macOS, Credential Manager on Windows, or your desktop keyring on Linux), so you stay signed in after maximal restarts. Turning Work IQ **Off** removes its tools from your apps but keeps your sign-in and your choices.
 
 ---
 
-## 3. Answer prompts in Requests
+## 3. Choose what Work IQ may do
 
-Sometimes Work IQ (or another MCP server) asks you to fill out a quick form or review a sign-in link during a task. When an app like Claude Desktop can&rsquo;t show that prompt on its own, maximal catches it under **Integrations → Requests** and sends you a notification:
+Under **Tool permissions** on the Work IQ page, choose how each tool can be used. Tools are grouped into **Read-only tools**, **Write/delete tools**, and **Other tools**; set a whole group at once or each tool on its own:
 
-![maximal’s Requests section showing pending MCP server prompts](../../public/screenshots/guide/mcp-requests.png)
+- **Allowed** — your apps can use the tool.
+- **Asks** — you approve every call. Claude Code asks you itself before the tool runs.
+- **Blocked** — the tool stays listed in your apps but is turned off, and calls are refused.
 
-1. Open **Integrations → Requests** (or click **Answer requests…** from maximal&rsquo;s menu bar or Dock icon).
-2. Click **Answer…** (to fill out a form) or **Review link…** (to open a sign-in link), or click **Decline** before the 5-minute timer expires.
-
-![Answering an MCP server form request inside maximal](../../public/screenshots/guide/mcp-request-dialog.png)
+By default, read-only tools are allowed, deleting is blocked, and everything else asks.
 
 ---
 
 ## Want to know a bit more?
 
-- **Where settings are written:** flipping on an app updates `~/.claude/settings.json` (Claude Code), Claude Desktop&rsquo;s local gateway settings, or `~/.codex/config.toml` (Codex CLI and Desktop), and provisions a dedicated local API key for each app.
-- **Connecting `opencode` or custom scripts:** open the **Models & keys** tab to copy maximal&rsquo;s local address (`http://127.0.0.1:4141` for Anthropic-style tools or `http://127.0.0.1:4141/v1` for OpenAI-style tools) and click **+ Add a connection** under **API keys** to create a named key.
-- **Command-line equivalents:** if you installed the CLI, you can toggle apps and MCP servers from the terminal:
+- **Where settings are written:** flipping on an app updates `~/.claude/settings.json` (Claude Code), Claude Desktop&rsquo;s local gateway settings, or `~/.codex/config.toml` (Codex CLI and Desktop), and provisions a dedicated local API key for each app. Checking **Claude Code** for Work IQ adds a `maximal-workiq` server to `~/.claude.json`.
+- **Work IQ in other apps:** for any other app that supports MCP servers, copy the address shown under **Connect to apps** and add it as a server, with a key from **Integrations → API keys**. Apps that can&rsquo;t ask for approval, like Codex, can only use tools set to **Allowed**.
+- **Connecting `opencode` or custom scripts:** in the **Integrations** tab, copy maximal&rsquo;s local address from **Endpoint** (`http://127.0.0.1:4141` for Anthropic-style tools or `http://127.0.0.1:4141/v1` for OpenAI-style tools) and click **+ Add a connection** under **API keys** to create a named key.
+- **Command-line equivalents:** if you installed the CLI, you can toggle apps from the terminal:
   ```sh
   maximal app list
   maximal app claude-code --enable
   maximal app claude-desktop --enable
   maximal app codex --enable
-
-  maximal mcp workiq --add
-  maximal mcp workiq --enable
   ```

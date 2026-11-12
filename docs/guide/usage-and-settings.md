@@ -4,7 +4,7 @@ maximal puts all of your settings and your usage dashboard in a single window.
 
 Across the top bar:
 
-- **Five Settings tabs on the left:** **Account**, **Integrations**, **Models & keys**, **Appearance**, and **System**.
+- **Five Settings tabs on the left:** **Account**, **Integrations**, **Models**, **Appearance**, and **System**.
 - **Dashboard toggle on the right:** click the chart icon (or press `⌘D` on macOS or `Ctrl+D` on Windows) to view your usage dashboard; click the gear icon (or press `⌘,` or `Ctrl+,`) to return to Settings.
 - **Language menu:** click the globe icon in the top-right corner to switch between 12 languages.
 
@@ -25,22 +25,22 @@ Sign in to GitHub Copilot and switch between saved GitHub accounts.
 
 ## Integrations
 
-Turn on your coding apps, share **Work IQ** and other MCP servers, and answer server prompts.
+Turn on your coding apps and connectors, and find the address and keys for tools you set up by hand.
 
 - **Apps** — one-click switches for **Claude Code**, **Claude Desktop**, and **Codex** (plus copyable install commands if a tool isn&rsquo;t installed yet).
-- **MCP servers** — add and turn on **Work IQ** (or other local MCP servers) and choose whether **Claude Code**, **Claude Desktop**, or **All apps** receive them.
-- **Requests** — holds form or sign-in link prompts from MCP servers when an app like Claude Desktop can&rsquo;t show them directly.
+- **Connectors** — turn on **Work IQ**, sign in, choose which apps get it, and set what each of its tools may do. See [Connect your tools](./connect-your-tools.md#2-turn-on-work-iq).
+- **Endpoint** — maximal&rsquo;s local address and the current key, only needed if you&rsquo;re connecting a tool manually (like `opencode` or your own scripts).
+- **API keys** — click **+ Add a connection** to create a named key for a tool you set up by hand.
 
 ---
 
-## Models and keys
+## Models
 
-Browse the models included in your Copilot plan, or grab the local address and API keys for manual tools.
+Browse the models included in your Copilot plan.
 
-![maximal’s Models & keys tab showing model families, endpoint address, and API key connections](../../public/screenshots/guide/models-and-keys.png)
+![maximal’s Models tab listing the models in a Copilot plan](../../public/screenshots/guide/models-and-keys.png)
 
-- **Models** — lists every model available in your GitHub Copilot plan, grouped by family, with capability badges (`Vision`, `Tools`, `Streaming`, `Reasoning`) and token limits.
-- **Endpoint and API keys** — only needed if you&rsquo;re connecting a tool manually (like `opencode` or your own scripts). Copy the local address from **Endpoint** and click **+ Add a connection** under **API keys** to create a named key.
+- **Models** — lists every model available in your GitHub Copilot plan, grouped by kind (chat models, embeddings, and so on), with its capabilities (`Vision`, `Tools`, `Streaming`, `Reasoning`) and token limits.
 
 ---
 
