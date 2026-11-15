@@ -5,10 +5,10 @@ import { defineConfig } from "astro/config";
 
 // The production build for mxml.sh runs in stuffbucket/maximal's Pages deploy
 // (through .github/workflows/build-mxml.yml) with SITE_URL=https://mxml.sh and
-// SITE_BASE=/. The defaults build this repo's own preview at
-// stuffbucket.github.io/maximal-site.
-const site = process.env.SITE_URL || "https://stuffbucket.github.io";
-const base = (process.env.SITE_BASE ?? "/maximal-site").replace(/\/$/, "");
+// SITE_BASE=/. The defaults build this repo's own preview at mxml.app;
+// deploy-pages.yml passes whatever origin and base Pages reports.
+const site = process.env.SITE_URL || "https://mxml.app";
+const base = (process.env.SITE_BASE ?? "/").replace(/\/$/, "");
 
 // A screenshot's size in CSS pixels (captures are @2x), read from its PNG
 // header, so the page reserves its space before the image loads.
@@ -61,8 +61,8 @@ function rewriteGuideLinks() {
   return (tree) => walk(tree);
 }
 
-// Keep the base separate from the origin so the same route code serves both
-// the preview below /maximal-site/ and mxml.sh at the root.
+// Keep the base separate from the origin so the same route code serves a
+// build below a path (e.g. a project Pages site) as well as one at the root.
 // The landing copy + page structure live in a Markdoc content collection
 // (src/content/landing/index.mdoc) rendered through custom tag-components.
 // index.astro stays a thin shell that resolves the release (lib/version.ts)
