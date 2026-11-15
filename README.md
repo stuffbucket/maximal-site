@@ -5,13 +5,12 @@
 > If you'd like to star the project, star it there.
 
 Static Astro site. Its content is published at **https://mxml.sh**; this
-repository's own GitHub Pages site,
-`https://stuffbucket.github.io/maximal-site/`, is a preview of `main` that
-points its canonical links at mxml.sh and asks not to be indexed.
+repository's own GitHub Pages site, `https://mxml.app/`, is a preview of
+`main` that points its canonical links at mxml.sh and asks not to be indexed.
 
 ```sh
 pnpm install
-pnpm run dev      # http://localhost:4321/maximal-site/
+pnpm run dev      # http://localhost:4321/
 pnpm run build    # cached by Turbo → dist/
 pnpm run test     # cached by Turbo
 pnpm run check    # build + test
@@ -19,8 +18,9 @@ pnpm run preview
 ```
 
 `SITE_URL` and `SITE_BASE` choose where a build is served from. They default
-to the preview; `SITE_URL=https://mxml.sh SITE_BASE=/ pnpm run build` builds
-for mxml.sh.
+to the preview at mxml.app (the Pages deploy passes the origin and base its
+Pages settings report); `SITE_URL=https://mxml.sh pnpm run build` builds for
+mxml.sh.
 
 ## How mxml.sh is published
 

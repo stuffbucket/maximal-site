@@ -3,7 +3,8 @@
 // broken page. Run after `astro build`, before any artifact upload.
 //
 // The same build serves two places (see astro.config.mjs):
-//   - this repo's preview at stuffbucket.github.io/maximal-site (the defaults);
+//   - this repo's preview at mxml.app (the defaults), or wherever its Pages
+//     site is configured (deploy-pages.yml passes the origin and base);
 //   - mxml.sh at the root (SITE_URL=https://mxml.sh SITE_BASE=/), assembled by
 //     stuffbucket/maximal's Pages deploy, which adds CNAME, /updates and /apt.
 // Root-relative URLs outside the base render locally but 404 once deployed,
@@ -16,8 +17,8 @@ import { dirname, join, resolve } from "node:path";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const DIST = resolve(HERE, "..", "dist");
-const SITE = process.env.SITE_URL || "https://stuffbucket.github.io";
-const BASE = (process.env.SITE_BASE ?? "/maximal-site").replace(/\/$/, "");
+const SITE = process.env.SITE_URL || "https://mxml.app";
+const BASE = (process.env.SITE_BASE ?? "/").replace(/\/$/, "");
 const SITE_URL = `${SITE}${BASE}/`;
 const CANONICAL_ORIGIN = "https://mxml.sh";
 const isCanonicalBuild = SITE_URL === `${CANONICAL_ORIGIN}/`;
